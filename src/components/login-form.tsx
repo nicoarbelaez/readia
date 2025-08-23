@@ -13,7 +13,7 @@ export function LoginForm({
           {/* Contenedor rojo */}
           <form className="flex h-full w-full items-center justify-center p-6 md:p-8">
             {/* Contenedor azul centrado vertical y horizontalmente */}
-            <div className="flex flex-col gap-6 w-full max-w-sm">
+            <div className="flex w-full max-w-sm flex-col gap-6">
               <div className="flex flex-col items-center text-center">
                 <h1 className="text-2xl font-bold">Bienvenido de nuevo</h1>
                 <p className="text-muted-foreground text-balance">
@@ -47,6 +47,7 @@ export function LoginForm({
 
           {/* Imagen lateral */}
           <div className="bg-muted relative hidden md:block">
+            {/* eslint-disable @next/next/no-img-element */}
             <img
               src="/img/login-picture.avif"
               alt="Imagen"
