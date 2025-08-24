@@ -1,0 +1,7 @@
+[
+  { "dimension": "Datos", "nivel": 2, "brecha": "Gobernanza y calidad", "prioridad": "Alta", "evidencias": "Catálogo parcial · ETL ad-hoc" },
+  { "dimension": "Tecnología", "nivel": 3, "brecha": "MLOps y observabilidad", "prioridad": "Media", "evidencias": "Nube híbrida · Pipelines CI/CD" },
+  { "dimension": "Talento", "nivel": 2, "brecha": "Skills en IA/ML y data", "prioridad": "Alta", "evidencias": "Capacitaciones puntuales" },
+  { "dimension": "Gobernanza", "nivel": 2, "brecha": "Políticas IA, riesgos y ética", "prioridad": "Alta", "evidencias": "Lineamientos en borrador" },
+  { "dimension": "Estrategia", "nivel": 3, "brecha": "Portafolio de casos", "prioridad": "Media", "evidencias": "Pilotos en CX y automatización" }
+]

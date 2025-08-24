@@ -1,0 +1,108 @@
+<!--?xml version="1.0" encoding="UTF-8"?-->
+<svg width="960" height="560" viewBox="0 0 960 560" xmlns="http://www.w3.org/2000/svg" aria-labelledby="title desc">
+  <title id="title">Diagnóstico de Capacidades de TI hacia la IA — Tabla de Demostración</title>
+  <desc id="desc">Tabla con dimensiones clave: Datos, Tecnología, Talento, Gobernanza y Estrategia. Columnas: Nivel actual, Brecha, Prioridad y Evidencias.</desc>
+
+  <!-- Fondo / Hero mini -->
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#eef2ff"></stop>
+      <stop offset="100%" stop-color="#ffffff"></stop>
+    </linearGradient>
+    <filter id="s" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="2" stdDeviation="6" flood-opacity="0.12"></feDropShadow>
+    </filter>
+  </defs>
+  <rect x="0" y="0" width="960" height="560" fill="url(#g)"></rect>
+
+  <!-- Encabezado -->
+  <g>
+    <text x="40" y="56" font-family="ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto" font-size="26" font-weight="700" fill="#111827">
+      Diagnóstico TI → IA en empresas
+    </text>
+    <text x="40" y="84" font-family="ui-sans-serif, system-ui" font-size="16" fill="#374151">
+      Evaluación de preparación en: Datos, Tecnología, Talento, Gobernanza y Estrategia
+    </text>
+  </g>
+
+  <!-- Leyenda de niveles -->
+  <g transform="translate(40,110)">
+    <rect width="880" height="56" rx="12" fill="#fff" filter="url(#s)"></rect>
+    <text x="20" y="36" font-family="ui-sans-serif, system-ui" font-size="14" fill="#111827">
+      Niveles de madurez: 1 = Inicial · 2 = Básico · 3 = Estable · 4 = Gestionado · 5 = Optimizado
+    </text>
+  </g>
+
+  <!-- Tabla -->
+  <g transform="translate(40,186)" role="table" aria-label="Tabla de diagnóstico IA">
+    <!-- Marco tabla -->
+    <rect width="880" height="320" rx="14" fill="#ffffff" filter="url(#s)"></rect>
+
+    <!-- Encabezados -->
+    <g role="row" aria-rowindex="1">
+      <rect x="0" y="0" width="880" height="48" rx="14" fill="#eef2ff"></rect>
+      <text x="20" y="31" font-family="ui-sans-serif, system-ui" font-size="14" font-weight="700" fill="#111827" role="columnheader">Dimensión</text>
+      <text x="260" y="31" font-family="ui-sans-serif, system-ui" font-size="14" font-weight="700" fill="#111827" role="columnheader">Nivel actual (1–5)</text>
+      <text x="420" y="31" font-family="ui-sans-serif, system-ui" font-size="14" font-weight="700" fill="#111827" role="columnheader">Brecha</text>
+      <text x="560" y="31" font-family="ui-sans-serif, system-ui" font-size="14" font-weight="700" fill="#111827" role="columnheader">Prioridad</text>
+      <text x="700" y="31" font-family="ui-sans-serif, system-ui" font-size="14" font-weight="700" fill="#111827" role="columnheader">Evidencias</text>
+    </g>
+
+    <!-- Filas -->
+    <!-- Row util: usa data-* para enganchar con JS si luego quieres editar dinámicamente -->
+    <g role="row" aria-rowindex="2" transform="translate(0,48)" data-row="datos">
+      <rect x="0" y="0" width="880" height="54" fill="#ffffff"></rect>
+      <line x1="0" y1="54" x2="880" y2="54" stroke="#E5E7EB"></line>
+      <text x="20" y="34" font-family="ui-sans-serif, system-ui" font-size="14" fill="#111827" role="cell">Datos</text>
+      <text x="260" y="34" font-family="ui-sans-serif, system-ui" font-size="14" fill="#1F2937" role="cell" data-field="nivel-datos">2</text>
+      <text x="420" y="34" font-family="ui-sans-serif, system-ui" font-size="14" fill="#1F2937" role="cell" data-field="brecha-datos">Gobernanza y calidad</text>
+      <text x="560" y="34" font-family="ui-sans-serif, system-ui" font-size="14" fill="#B91C1C" role="cell" data-field="prioridad-datos">Alta</text>
+      <text x="700" y="34" font-family="ui-sans-serif, system-ui" font-size="14" fill="#1F2937" role="cell" data-field="evidencias-datos">Catálogo parcial · ETL ad-hoc</text>
+    </g>
+
+    <g role="row" aria-rowindex="3" transform="translate(0,102)" data-row="tecnologia">
+      <rect x="0" y="0" width="880" height="54" fill="#ffffff"></rect>
+      <line x1="0" y1="54" x2="880" y2="54" stroke="#E5E7EB"></line>
+      <text x="20" y="34" font-family="ui-sans-serif, system-ui" font-size="14" fill="#111827" role="cell">Tecnología</text>
+      <text x="260" y="34" font-family="ui-sans-serif, system-ui" font-size="14" fill="#1F2937" role="cell" data-field="nivel-tec">3</text>
+      <text x="420" y="34" font-family="ui-sans-serif, system-ui" font-size="14" fill="#1F2937" role="cell" data-field="brecha-tec">MLOps y observabilidad</text>
+      <text x="560" y="34" font-family="ui-sans-serif, system-ui" font-size="14" fill="#D97706" role="cell" data-field="prioridad-tec">Media</text>
+      <text x="700" y="34" font-family="ui-sans-serif, system-ui" font-size="14" fill="#1F2937" role="cell" data-field="evidencias-tec">Nube híbrida · Pipelines CI/CD</text>
+    </g>
+
+    <g role="row" aria-rowindex="4" transform="translate(0,156)" data-row="talento">
+      <rect x="0" y="0" width="880" height="54" fill="#ffffff"></rect>
+      <line x1="0" y1="54" x2="880" y2="54" stroke="#E5E7EB"></line>
+      <text x="20" y="34" font-family="ui-sans-serif, system-ui" font-size="14" fill="#111827" role="cell">Talento</text>
+      <text x="260" y="34" font-family="ui-sans-serif, system-ui" font-size="14" fill="#1F2937" role="cell" data-field="nivel-talento">2</text>
+      <text x="420" y="34" font-family="ui-sans-serif, system-ui" font-size="14" fill="#1F2937" role="cell" data-field="brecha-talento">Skills en IA/ML y data</text>
+      <text x="560" y="34" font-family="ui-sans-serif, system-ui" font-size="14" fill="#B91C1C" role="cell" data-field="prioridad-talento">Alta</text>
+      <text x="700" y="34" font-family="ui-sans-serif, system-ui" font-size="14" fill="#1F2937" role="cell" data-field="evidencias-talento">Capacitaciones puntuales</text>
+    </g>
+
+    <g role="row" aria-rowindex="5" transform="translate(0,210)" data-row="gobernanza">
+      <rect x="0" y="0" width="880" height="54" fill="#ffffff"></rect>
+      <line x1="0" y1="54" x2="880" y2="54" stroke="#E5E7EB"></line>
+      <text x="20" y="34" font-family="ui-sans-serif, system-ui" font-size="14" fill="#111827" role="cell">Gobernanza</text>
+      <text x="260" y="34" font-family="ui-sans-serif, system-ui" font-size="14" fill="#1F2937" role="cell" data-field="nivel-gob">2</text>
+      <text x="420" y="34" font-family="ui-sans-serif, system-ui" font-size="14" fill="#1F2937" role="cell" data-field="brecha-gob">Políticas IA, riesgos y ética</text>
+      <text x="560" y="34" font-family="ui-sans-serif, system-ui" font-size="14" fill="#B91C1C" role="cell" data-field="prioridad-gob">Alta</text>
+      <text x="700" y="34" font-family="ui-sans-serif, system-ui" font-size="14" fill="#1F2937" role="cell" data-field="evidencias-gob">Lineamientos de datos en borrador</text>
+    </g>
+
+    <g role="row" aria-rowindex="6" transform="translate(0,264)" data-row="estrategia">
+      <rect x="0" y="0" width="880" height="54" fill="#ffffff"></rect>
+      <line x1="0" y1="54" x2="880" y2="54" stroke="#E5E7EB"></line>
+      <text x="20" y="34" font-family="ui-sans-serif, system-ui" font-size="14" fill="#111827" role="cell">Estrategia</text>
+      <text x="260" y="34" font-family="ui-sans-serif, system-ui" font-size="14" fill="#1F2937" role="cell" data-field="nivel-estrategia">3</text>
+      <text x="420" y="34" font-family="ui-sans-serif, system-ui" font-size="14" fill="#1F2937" role="cell" data-field="brecha-estrategia">Portafolio de casos de uso</text>
+      <text x="560" y="34" font-family="ui-sans-serif, system-ui" font-size="14" fill="#D97706" role="cell" data-field="prioridad-estrategia">Media</text>
+      <text x="700" y="34" font-family="ui-sans-serif, system-ui" font-size="14" fill="#1F2937" role="cell" data-field="evidencias-estrategia">Pilotos en CX y automatización</text>
+    </g>
+  </g>
+
+  <!-- Nota -->
+  <text x="40" y="528" font-family="ui-sans-serif, system-ui" font-size="12" fill="#6B7280">
+    Demo: edita los textos o usa data-field para inyectar valores desde React/Next.js.
+  </text>
+</svg>
