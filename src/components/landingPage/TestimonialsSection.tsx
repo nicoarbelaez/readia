@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState, useEffect } from "react";
@@ -111,7 +110,7 @@ export function TestimonialsSection() {
           <div className="bg-white dark:bg-slate-800 rounded-2xl p-4 md:p-6 lg:p-8 shadow-xl">
             <Quote className="h-8 w-8 md:h-10 md:w-10 lg:h-12 lg:w-12 text-blue-400 mb-4 md:mb-6" />
             <p className="text-base md:text-lg text-slate-700 dark:text-slate-300 italic mb-6 md:mb-8">
-              "{testimonials[currentIndex].comment}"
+              &ldquo;{testimonials[currentIndex].comment}&rdquo;
             </p>
             <div className="border-t border-slate-200 dark:border-slate-700 pt-4 md:pt-6">
               <h4 className="font-semibold text-slate-800 dark:text-white text-sm md:text-base">
@@ -163,7 +162,7 @@ export function TestimonialsSection() {
                 </div>
               </div>
               <p className="text-slate-600 dark:text-slate-300 text-xs md:text-sm">
-                "{testimonial.comment.substring(0, 80)}..."
+                &ldquo;{testimonial.comment.substring(0, 80)}...&rdquo;
               </p>
             </div>
           ))}
