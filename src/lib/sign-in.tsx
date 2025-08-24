@@ -1,10 +1,13 @@
 import { createClient } from "@/utils/supabase/client";
 
+export type SignInProviders = "google" | "github";
+export type SignInFunction = (next?: string) => Promise<void>;
+
 // Cliente supabase
 const supabase = createClient();
 
 // Login con Google
-export const signInWithGoogle = async (next?: string) => {
+export const signInWithGoogle: SignInFunction = async (next?: string) => {
   const redirectTo = buildRedirectUrl(next);
   await supabase.auth.signInWithOAuth({
     provider: "google",
@@ -13,7 +16,7 @@ export const signInWithGoogle = async (next?: string) => {
 };
 
 // Login con GitHub
-export const signInWithGitHub = async (next?: string) => {
+export const signInWithGitHub: SignInFunction = async (next?: string) => {
   const redirectTo = buildRedirectUrl(next);
   await supabase.auth.signInWithOAuth({
     provider: "github",

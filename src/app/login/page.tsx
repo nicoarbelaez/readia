@@ -1,5 +1,5 @@
 import { ModeToggle } from "@/components/dark-mode/mode-toggle";
-import { LoginForm } from "@/components/login-form";
+import { LoginForm } from "@/components/login/login-form";
 
 export default function LoginPage() {
   return (

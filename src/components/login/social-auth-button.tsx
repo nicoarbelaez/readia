@@ -2,16 +2,24 @@
 
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { signInWithGitHub, signInWithGoogle } from "@/lib/sign-in";
-// import { useSearchParams } from "next/navigation";
+import {
+  SignInFunction,
+  type SignInProviders,
+  signInWithGitHub,
+  signInWithGoogle,
+} from "@/lib/sign-in";
+import { IconLoader2 } from "@tabler/icons-react";
 
 type SocialAuthButtonProps = {
-  provider: "google" | "github";
+  provider: SignInProviders;
   className?: string;
+  isLoading?: boolean;
+  startSignIn?: (signIn: SignInFunction) => Promise<void>;
 } & React.ComponentProps<typeof Button>;
 
 const providers = {
   google: {
+    label: "Google",
     signIn: signInWithGoogle,
     icon: (
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
@@ -23,6 +31,7 @@ const providers = {
     ),
   },
   github: {
+    label: "GitHub",
     signIn: signInWithGitHub,
     icon: (
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
@@ -39,21 +48,29 @@ export function SocialAuthButton({
   provider,
   className,
   children,
+  isLoading = false,
+  startSignIn,
   ...props
 }: SocialAuthButtonProps) {
-  //   const searchParams = useSearchParams();
-  //   const next = searchParams.get("next");
-  const next = null;
+  const { signIn, icon, label } = providers[provider];
+
+  const handleSignIn = async () => {
+    if (isLoading) return;
+
+    if (startSignIn) startSignIn(signIn);
+  };
 
   return (
     <Button
+      disabled={isLoading}
       className={cn("w-full cursor-pointer", className)}
-      onClick={() => providers[provider].signIn(next ?? undefined)}
+      type="button"
+      onClick={handleSignIn}
       {...props}
     >
-      {providers[provider].icon}
-      {children ??
-        `Iniciar sesión con ${provider === "google" ? "Google" : "GitHub"}`}
+      {isLoading ? <IconLoader2 className="animate-spin" /> : icon}
+
+      {children ?? `Iniciar sesión con ${label}`}
     </Button>
   );
 }
