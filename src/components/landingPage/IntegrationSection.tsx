@@ -1,4 +1,4 @@
-// components/landingPage/IntegrationSection.tsx
+
 import { Code, GitBranch, Cpu, Smartphone, Server } from "lucide-react";
 
 export function IntegrationSection() {

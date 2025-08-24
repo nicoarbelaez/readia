@@ -1,4 +1,4 @@
-// components/landingPage/MetricsSection.tsx
+
 export function MetricsSection() {
   return (
     <section className="bg-slate-50 dark:bg-slate-900 py-12 md:py-16">

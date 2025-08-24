@@ -41,18 +41,6 @@ const resourcesItems = [
     href: "/docs",
     description: "Guías detalladas y manuales de uso",
     icon: <BookOpen className="h-4 w-4 text-blue-600 dark:text-blue-400" />
-  },
-  {
-    title: "Casos de Éxito",
-    href: "/casos-exito",
-    description: "Experiencias reales de implementación",
-    icon: <Award className="h-4 w-4 text-blue-600 dark:text-blue-400" />
-  },
-  {
-    title: "Blog de IA Empresarial",
-    href: "/blog",
-    description: "Artículos y tendencias actuales",
-    icon: <Newspaper className="h-4 w-4 text-blue-600 dark:text-blue-400" />
   }
 ]
 

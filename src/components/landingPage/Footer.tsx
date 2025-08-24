@@ -1,4 +1,4 @@
-// components/landingPage/Footer.tsx
+
 export function Footer() {
   return (
     <footer className="bg-slate-900 text-white py-8 md:py-12">

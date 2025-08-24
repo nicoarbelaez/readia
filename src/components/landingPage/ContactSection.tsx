@@ -1,4 +1,3 @@
-// components/landingPage/ContactSection.tsx
 import { Mail, Phone, MessageCircle, Calendar } from "lucide-react";
 
 export function ContactSection() {
