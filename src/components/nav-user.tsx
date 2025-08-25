@@ -1,6 +1,6 @@
 "use client";
 
-import { BadgeCheck, LogOut, Monitor, Moon, Sun } from "lucide-react";
+import { BadgeCheck, LogOut } from "lucide-react";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -18,11 +18,11 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
-import { useTheme } from "next-themes";
 import { IconDotsVertical } from "@tabler/icons-react";
 import Link from "next/link";
 import { createClient } from "@/utils/supabase/client";
 import { usePathname, useRouter } from "next/navigation";
+import { ThemeSelector } from "@/components/dark-mode/theme-selector";
 
 export function NavUser({
   user,
@@ -34,7 +34,6 @@ export function NavUser({
   };
 }) {
   const { isMobile } = useSidebar();
-  const { setTheme } = useTheme();
 
   const router = useRouter();
   const pathname = usePathname();
@@ -101,18 +100,7 @@ export function NavUser({
 
             <DropdownMenuLabel>Tema</DropdownMenuLabel>
             <DropdownMenuGroup>
-              <DropdownMenuItem onClick={() => setTheme("light")}>
-                <Sun />
-                Claro
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setTheme("dark")}>
-                <Moon />
-                Oscuro
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setTheme("system")}>
-                <Monitor />
-                Sistema
-              </DropdownMenuItem>
+              <ThemeSelector />
             </DropdownMenuGroup>
 
             <DropdownMenuSeparator />
