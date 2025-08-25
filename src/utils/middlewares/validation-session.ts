@@ -24,7 +24,7 @@ export async function validationSession(request: NextRequest) {
   }
 
   if (user && nextUrl.pathname.startsWith("/login")) {
-    return NextResponse.redirect(new URL("/", request.url));
+    return NextResponse.redirect(new URL("/home", request.url));
   }
 
   if (!user) {
