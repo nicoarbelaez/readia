@@ -8,8 +8,6 @@ import {
   BookOpen, 
   FileText, 
   User, 
-  Newspaper,
-  Award,
   Menu,
   X
 } from "lucide-react"
