@@ -1,6 +1,6 @@
 import { cn } from "@/lib/utils";
 import { Card, CardContent } from "@/components/ui/card";
-import { SocialAuthButton } from "@/components/social-auth-button";
+import { LoginButtons } from "@/components/login/login-buttons";
 
 export function LoginForm({
   className,
@@ -22,8 +22,7 @@ export function LoginForm({
               </div>
 
               <div className="flex flex-col gap-4">
-                <SocialAuthButton provider="google" variant={"secondary"}/>
-                <SocialAuthButton provider="github" variant={"outline"}/>
+                <LoginButtons />
               </div>
             </div>
           </form>
