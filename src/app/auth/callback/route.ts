@@ -5,10 +5,10 @@ export async function GET(request: NextRequest) {
   const { searchParams, origin } = new URL(request.url);
   const code = searchParams.get("code");
   // si "next" está en los parámetros, úsalo como la URL de redirección
-  let next = searchParams.get("next") ?? "/";
+  let next = searchParams.get("next") ?? "/home";
   if (!next.startsWith("/")) {
     // si "next" no es una URL relativa, usa la predeterminada
-    next = "/";
+    next = "/home";
   }
 
   if (code) {

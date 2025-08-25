@@ -13,7 +13,7 @@ import { IconLoader2 } from "@tabler/icons-react";
 type SocialAuthButtonProps = {
   provider: SignInProviders;
   className?: string;
-  isLoading?: boolean;
+  loginProvider: SignInProviders | null;
   startSignIn?: (signIn: SignInFunction) => Promise<void>;
 } & React.ComponentProps<typeof Button>;
 
@@ -48,27 +48,31 @@ export function SocialAuthButton({
   provider,
   className,
   children,
-  isLoading = false,
+  loginProvider,
   startSignIn,
   ...props
 }: SocialAuthButtonProps) {
   const { signIn, icon, label } = providers[provider];
 
   const handleSignIn = async () => {
-    if (isLoading) return;
+    if (loginProvider != null) return;
 
     if (startSignIn) startSignIn(signIn);
   };
 
   return (
     <Button
-      disabled={isLoading}
+      disabled={loginProvider != null}
       className={cn("w-full cursor-pointer", className)}
       type="button"
       onClick={handleSignIn}
       {...props}
     >
-      {isLoading ? <IconLoader2 className="animate-spin" /> : icon}
+      {loginProvider === provider ? (
+        <IconLoader2 className="animate-spin" />
+      ) : (
+        icon
+      )}
 
       {children ?? `Iniciar sesión con ${label}`}
     </Button>
