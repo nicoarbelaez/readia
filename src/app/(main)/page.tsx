@@ -11,15 +11,6 @@ import { FAQSection } from "@/components/landingPage/FAQSection";
 import { ContactSection } from "@/components/landingPage/ContactSection";
 import { Footer } from "@/components/landingPage/Footer";
 
-const typedDemoRows = demoRows.map(row => ({
-  ...row,
-  nivel: row.nivel as 1 | 2 | 3 | 4 | 5,
-  prioridad: (row.prioridad === "Alta" || row.prioridad === "Media" || row.prioridad === "Baja") 
-    ? row.prioridad 
-    : "Media"
-}));
-
-
 
 export default function Home() {
   return (

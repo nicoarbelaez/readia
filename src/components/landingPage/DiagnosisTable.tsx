@@ -1,13 +1,25 @@
-export function DiagnosisTable({ rows }: { rows: any[] }) {
-  // Función para obtener el nivel validado
-  const getValidNivel = (nivel: any): number => {
-    const num = Number(nivel);
-    return (num >= 1 && num <= 5) ? num : 1;
+type Prioridad = "Alta" | "Media" | "Baja";
+type Nivel = 1 | 2 | 3 | 4 | 5;
+
+interface TableRow {
+  dimension: string;
+  nivel: number;
+  brecha: string;
+  prioridad: string;
+  evidencias: string;
+}
+
+interface DiagnosisTableProps {
+  rows: TableRow[];
+}
+
+export function DiagnosisTable({ rows }: DiagnosisTableProps) {
+  const getValidNivel = (nivel: number): Nivel => {
+    return (nivel >= 1 && nivel <= 5) ? nivel as Nivel : 1;
   };
 
-  // Función para obtener prioridad con valor por defecto
-  const getValidPrioridad = (prioridad: any): string => {
-    const prio = String(prioridad).toLowerCase();
+  const getValidPrioridad = (prioridad: string): Prioridad => {
+    const prio = prioridad.toLowerCase();
     if (prio === "alta") return "Alta";
     if (prio === "media") return "Media";
     if (prio === "baja") return "Baja";
