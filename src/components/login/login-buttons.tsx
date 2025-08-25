@@ -2,10 +2,10 @@
 
 import { useState, useEffect } from "react";
 import { SocialAuthButton } from "@/components/login/social-auth-button";
-import { type SignInFunction } from "@/lib/sign-in";
+import { SignInProviders, type SignInFunction } from "@/lib/sign-in";
 
 export function LoginButtons() {
-  const [isLoading, setIsLoading] = useState(false);
+  const [provider, setProvider] = useState<SignInProviders | null>(null);
   const [nextUrl, setNextUrl] = useState<string | undefined>(undefined);
 
   useEffect(() => {
@@ -15,25 +15,24 @@ export function LoginButtons() {
   }, []);
 
   const startSignIn = async (signIn: SignInFunction) => {
-    setIsLoading(true);
-
     try {
-      await signIn(nextUrl);
+      const { provider } = await signIn(nextUrl);
+      setProvider(provider);
     } catch {
-      setIsLoading(false);
+      setProvider(null);
     }
   };
 
   return (
     <>
       <SocialAuthButton
-        isLoading={isLoading}
+        loginProvider={provider}
         provider="google"
         variant="secondary"
         startSignIn={startSignIn}
       />
       <SocialAuthButton
-        isLoading={isLoading}
+        loginProvider={provider}
         provider="github"
         variant="outline"
         startSignIn={startSignIn}
