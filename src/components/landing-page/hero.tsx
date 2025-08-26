@@ -8,7 +8,7 @@ interface HeroProps {
   ctaText?: string;
 }
 
-export function HERO({
+export function Hero({
   title = "Diagnóstico TI → IA Empresarial",
   subtitle = "Evalúa tu infraestructura, datos, talento y gobernanza para adoptar IA de forma efectiva.",
   ctaHref = "#tabla",

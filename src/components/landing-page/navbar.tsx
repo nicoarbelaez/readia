@@ -42,7 +42,7 @@ const resourcesItems = [
   }
 ]
 
-export function NAVBAR() {
+export function Navbar() {
   const [isScrolled, setIsScrolled] = React.useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false)
 
