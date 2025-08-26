@@ -1,10 +1,12 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { updateSession } from "@/utils/supabase/middleware";
 import { validationSession } from "@/utils/middlewares/validation-session";
+import { rootRedirect } from "@/utils/middlewares/root-redirect";
 
 export async function middleware(request: NextRequest) {
   // handlers: deben devolver NextResponse SOLO si quieren terminar la request
   const handlers = [
+    rootRedirect,
     validationSession,
     updateSession, // actualiza/propaga session cookies (último)
   ];
@@ -25,7 +27,6 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    // "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|avif)$).*)",
-    "/((?!_next/static|_next/image|favicon.ico|$|.*\\.(?:svg|png|jpg|jpeg|gif|webp|avif)$).*)",
+    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|avif)$).*)",
   ],
 };
