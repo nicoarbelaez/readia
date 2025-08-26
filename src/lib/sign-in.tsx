@@ -28,15 +28,15 @@ const signIn = async (provider: SignInProviders, next?: string) => {
 };
 
 function buildRedirectUrl(next?: string): string {
-  const base = getBaseUrlClient();
-  const url = `${base}/auth/callback`;
+  const base = getBaseUrlClient(); // Ya tiene `/` al final
+  const url = `${base}auth/callback`; // Sin `/` extra
 
   const params = new URLSearchParams();
   if (next) {
     params.append("next", next);
   }
 
-  return `${url}${params.toString() ? `?${params.toString()}` : ""}`;
+  return params.toString() ? `${url}?${params.toString()}` : url;
 }
 
 function getBaseUrlClient() {
@@ -44,9 +44,11 @@ function getBaseUrlClient() {
     process?.env?.NEXT_PUBLIC_SITE_URL ?? // Configura esto como la URL del sitio en el entorno de producción.
     process?.env?.NEXT_PUBLIC_VERCEL_URL ?? // Establecido automáticamente por Vercel.
     "http://localhost:3000/";
-  // Asegúrate de incluir `https://` cuando no sea localhost.
+
+  // Asegúrate de incluir `https://` cuando no sea localhost
   url = url.startsWith("http") ? url : `https://${url}`;
-  // Asegúrate de incluir una `/` al final.
-  url = url.endsWith("/") ? url : `${url}/`;
-  return url;
+  // Quitamos posibles dobles barras al final
+  url = url.replace(/\/+$/, "");
+
+  return url + "/"; // Garantizamos solo 1 slash al final
 }
