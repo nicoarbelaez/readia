@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@/utils/supabase/server";
+import { getUserAuthStatus } from "@/utils/auth-status";
 
 /**
  * Middleware para manejar redirecciones en la ruta raíz ('/')
@@ -23,13 +23,10 @@ export async function rootRedirect(request: NextRequest) {
   }
 
   // Verificamos si el usuario está autenticado
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const { isAuthenticated } = await getUserAuthStatus();
 
   // Si no hay usuario autenticado, permitimos el acceso a la ruta raíz
-  if (!user) {
+  if (!isAuthenticated) {
     return NextResponse.next();
   }
 

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@/utils/supabase/server";
 import { redirectToLogin } from "@/utils/redirects";
+import { getUserAuthStatus } from "@/utils/auth-status";
 
 export async function validationSession(request: NextRequest) {
   const { pathname, searchParams } = request.nextUrl;
@@ -8,23 +8,19 @@ export async function validationSession(request: NextRequest) {
     return;
   }
 
-  // Ahora validamos autenticación
-  const supabase = await createClient();
-  const {
-    data: { user },
-    error,
-  } = await supabase.auth.getUser();
+  // Validamos autenticación
+  const { error, isAuthenticated } = await getUserAuthStatus();
 
-  if (error || !user) {
+  if (error || !isAuthenticated) {
     // No autenticado -> enviar a login con next para volver luego
     return redirectToLogin({ request });
   }
 
-  if (user && pathname.startsWith("/login")) {
+  if (isAuthenticated && pathname.startsWith("/login")) {
     return NextResponse.redirect(new URL("/home", request.url));
   }
 
-  if (!user) {
+  if (!isAuthenticated) {
     return redirectToLogin({ request, error: "wrong_account_type" });
   }
 }
