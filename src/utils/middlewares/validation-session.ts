@@ -3,11 +3,8 @@ import { createClient } from "@/utils/supabase/server";
 import { redirectToLogin } from "@/utils/redirects";
 
 export async function validationSession(request: NextRequest) {
-  const nextUrl = request.nextUrl;
-  if (
-    nextUrl.pathname.startsWith("/auth") ||
-    nextUrl.searchParams.get("error")
-  ) {
+  const { pathname, searchParams } = request.nextUrl;
+  if (pathname.startsWith("/auth") || searchParams.get("error")) {
     return;
   }
 
@@ -23,7 +20,7 @@ export async function validationSession(request: NextRequest) {
     return redirectToLogin({ request });
   }
 
-  if (user && nextUrl.pathname.startsWith("/login")) {
+  if (user && pathname.startsWith("/login")) {
     return NextResponse.redirect(new URL("/home", request.url));
   }
 
