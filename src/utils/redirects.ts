@@ -6,14 +6,14 @@ interface RedirectToLoginParams {
 }
 
 export const redirectToLogin = ({ request, error }: RedirectToLoginParams) => {
-  const nextUrl = request.nextUrl;
+  const { pathname, search } = request.nextUrl;
 
-  if (nextUrl.pathname.startsWith("/login")) {
+  if (pathname.startsWith("/login")) {
     return;
   }
 
   const loginUrl = new URL("/login", request.url);
-  loginUrl.searchParams.set("next", nextUrl.pathname + nextUrl.search);
+  loginUrl.searchParams.set("next", pathname + search);
 
   if (error) {
     loginUrl.searchParams.set("error", error);
