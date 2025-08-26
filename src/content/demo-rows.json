@@ -1,0 +1,37 @@
+[
+  {
+    "dimension": "Datos",
+    "nivel": 2,
+    "brecha": "Gobernanza y calidad",
+    "prioridad": "Alta",
+    "evidencias": "Catálogo parcial - ETL ad hoc"
+  },
+  {
+    "dimension": "Tecnología",
+    "nivel": 3,
+    "brecha": "MIQray y observabilidad",
+    "prioridad": "Media",
+    "evidencias": "Nubia Mobile - Apellente C/CCD"
+  },
+  {
+    "dimension": "Talento",
+    "nivel": 2,
+    "brecha": "Stille en IAGNs y data",
+    "prioridad": "Alta",
+    "evidencias": "Capacitaciones puntuales"
+  },
+  {
+    "dimension": "Gobernanza",
+    "nivel": 2,
+    "brecha": "Política IA, riqueza y ética",
+    "prioridad": "Alta",
+    "evidencias": "Literamientos en borrador"
+  },
+  {
+    "dimension": "Entralegía",
+    "nivel": 3,
+    "brecha": "Postafolio de casos",
+    "prioridad": "Media",
+    "evidencias": "Pilates en CV y automatización"
+  }
+]
