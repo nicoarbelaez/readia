@@ -41,6 +41,12 @@ const resourcesItems = [
   }
 ]
 
+// Enlaces rápidos para la sección junto al logo
+const quickLinks = [
+  { name: "Diagnóstico", href: "#tabla" },
+  { name: "Preguntas Frecuentes", href: "#faq" }
+]
+
 export function Navbar() {
   const [isScrolled, setIsScrolled] = React.useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false)
@@ -65,13 +71,29 @@ export function Navbar() {
       `}
     >
       <div className="mx-auto flex h-16 w-full items-center justify-between px-8">
-        {/* Logo */}
-        <Link 
-          href="/" 
-          className="flex items-center gap-2 group z-50 text-[var(--primary)] font-bold text-3xl transition-colors hover:text-[var(--primary-foreground)]"
-        >
-          Readia
-        </Link>
+        {/* Logo y enlaces rápidos */}
+        <div className="flex items-center gap-8">
+          {/* Logo */}
+          <Link 
+            href="/" 
+            className="flex items-center gap-2 group z-50 text-[var(--primary)] font-bold text-3xl transition-colors hover:text-[var(--primary-foreground)]"
+          >
+            Readia
+          </Link>
+
+          {/* Enlaces rápidos - Solo visible en desktop */}
+          <div className="hidden lg:flex items-center gap-6">
+            {quickLinks.map((link) => (
+              <Link
+                key={link.name}
+                href={link.href}
+                className="text-[var(--foreground)] text-sm font-medium hover:text-[var(--primary)] transition-colors duration-200"
+              >
+                {link.name}
+              </Link>
+            ))}
+          </div>
+        </div>
 
         {/* Desktop Navigation*/}
         <div className="hidden lg:flex items-center gap-6">
@@ -151,6 +173,25 @@ export function Navbar() {
       {isMobileMenuOpen && (
         <div className="lg:hidden absolute top-full left-0 w-full bg-[var(--background)]/95 backdrop-blur-md border-b border-[var(--border)] shadow-lg">
           <div className="px-4 py-6 space-y-4">
+            
+            {/* Enlaces rápidos en móvil */}
+            <div>
+              <h3 className="font-semibold text-[var(--foreground)] mb-2 px-3">
+                Navegación rápida
+              </h3>
+              <div className="space-y-1">
+                {quickLinks.map((link) => (
+                  <Link
+                    key={link.name}
+                    href={link.href}
+                    className="block px-3 py-2 rounded-lg text-[var(--foreground)] hover:bg-[var(--accent)]/20 transition-colors"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    {link.name}
+                  </Link>
+                ))}
+              </div>
+            </div>
 
             {/* Recursos Mobile */}
             <div>

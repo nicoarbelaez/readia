@@ -51,7 +51,7 @@ export function DiagnosisTable({ rows }: DiagnosisTableProps) {
         <div className="hidden lg:block min-w-[800px]">
           <div className="grid grid-cols-[1.2fr_0.8fr_1.2fr_0.8fr_1.6fr] gap-y-4 text-sm font-medium text-[var(--card-foreground)] w-full">
             {/* Encabezados */}
-            <div className="col-span-5 grid grid-cols-subgrid rounded-lg bg-[var(--primary)]/10 px-4 py-3 font-semibold text-[var(--primary-foreground)]">
+            <div className="col-span-5 grid grid-cols-subgrid rounded-lg bg-[var(--primary)]/10 px-4 py-3 font-semibold text-[var(--primary)]">
               <div>Dimensión</div>
               <div>Nivel</div>
               <div>Brecha</div>

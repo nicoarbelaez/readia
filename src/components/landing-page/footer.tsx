@@ -1,6 +1,6 @@
 export function Footer() {
   return (
-    <footer className="bg-[var(--background)] border-t border-[var(--border)] py-8 md:py-12">
+    <footer className="bg-[var(--background)]  py-8 md:py-12">
       <div className="container mx-auto px-4 sm:px-6">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
           
@@ -28,11 +28,6 @@ export function Footer() {
                   Documentación
                 </a>
               </li>
-              <li>
-                <a href="#contacto" className="hover:text-[var(--primary)] transition-colors">
-                  Contacto
-                </a>
-              </li>
             </ul>
           </div>
 
@@ -43,11 +38,6 @@ export function Footer() {
               <li>
                 <a href="mailto:info@readia.com" className="hover:text-[var(--primary)] transition-colors">
                   info@readia.com
-                </a>
-              </li>
-              <li>
-                <a href="#contacto" className="hover:text-[var(--primary)] transition-colors">
-                  Formulario de contacto
                 </a>
               </li>
             </ul>
