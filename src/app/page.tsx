@@ -17,7 +17,7 @@ export default function Home() {
     <>
       <Navbar />
       <Hero />
-       <section className="min-h-screen bg-gradient-to-b from-slate-50 to-blue-50/30 dark:from-slate-900 dark:to-blue-900/20 py-20">
+       <section className="min-h-screen bg-gradient-to-b from-[var(--background)] to-[var(--card)] py-20">
         <div className="container mx-auto px-4 md:px-6">
            <DiagnosisTable rows={demoRows} />
         </div>
