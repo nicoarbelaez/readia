@@ -5,7 +5,6 @@ import demoRows from "@/content/demo-rows.json";
 import { MetricsSection } from "@/components/landing-page/metrics-section";
 import { SecuritySection } from "@/components/landing-page/security-section";
 import { CustomSolutions } from "@/components/landing-page/custom-solutions";
-import { IntegrationSection } from "@/components/landing-page/integration-section";
 import { TestimonialsSection } from "@/components/landing-page/testimonials-section";
 import { FAQSection } from "@/components/landing-page/faq-section";
 import { ContactSection } from "@/components/landing-page/contact-section";
@@ -25,7 +24,6 @@ export default function Home() {
       <MetricsSection />
       <SecuritySection />
       <CustomSolutions />
-      <IntegrationSection />
       <TestimonialsSection />
       <FAQSection />
       <ContactSection />
