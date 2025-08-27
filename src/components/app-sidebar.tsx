@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { Frame, GalleryVerticalEnd, SquareTerminal } from "lucide-react";
+import { Frame, GalleryVerticalEnd, House, SquareTerminal } from "lucide-react";
 
 import { NavMain } from "@/components/nav-main";
 import { NavProjects } from "@/components/nav-projects";
@@ -14,6 +14,7 @@ import {
   SidebarHeader,
   SidebarRail,
 } from "@/components/ui/sidebar";
+import { IconSitemap } from "@tabler/icons-react";
 
 interface SidebarProps extends React.ComponentProps<typeof Sidebar> {
   user: {
@@ -41,6 +42,18 @@ export function AppSidebar({
       },
     ],
     navMain: [
+      {
+        title: "Inicio",
+        url: "/home",
+        icon: House,
+        isActive: true,
+      },
+      {
+        title: "Hoja de ruta",
+        url: "/roadmap",
+        icon: IconSitemap,
+        isActive: true,
+      },
       {
         title: "Playground",
         url: "#",
