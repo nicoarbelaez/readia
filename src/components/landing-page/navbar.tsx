@@ -76,7 +76,7 @@ export function Navbar() {
           {/* Logo */}
           <Link 
             href="/" 
-            className="flex items-center gap-2 group z-50 text-[var(--primary)] font-bold text-3xl transition-colors hover:text-[var(--primary-foreground)]"
+            className="flex items-center gap-2 group z-50 text-[var(--ring)] font-bold text-3xl transition-colors hover:text-[var(--primary-foreground)]"
           >
             Readia
           </Link>

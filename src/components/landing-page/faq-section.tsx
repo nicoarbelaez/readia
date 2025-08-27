@@ -82,21 +82,6 @@ export function FAQSection() {
             ))}
           </div>
         </div>
-
-        {/* Contacto adicional */}
-        <div className="text-center mt-8 md:mt-12 lg:mt-16">
-          <div className="bg-[var(--accent)]/20 rounded-2xl p-4 md:p-6 lg:p-8 max-w-2xl mx-auto">
-            <h3 className="text-lg md:text-xl font-semibold text-[var(--foreground)] mb-3 md:mb-4">
-              ¿No encontraste lo que buscabas?
-            </h3>
-            <p className="text-[var(--muted-foreground)] mb-4 md:mb-6 text-sm md:text-base">
-              Nuestro equipo de expertos está listo para responder cualquier pregunta específica sobre tu caso
-            </p>
-            <button className="px-4 py-2 md:px-6 md:py-3 bg-[var(--primary)] hover:bg-[var(--primary-soft)] text-[var(--primary-foreground)] rounded-lg font-semibold transition-colors text-sm md:text-base">
-              Contactanos
-            </button>
-          </div>
-        </div>
       </div>
     </section>
   );

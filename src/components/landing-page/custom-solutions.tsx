@@ -1,3 +1,5 @@
+import { Button } from "@/components/ui/button";
+
 import { CheckCircle, Settings, Target, Route } from "lucide-react";
 
 export function CustomSolutions() {
@@ -43,9 +45,16 @@ export function CustomSolutions() {
               </div>
             ))}
 
-            <button className="w-full md:w-auto px-6 py-3 md:px-8 md:py-4 bg-[var(--primary)] hover:bg-[var(--primary-soft)] text-[var(--primary-foreground)] rounded-lg font-semibold transition-colors shadow-lg hover:shadow-xl text-base md:text-lg">
-              Solicitar diagnóstico
-            </button>
+            <Button 
+            asChild 
+            className="px-6 py-4 md:px-8 md:py-4 text-base md:text-lg 
+                      bg-[var(--ring)] text-[var(--on-primary)] 
+                      hover:bg-[var(--ring)]/90 hover:text-[var(--on-primary)] 
+                      transition-all duration-300 shadow-lg hover:shadow-xl 
+                      transform hover:scale-105"
+          >
+            <a href="/login">Solicitar diagnostico</a>
+          </Button>
           </div>
 
           {/* Columna derecha - Personalización */}

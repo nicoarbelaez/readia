@@ -35,14 +35,10 @@ export function MetricsSection() {
           ))}
         </div>
 
-        {/* Texto y botón */}
         <div className="text-center mt-8 md:mt-12">
           <p className="text-[var(--muted-foreground)] text-xs md:text-sm mb-4 md:mb-6">
             *Resultados basados en simulaciones y análisis de pruebas del diagnóstico IA.
           </p>
-          <button className="px-4 py-2 md:px-6 md:py-3 bg-[var(--primary)] hover:bg-[var(--primary-foreground)] text-white rounded-lg font-medium transition-colors text-sm md:text-base">
-            Conocer más
-          </button>
         </div>
       </div>
     </section>

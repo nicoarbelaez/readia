@@ -177,9 +177,6 @@ export function TestimonialsSection() {
 
         {/* Call to action */}
         <div className="text-center mt-8 md:mt-12">
-          <button className="px-4 py-2 md:px-6 md:py-3 bg-[var(--primary)] hover:opacity-90 text-white rounded-lg font-semibold transition-colors text-sm md:text-base">
-            Ver más casos
-          </button>
         </div>
       </div>
     </section>
