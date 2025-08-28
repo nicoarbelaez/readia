@@ -7,43 +7,43 @@ import { Plus, Minus } from "lucide-react";
 const faqItems = [
   {
     id: 1,
-    question: "¿Qué incluye exactamente el diagnóstico de capacidades de TI hacia IA?",
-    answer: "Nuestro diagnóstico evalúa cuatro dimensiones clave: infraestructura tecnológica, calidad y gobernanza de datos, talento y capacidades del equipo, y marco de gobernanza de IA. Incluye un reporte detallado, identificación de brechas, recomendaciones prioritarias y una hoja de ruta personalizada."
+    question: "¿Qué hace exactamente la IA de Readia?",
+    answer: "La IA de Readia analiza la infraestructura tecnológica, la calidad de los datos, las capacidades del equipo y la gobernanza digital de tu organización. Con esta información genera automáticamente un diagnóstico completo y una hoja de ruta para adoptar IA de manera efectiva."
   },
   {
     id: 2,
-    question: "¿Cuánto tiempo toma completar el diagnóstico?",
-    answer: "El proceso completo toma entre 2-4 semanas dependiendo del tamaño de la organización. Incluye reuniones de descubrimiento, análisis técnico, evaluación de datos y la elaboración del reporte final con recomendaciones."
+    question: "¿Qué diferencia a Readia de otros servicios?",
+    answer: "A diferencia de una consultoría tradicional, Readia es una inteligencia artificial que procesa datos de tu empresa en tiempo real, identifica brechas y propone soluciones personalizadas en cuestión de minutos, reduciendo tiempo y costos."
   },
   {
     id: 3,
-    question: "¿Necesitamos preparar algo antes de comenzar el diagnóstico?",
-    answer: "Recomendamos tener disponible información sobre: infraestructura TI actual, proyectos de datos existentes, organigrama del equipo tecnológico, y objetivos estratégicos de IA. Nuestros consultores guiarán todo el proceso."
+    question: "¿Es seguro compartir la información de mi empresa?",
+    answer: "Sí. La IA de Readia utiliza protocolos de seguridad avanzados y procesa la información de forma confidencial. Los datos nunca se comparten con terceros y pueden almacenarse en servidores locales o en la nube, según prefieras."
   },
   {
     id: 4,
-    question: "¿El diagnóstico es compatible con nuestra infraestructura tecnológica actual?",
-    answer: "Sí, nuestros sistemas se adaptan a su entorno tecnológico y pueden interactuar o integrarse con sus herramientas actuales, así como desplegarse tanto en servidor local como en la nube."
+    question: "¿Qué tipo de empresas pueden beneficiarse?",
+    answer: "Cualquier empresa, desde startups hasta grandes corporaciones. La IA adapta el diagnóstico según el tamaño, la industria y el nivel de madurez digital de cada organización."
   },
   {
     id: 5,
-    question: "¿Qué diferencia su diagnóstico de otras soluciones del mercado?",
-    answer: "Nuestra metodología combina evaluación técnica con estrategia empresarial, ofreciendo no solo identificación de problemas sino también soluciones prácticas priorizadas y una hoja de ruta ejecutable con métricas de ROI claras."
+    question: "¿Cuánto tiempo tarda en dar un diagnóstico?",
+    answer: "El diagnóstico inicial se genera en minutos tras ingresar la información básica. El informe detallado completo puede estar listo en pocos días, dependiendo de la cantidad de datos proporcionados."
   },
   {
     id: 6,
-    question: "¿En qué idiomas está disponible el servicio?",
-    answer: "Ofrecemos nuestro diagnóstico y reportes en español, inglés y portugués. Todos nuestros consultores son bilingües y con experiencia en proyectos internacionales."
+    question: "¿La IA también apoya en la implementación?",
+    answer: "Sí. Readia no solo entrega un diagnóstico, también genera una hoja de ruta priorizada con fases de implementación, casos de uso recomendados y métricas para medir el retorno de inversión (ROI)."
   },
   {
     id: 7,
-    question: "¿Qué tipo de empresas pueden beneficiarse del diagnóstico?",
-    answer: "Trabajamos con empresas de todos los tamaños, desde startups hasta grandes corporaciones, en diversos sectores incluyendo fintech, retail, healthcare, manufacturing y servicios."
+    question: "¿Qué necesito para empezar a usar Readia?",
+    answer: "Únicamente registrar tu empresa en la plataforma y proporcionar información básica sobre tus sistemas, datos y objetivos. El resto lo hace automáticamente la IA."
   },
   {
     id: 8,
-    question: "¿Ofrecen soporte post-diagnóstico para la implementación?",
-    answer: "Sí, ofrecemos servicios de consultoría continuada para apoyar la implementación de las recomendaciones, incluyendo gestión de proyectos, capacitación de equipos y seguimiento de métricas."
+    question: "¿En qué idiomas está disponible?",
+    answer: "Actualmente la IA de Readia está disponible en español"
   }
 ];
 
@@ -59,13 +59,13 @@ export function FAQSection() {
   };
 
   return (
-    <section className="bg-white dark:bg-slate-900 py-12 md:py-16 lg:py-20">
+    <section id="faq" className="bg-[var(--background)] py-12 md:py-16 lg:py-20">
       <div className="container mx-auto px-4 sm:px-6">
         <div className="text-center mb-8 md:mb-12 lg:mb-16">
-          <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-slate-800 dark:text-white">
+          <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-[var(--foreground)]">
             Preguntas frecuentes
           </h2>
-          <p className="text-slate-600 dark:text-slate-300 mt-2 md:mt-4 max-w-2xl mx-auto text-sm md:text-base lg:text-lg">
+          <p className="text-[var(--muted-foreground)] mt-2 md:mt-4 max-w-2xl mx-auto text-sm md:text-base lg:text-lg">
             Resolvemos todas tus dudas sobre nuestro diagnóstico de capacidades de TI hacia IA
           </p>
         </div>
@@ -82,21 +82,6 @@ export function FAQSection() {
             ))}
           </div>
         </div>
-
-        {/* Contacto adicional */}
-        <div className="text-center mt-8 md:mt-12 lg:mt-16">
-          <div className="bg-blue-50 dark:bg-blue-900/20 rounded-2xl p-4 md:p-6 lg:p-8 max-w-2xl mx-auto">
-            <h3 className="text-lg md:text-xl font-semibold text-slate-800 dark:text-white mb-3 md:mb-4">
-              ¿No encontraste lo que buscabas?
-            </h3>
-            <p className="text-slate-600 dark:text-slate-300 mb-4 md:mb-6 text-sm md:text-base">
-              Nuestro equipo de expertos está listo para responder cualquier pregunta específica sobre tu caso
-            </p>
-            <button className="px-4 py-2 md:px-6 md:py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition-colors text-sm md:text-base">
-              Contactar a un especialista
-            </button>
-          </div>
-        </div>
       </div>
     </section>
   );
@@ -111,19 +96,19 @@ function FAQItem({ item, isOpen, onToggle }: {
   const contentRef = useRef<HTMLDivElement>(null);
 
   return (
-    <div className="bg-slate-50 dark:bg-slate-800 rounded-xl overflow-hidden transition-all duration-300 hover:shadow-md">
+    <div className="bg-[var(--card)] rounded-xl overflow-hidden transition-all duration-300 hover:shadow-md">
       <button
         onClick={onToggle}
-        className="w-full flex items-center justify-between p-4 md:p-6 text-left hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors duration-200"
+        className="w-full flex items-center justify-between p-4 md:p-6 text-left hover:bg-[var(--muted)] transition-colors duration-200"
       >
-        <span className="font-semibold text-slate-800 dark:text-white pr-4 text-sm md:text-base">
+        <span className="font-semibold text-[var(--foreground)] pr-4 text-sm md:text-base">
           {item.question}
         </span>
         <div className={`flex-shrink-0 transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`}>
           {isOpen ? (
-            <Minus className="h-4 w-4 md:h-5 md:w-5 text-blue-600 transition-colors duration-200" />
+            <Minus className="h-4 w-4 md:h-5 md:w-5 text-[var(--primary)] transition-colors duration-200" />
           ) : (
-            <Plus className="h-4 w-4 md:h-5 md:w-5 text-blue-600 transition-colors duration-200" />
+            <Plus className="h-4 w-4 md:h-5 md:w-5 text-[var(--primary)] transition-colors duration-200" />
           )}
         </div>
       </button>
@@ -137,8 +122,8 @@ function FAQItem({ item, isOpen, onToggle }: {
         }}
       >
         <div className="px-4 md:px-6 pb-4 md:pb-6">
-          <div className="border-t border-slate-200 dark:border-slate-700 pt-3 md:pt-4">
-            <p className="text-slate-600 dark:text-slate-300 leading-relaxed text-sm md:text-base">
+          <div className="border-t border-[var(--border)] pt-3 md:pt-4">
+            <p className="text-[var(--muted-foreground)] leading-relaxed text-sm md:text-base">
               {item.answer}
             </p>
           </div>
