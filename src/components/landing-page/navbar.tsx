@@ -2,7 +2,6 @@
 
 import * as React from "react"
 import Link from "next/link"
-import Image from "next/image"
 import { 
   BarChart3, 
   BookOpen, 
@@ -17,19 +16,19 @@ const solutionsItems = [
     title: "Diagnóstico Completo",
     href: "/diagnostico",
     description: "Evaluación integral de capacidades TI para IA",
-    icon: <BarChart3 className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+    icon: <BarChart3 className="h-4 w-4 text-[var(--primary)]" />
   },
   {
     title: "Hoja de Ruta Estratégica",
     href: "/hoja-de-ruta",
     description: "Plan de implementación por fases",
-    icon: <FileText className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+    icon: <FileText className="h-4 w-4 text-[var(--primary)]" />
   },
   {
     title: "Consultoría Especializada",
     href: "/consultoria",
     description: "Asesoramiento personalizado por expertos",
-    icon: <User className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+    icon: <User className="h-4 w-4 text-[var(--primary)]" />
   }
 ]
 
@@ -38,8 +37,14 @@ const resourcesItems = [
     title: "Documentación Técnica",
     href: "/docs",
     description: "Guías detalladas y manuales de uso",
-    icon: <BookOpen className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+    icon: <BookOpen className="h-4 w-4 text-[var(--primary)]" />
   }
+]
+
+// Enlaces rápidos para la sección junto al logo
+const quickLinks = [
+  { name: "Diagnóstico", href: "#tabla" },
+  { name: "Preguntas Frecuentes", href: "#faq" }
 ]
 
 export function Navbar() {
@@ -55,209 +60,134 @@ export function Navbar() {
   }, [])
 
   return (
-    <header className={`
-      fixed top-0 z-50 w-full 
-      transition-all duration-300
-      ${isScrolled 
-        ? 'bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-b border-slate-200 dark:border-slate-700 shadow-sm' 
-        : 'bg-transparent border-b border-transparent'
-      }
-    `}>
-      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6">
-        {/* Logo */}
-        <Link href="/" className="flex items-center gap-2 group z-50">
-          <div className="relative">
+    <header
+      className={`
+        fixed top-0 z-50 w-full 
+        transition-all duration-300
+        ${isScrolled 
+          ? 'bg-[var(--background)]/95 backdrop-blur-md border-b border-[var(--border)] shadow-sm' 
+          : 'bg-transparent border-b border-transparent'
+        }
+      `}
+    >
+      <div className="mx-auto flex h-16 w-full items-center justify-between px-8">
+        {/* Logo y enlaces rápidos */}
+        <div className="flex items-center gap-8">
+          {/* Logo */}
+          <Link 
+            href="/" 
+            className="flex items-center gap-2 group z-50 text-[var(--ring)] font-bold text-3xl transition-colors hover:text-[var(--primary-foreground)]"
+          >
+            Readia
+          </Link>
+
+          {/* Enlaces rápidos - Solo visible en desktop */}
+          <div className="hidden lg:flex items-center gap-6">
+            {quickLinks.map((link) => (
+              <Link
+                key={link.name}
+                href={link.href}
+                className="text-[var(--foreground)] text-sm font-medium hover:text-[var(--primary)] transition-colors duration-200"
+              >
+                {link.name}
+              </Link>
+            ))}
+          </div>
+        </div>
+
+        {/* Desktop Navigation*/}
+        <div className="hidden lg:flex items-center gap-6">
+          
+          {/* Recursos Desktop*/}
+          <div className="relative group">
+            <button className="
+              px-3 py-2 rounded-lg text-sm font-medium
+              text-[var(--foreground)]
+              hover:text-[var(--primary)]
+              transition-colors duration-200
+            ">
+              Recursos
+            </button>
             <div className="
-              absolute -inset-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg 
-              opacity-0 group-hover:opacity-100 transition-opacity duration-300
-            " />
-            <Image
-              src="./escritoReadia.svg"
-              alt="Reedia - Diagnóstico TI hacia IA"
-              width={120}
-              height={40}
-              className="relative z-10 transition-transform duration-300 group-hover:scale-105 w-24 sm:w-32"
-            />
-          </div>
-        </Link>
-
-        {/* Desktop Navigation */}
-        <nav className="hidden lg:flex items-center">
-          <div className="flex items-center gap-1">
-            {/* Soluciones Desktop */}
-            <div className="relative group">
-              <button className="
-                px-3 py-2 rounded-lg text-sm font-medium
-                text-slate-700 dark:text-slate-300
-                hover:text-blue-700 dark:hover:text-blue-300
-                transition-colors duration-200
-              ">
-                Soluciones
-              </button>
-              <div className="
-                absolute top-full left-0 mt-2 w-96
-                bg-white/95 dark:bg-slate-900/95 backdrop-blur-md
-                rounded-xl border border-slate-200 dark:border-slate-700
-                shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible
-                transition-all duration-200 z-50
-              ">
-                <div className="p-3">
-                  {solutionsItems.map((item) => (
-                    <Link
-                      key={item.title}
-                      href={item.href}
-                      className="flex items-center gap-3 p-3 rounded-lg hover:bg-blue-50/50 dark:hover:bg-blue-900/20 transition-colors"
-                    >
-                      <div className="bg-blue-100/50 dark:bg-blue-900/30 p-2 rounded-lg">
-                        {item.icon}
+              absolute top-full right-0 mt-2 w-96
+              bg-[var(--background)]/95 backdrop-blur-md
+              rounded-xl border border-[var(--border)]
+              shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible
+              transition-all duration-200 z-50
+            ">
+              <div className="p-3">
+                {resourcesItems.map((item) => (
+                  <Link
+                    key={item.title}
+                    href={item.href}
+                    className="flex items-center gap-3 p-3 rounded-lg hover:bg-[var(--accent)]/20 transition-colors"
+                  >
+                    <div className="bg-[var(--accent)]/40 p-2 rounded-lg">
+                      {item.icon}
+                    </div>
+                    <div>
+                      <div className="font-medium text-[var(--foreground)] text-sm">
+                        {item.title}
                       </div>
-                      <div>
-                        <div className="font-medium text-slate-900 dark:text-white text-sm">
-                          {item.title}
-                        </div>
-                        <div className="text-slate-600 dark:text-slate-300 text-xs mt-1">
-                          {item.description}
-                        </div>
+                      <div className="text-[var(--muted-foreground)] text-xs mt-1">
+                        {item.description}
                       </div>
-                    </Link>
-                  ))}
-                </div>
+                    </div>
+                  </Link>
+                ))}
               </div>
             </div>
-
-            {/* Recursos Desktop */}
-            <div className="relative group">
-              <button className="
-                px-3 py-2 rounded-lg text-sm font-medium
-                text-slate-700 dark:text-slate-300
-                hover:text-blue-700 dark:hover:text-blue-300
-                transition-colors duration-200
-              ">
-                Recursos
-              </button>
-              <div className="
-                absolute top-full left-0 mt-2 w-96
-                bg-white/95 dark:bg-slate-900/95 backdrop-blur-md
-                rounded-xl border border-slate-200 dark:border-slate-700
-                shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible
-                transition-all duration-200 z-50
-              ">
-                <div className="p-3">
-                  {resourcesItems.map((item) => (
-                    <Link
-                      key={item.title}
-                      href={item.href}
-                      className="flex items-center gap-3 p-3 rounded-lg hover:bg-blue-50/50 dark:hover:bg-blue-900/20 transition-colors"
-                    >
-                      <div className="bg-blue-100/50 dark:bg-blue-900/30 p-2 rounded-lg">
-                        {item.icon}
-                      </div>
-                      <div>
-                        <div className="font-medium text-slate-900 dark:text-white text-sm">
-                          {item.title}
-                        </div>
-                        <div className="text-slate-600 dark:text-slate-300 text-xs mt-1">
-                          {item.description}
-                        </div>
-                      </div>
-                    </Link>
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            {/* Enlaces simples */}
-            <Link href="/precios" className="
-              px-3 py-2 rounded-lg text-sm font-medium
-              text-slate-700 dark:text-slate-300
-              hover:text-blue-700 dark:hover:text-blue-300
-              transition-colors duration-200
-            ">
-              Precios
-            </Link>
-            
-            <Link href="/contacto" className="
-              px-3 py-2 rounded-lg text-sm font-medium
-              text-slate-700 dark:text-slate-300
-              hover:text-blue-700 dark:hover:text-blue-300
-              transition-colors duration-200
-            ">
-              Contacto
-            </Link>
           </div>
-        </nav>
 
-        {/* Botones de acción Desktop */}
-        <div className="hidden lg:flex items-center gap-2">
+          {/* Botón Iniciar sesión */}
           <Link
             href="/login"
             className="
               px-4 py-2 rounded-lg text-sm font-medium 
-              border border-slate-300 dark:border-slate-600 
-              text-slate-700 dark:text-slate-300
-              hover:bg-slate-50 dark:hover:bg-slate-800
+              border border-[var(--border)]
+              text-[var(--foreground)]
               transition-all duration-200
+              hover:bg-[var(--primary-soft)] 
+              hover:text-[var(--foreground)]
               hover:shadow-sm
             "
           >
             Iniciar sesión
-          </Link>
-          <Link
-            href="/signup"
-            className="
-              px-4 py-2 rounded-lg text-sm font-medium 
-              bg-blue-600 text-white 
-              hover:bg-blue-700 
-              transition-all duration-200
-              hover:shadow-md
-              transform hover:scale-105
-            "
-          >
-            Comenzar diagnóstico
           </Link>
         </div>
 
         {/* Mobile Menu Button */}
         <button
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-          className="lg:hidden p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+          className="lg:hidden p-2 rounded-lg hover:bg-[var(--muted)] transition-colors"
         >
           {isMobileMenuOpen ? (
-            <X className="h-6 w-6" />
+            <X className="h-6 w-6 text-[var(--foreground)]" />
           ) : (
-            <Menu className="h-6 w-6" />
+            <Menu className="h-6 w-6 text-[var(--foreground)]" />
           )}
         </button>
       </div>
 
       {/* Mobile Menu */}
       {isMobileMenuOpen && (
-        <div className="lg:hidden absolute top-full left-0 w-full bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-b border-slate-200 dark:border-slate-700 shadow-lg">
+        <div className="lg:hidden absolute top-full left-0 w-full bg-[var(--background)]/95 backdrop-blur-md border-b border-[var(--border)] shadow-lg">
           <div className="px-4 py-6 space-y-4">
-            {/* Soluciones Mobile */}
+            
+            {/* Enlaces rápidos en móvil */}
             <div>
-              <h3 className="font-semibold text-slate-900 dark:text-white mb-2 px-3">
-                Soluciones
+              <h3 className="font-semibold text-[var(--foreground)] mb-2 px-3">
+                Navegación rápida
               </h3>
               <div className="space-y-1">
-                {solutionsItems.map((item) => (
+                {quickLinks.map((link) => (
                   <Link
-                    key={item.title}
-                    href={item.href}
-                    className="flex items-center gap-3 p-3 rounded-lg hover:bg-blue-50/50 dark:hover:bg-blue-900/20 transition-colors"
+                    key={link.name}
+                    href={link.href}
+                    className="block px-3 py-2 rounded-lg text-[var(--foreground)] hover:bg-[var(--accent)]/20 transition-colors"
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
-                    <div className="bg-blue-100/50 dark:bg-blue-900/30 p-2 rounded-lg">
-                      {item.icon}
-                    </div>
-                    <div>
-                      <div className="font-medium text-slate-900 dark:text-white text-sm">
-                        {item.title}
-                      </div>
-                      <div className="text-slate-600 dark:text-slate-300 text-xs">
-                        {item.description}
-                      </div>
-                    </div>
+                    {link.name}
                   </Link>
                 ))}
               </div>
@@ -265,7 +195,7 @@ export function Navbar() {
 
             {/* Recursos Mobile */}
             <div>
-              <h3 className="font-semibold text-slate-900 dark:text-white mb-2 px-3">
+              <h3 className="font-semibold text-[var(--foreground)] mb-2 px-3">
                 Recursos
               </h3>
               <div className="space-y-1">
@@ -273,17 +203,17 @@ export function Navbar() {
                   <Link
                     key={item.title}
                     href={item.href}
-                    className="flex items-center gap-3 p-3 rounded-lg hover:bg-blue-50/50 dark:hover:bg-blue-900/20 transition-colors"
+                    className="flex items-center gap-3 p-3 rounded-lg hover:bg-[var(--accent)]/20 transition-colors"
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
-                    <div className="bg-blue-100/50 dark:bg-blue-900/30 p-2 rounded-lg">
+                    <div className="bg-[var(--accent)]/40 p-2 rounded-lg">
                       {item.icon}
                     </div>
                     <div>
-                      <div className="font-medium text-slate-900 dark:text-white text-sm">
+                      <div className="font-medium text-[var(--foreground)] text-sm">
                         {item.title}
                       </div>
-                      <div className="text-slate-600 dark:text-slate-300 text-xs">
+                      <div className="text-[var(--muted-foreground)] text-xs">
                         {item.description}
                       </div>
                     </div>
@@ -291,39 +221,15 @@ export function Navbar() {
                 ))}
               </div>
             </div>
-
-            {/* Enlaces simples Mobile */}
-            <Link
-              href="/precios"
-              className="block px-3 py-2 rounded-lg text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
-              onClick={() => setIsMobileMenuOpen(false)}
-            >
-              Precios
-            </Link>
             
-            <Link
-              href="/contacto"
-              className="block px-3 py-2 rounded-lg text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
-              onClick={() => setIsMobileMenuOpen(false)}
-            >
-              Contacto
-            </Link>
-
             {/* Botones de acción Mobile */}
-            <div className="pt-4 border-t border-slate-200 dark:border-slate-700 space-y-2">
+            <div className="pt-4 border-t border-[var(--border)] space-y-2">
               <Link
                 href="/login"
-                className="block w-full text-center px-4 py-2 rounded-lg text-sm font-medium border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all"
+                className="block w-full text-center px-4 py-2 rounded-lg text-sm font-medium border border-[var(--border)] text-[var(--foreground)] hover:bg-[var(--primary)] hover:text-[var(--primary-foreground)] transition-all"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 Iniciar sesión
-              </Link>
-              <Link
-                href="/signup"
-                className="block w-full text-center px-4 py-2 rounded-lg text-sm font-medium bg-blue-600 text-white hover:bg-blue-700 transition-all"
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                Comenzar diagnóstico
               </Link>
             </div>
           </div>
