@@ -7,7 +7,19 @@ const loadUser = async () => {
   if (error || !data.user) {
     redirect("/login");
   }
-  return data.user;
+  const userId = data.user.id;
+  const { data: user, error: errorUser } = await supabase
+    .schema("public_web")
+    .from("users")
+    .select("*")
+    .eq("id", userId)
+    .single();
+
+  if (errorUser) {
+    throw Error(JSON.stringify(errorUser, null, 2));
+  }
+
+  return user;
 };
 
 export default loadUser;

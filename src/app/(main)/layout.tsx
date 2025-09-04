@@ -1,4 +1,5 @@
 import { AppSidebar } from "@/components/app-sidebar";
+import { ModalCompleteProfile } from "@/components/modal-complete-profile";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -20,44 +21,45 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const user = await loadUser();
-  const {
-    user_metadata: { email, full_name: name, avatar_url: avatar },
-  } = user;
-  const userInfo = {
-    email,
-    name,
-    avatar,
+  const { avatar_url, email, full_name, user_name } = await loadUser();
+  const user = {
+    email: email ?? "",
+    full_name: full_name ?? "",
+    user_name: user_name ?? "",
+    avatar_url: avatar_url ?? "",
   };
 
   return (
-    <SidebarProvider>
-      <AppSidebar user={userInfo} />
-      <SidebarInset>
-        <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
-          <div className="flex items-center gap-2 px-4">
-            <SidebarTrigger className="-ml-1 cursor-pointer" />
-            <Separator
-              orientation="vertical"
-              className="mr-2 data-[orientation=vertical]:h-4"
-            />
-            <Breadcrumb>
-              <BreadcrumbList>
-                <BreadcrumbItem className="hidden md:block">
-                  <BreadcrumbLink href="#">
-                    Building Your Application
-                  </BreadcrumbLink>
-                </BreadcrumbItem>
-                <BreadcrumbSeparator className="hidden md:block" />
-                <BreadcrumbItem>
-                  <BreadcrumbPage>Data Fetching</BreadcrumbPage>
-                </BreadcrumbItem>
-              </BreadcrumbList>
-            </Breadcrumb>
-          </div>
-        </header>
-        {children}
-      </SidebarInset>
-    </SidebarProvider>
+    <>
+      <ModalCompleteProfile />
+      <SidebarProvider>
+        <AppSidebar user={user} />
+        <SidebarInset>
+          <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
+            <div className="flex items-center gap-2 px-4">
+              <SidebarTrigger className="-ml-1 cursor-pointer" />
+              <Separator
+                orientation="vertical"
+                className="mr-2 data-[orientation=vertical]:h-4"
+              />
+              <Breadcrumb>
+                <BreadcrumbList>
+                  <BreadcrumbItem className="hidden md:block">
+                    <BreadcrumbLink href="#">
+                      Building Your Application
+                    </BreadcrumbLink>
+                  </BreadcrumbItem>
+                  <BreadcrumbSeparator className="hidden md:block" />
+                  <BreadcrumbItem>
+                    <BreadcrumbPage>Data Fetching</BreadcrumbPage>
+                  </BreadcrumbItem>
+                </BreadcrumbList>
+              </Breadcrumb>
+            </div>
+          </header>
+          {children}
+        </SidebarInset>
+      </SidebarProvider>
+    </>
   );
 }

@@ -5,7 +5,7 @@ import { Frame, GalleryVerticalEnd, House, SquareTerminal } from "lucide-react";
 
 import { NavMain } from "@/components/nav-main";
 import { NavProjects } from "@/components/nav-projects";
-import { NavUser } from "@/components/nav-user";
+import { NavUser, type NavUserProps } from "@/components/nav-user";
 import { TeamSwitcher } from "@/components/team-switcher";
 import {
   Sidebar,
@@ -16,23 +16,18 @@ import {
 } from "@/components/ui/sidebar";
 import { IconSitemap } from "@tabler/icons-react";
 
-interface SidebarProps extends React.ComponentProps<typeof Sidebar> {
-  user: {
-    email: string;
-    name: string;
-    avatar: string;
-  };
-}
+type SidebarProps = React.ComponentProps<typeof Sidebar> & NavUserProps;
 
 export function AppSidebar({
-  user: { email, name, avatar },
+  user: { email, full_name, user_name, avatar_url },
   ...props
 }: SidebarProps) {
   const data = {
     user: {
-      name,
+      full_name,
       email,
-      avatar,
+      user_name,
+      avatar_url,
     },
     teams: [
       {

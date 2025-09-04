@@ -23,16 +23,20 @@ import Link from "next/link";
 import { createClient } from "@/utils/supabase/client";
 import { usePathname, useRouter } from "next/navigation";
 import { ThemeSelector } from "@/components/dark-mode/theme-selector";
+import { Skeleton } from "@/components/ui/skeleton";
+
+export interface NavUserProps {
+  user: {
+    email: string;
+    full_name: string;
+    user_name: string;
+    avatar_url: string;
+  };
+}
 
 export function NavUser({
-  user,
-}: {
-  user: {
-    name: string;
-    email: string;
-    avatar: string;
-  };
-}) {
+  user: { email, full_name, user_name, avatar_url },
+}: NavUserProps) {
   const { isMobile } = useSidebar();
 
   const router = useRouter();
@@ -56,12 +60,21 @@ export function NavUser({
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground cursor-pointer"
             >
               <Avatar className="h-8 w-8 rounded-lg">
-                <AvatarImage src={user.avatar} alt={user.name} />
+                <AvatarImage src={avatar_url} alt={full_name} />
                 <AvatarFallback className="rounded-lg" />
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate font-medium">{user.name}</span>
-                <span className="truncate text-xs">{user.email}</span>
+                {full_name !== "" ? (
+                  <span className="truncate font-medium">{full_name}</span>
+                ) : (
+                  <Skeleton className="h-4 w-full" />
+                )}
+
+                {user_name !== "" ? (
+                  <span className="truncate text-xs">@{user_name}</span>
+                ) : (
+                  <Skeleton className="mt-1 h-3 w-2/3" />
+                )}
               </div>
               <IconDotsVertical className="ml-auto size-4" />
             </SidebarMenuButton>
@@ -75,12 +88,12 @@ export function NavUser({
             <DropdownMenuLabel className="p-0 font-normal">
               <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                 <Avatar className="h-8 w-8 rounded-lg">
-                  <AvatarImage src={user.avatar} alt={user.name} />
+                  <AvatarImage src={avatar_url} alt={full_name} />
                   <AvatarFallback className="rounded-lg" />
                 </Avatar>
                 <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-medium">{user.name}</span>
-                  <span className="truncate text-xs">{user.email}</span>
+                  <span className="truncate font-medium">{full_name}</span>
+                  <span className="truncate text-xs">{email}</span>
                 </div>
               </div>
             </DropdownMenuLabel>
