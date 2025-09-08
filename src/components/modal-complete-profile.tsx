@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
-import { type NavUserProps } from "@/components/nav-user";
+import { type NavUserProps } from "@/components/sidebar/nav-user";
 import { updateProfile } from "@/app/actions";
 import {
   Form,
