@@ -27,15 +27,16 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 export interface NavUserProps {
   user: {
+    id?: string;
     email: string;
-    full_name: string;
-    user_name: string;
-    avatar_url: string;
+    fullName: string;
+    userName: string;
+    avatarUrl: string;
   };
 }
 
 export function NavUser({
-  user: { email, full_name, user_name, avatar_url },
+  user: { email, fullName, userName, avatarUrl },
 }: NavUserProps) {
   const { isMobile } = useSidebar();
 
@@ -60,18 +61,18 @@ export function NavUser({
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground cursor-pointer"
             >
               <Avatar className="h-8 w-8 rounded-lg">
-                <AvatarImage src={avatar_url} alt={full_name} />
+                <AvatarImage src={avatarUrl} alt={fullName} />
                 <AvatarFallback className="rounded-lg" />
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
-                {full_name !== "" ? (
-                  <span className="truncate font-medium">{full_name}</span>
+                {fullName !== "" ? (
+                  <span className="truncate font-medium">{fullName}</span>
                 ) : (
                   <Skeleton className="h-4 w-full" />
                 )}
 
-                {user_name !== "" ? (
-                  <span className="truncate text-xs">@{user_name}</span>
+                {userName !== "" ? (
+                  <span className="truncate text-xs">@{userName}</span>
                 ) : (
                   <Skeleton className="mt-1 h-3 w-2/3" />
                 )}
@@ -88,11 +89,11 @@ export function NavUser({
             <DropdownMenuLabel className="p-0 font-normal">
               <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                 <Avatar className="h-8 w-8 rounded-lg">
-                  <AvatarImage src={avatar_url} alt={full_name} />
+                  <AvatarImage src={avatarUrl} alt={fullName} />
                   <AvatarFallback className="rounded-lg" />
                 </Avatar>
                 <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-medium">{full_name}</span>
+                  <span className="truncate font-medium">{fullName}</span>
                   <span className="truncate text-xs">{email}</span>
                 </div>
               </div>

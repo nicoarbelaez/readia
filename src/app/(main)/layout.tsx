@@ -21,17 +21,27 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const { avatar_url, email, full_name, user_name } = await loadUser();
+  const {
+    id,
+    email,
+    full_name: fullName,
+    user_name: userName,
+    avatar_url: avatarUrl,
+  } = await loadUser();
   const user = {
     email: email ?? "",
-    full_name: full_name ?? "",
-    user_name: user_name ?? "",
-    avatar_url: avatar_url ?? "",
+    fullName: fullName ?? "",
+    userName: userName ?? "",
+    avatarUrl: avatarUrl ?? "",
   };
 
   return (
     <>
-      <ModalCompleteProfile />
+      <ModalCompleteProfile
+        id={id}
+        fullName={user.fullName}
+        userName={user.userName}
+      />
       <SidebarProvider>
         <AppSidebar user={user} />
         <SidebarInset>

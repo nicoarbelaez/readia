@@ -19,15 +19,15 @@ import { IconSitemap } from "@tabler/icons-react";
 type SidebarProps = React.ComponentProps<typeof Sidebar> & NavUserProps;
 
 export function AppSidebar({
-  user: { email, full_name, user_name, avatar_url },
+  user: { email, fullName, userName, avatarUrl },
   ...props
 }: SidebarProps) {
   const data = {
     user: {
-      full_name,
       email,
-      user_name,
-      avatar_url,
+      fullName,
+      userName,
+      avatarUrl,
     },
     teams: [
       {
