@@ -1,6 +1,4 @@
-"use client";
-
-import { ChevronRight, type LucideIcon } from "lucide-react";
+import { type LucideIcon } from "lucide-react";
 import { type TablerIcon } from "@tabler/icons-react";
 
 import {
@@ -11,17 +9,16 @@ import {
 import {
   SidebarGroup,
   SidebarMenu,
-  SidebarMenuButton,
   SidebarMenuItem,
   SidebarMenuSub,
-  SidebarMenuSubButton,
   SidebarMenuSubItem,
 } from "@/components/ui/sidebar";
-import Link from "next/link";
+import {
+  SidebarMenuButtonItem,
+  SidebarMenuSubButtonItem,
+} from "@/components/sidebar/nav-items";
 
-export function NavMain({
-  items,
-}: {
+interface NavMainProps {
   items: {
     title: string;
     url: string;
@@ -32,7 +29,9 @@ export function NavMain({
       url: string;
     }[];
   }[];
-}) {
+}
+
+export function NavMain({ items }: NavMainProps) {
   return (
     <SidebarGroup>
       <SidebarMenu>
@@ -40,13 +39,12 @@ export function NavMain({
           const hasItems = !!subItems?.length;
 
           const buttonContent = (
-            <SidebarMenuButton tooltip={title} className="cursor-pointer">
-              {Icon && <Icon />}
-              <span>{title}</span>
-              {hasItems && (
-                <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
-              )}
-            </SidebarMenuButton>
+            <SidebarMenuButtonItem
+              hasItems={hasItems}
+              title={title}
+              url={url}
+              icon={Icon}
+            />
           );
 
           return (
@@ -57,24 +55,17 @@ export function NavMain({
               className="group/collapsible"
             >
               <SidebarMenuItem>
-                <CollapsibleTrigger asChild>
-                  {!hasItems ? (
-                    <Link href={url}>{buttonContent}</Link>
-                  ) : (
-                    buttonContent
-                  )}
-                </CollapsibleTrigger>
+                <CollapsibleTrigger asChild>{buttonContent}</CollapsibleTrigger>
 
                 {hasItems && (
                   <CollapsibleContent>
                     <SidebarMenuSub>
                       {subItems!.map((sub) => (
                         <SidebarMenuSubItem key={sub.title}>
-                          <SidebarMenuSubButton asChild>
-                            <Link href={sub.url}>
-                              <span>{sub.title}</span>
-                            </Link>
-                          </SidebarMenuSubButton>
+                          <SidebarMenuSubButtonItem
+                            title={sub.title}
+                            url={sub.url}
+                          />
                         </SidebarMenuSubItem>
                       ))}
                     </SidebarMenuSub>
