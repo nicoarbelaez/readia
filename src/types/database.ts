@@ -1493,20 +1493,32 @@ export type Database = {
     Tables: {
       businesses: {
         Row: {
+          company_name: string
           create_at: string
+          description: string | null
+          employee_count: number | null
           id: number
+          sector: string | null
           update_at: string
           user_owner_id: string
         }
         Insert: {
+          company_name?: string
           create_at?: string
+          description?: string | null
+          employee_count?: number | null
           id?: number
+          sector?: string | null
           update_at?: string
           user_owner_id: string
         }
         Update: {
+          company_name?: string
           create_at?: string
+          description?: string | null
+          employee_count?: number | null
           id?: number
+          sector?: string | null
           update_at?: string
           user_owner_id?: string
         }
@@ -1514,6 +1526,134 @@ export type Database = {
           {
             foreignKeyName: "businesses_user_owner_id_fkey"
             columns: ["user_owner_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      question_options: {
+        Row: {
+          created_at: string
+          id: string
+          option_order: number | null
+          option_text: string
+          question_id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          option_order?: number | null
+          option_text: string
+          question_id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          option_order?: number | null
+          option_text?: string
+          question_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "question_options_question_id_fkey"
+            columns: ["question_id"]
+            isOneToOne: false
+            referencedRelation: "questions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      questions: {
+        Row: {
+          business_id: number
+          created_at: string
+          description: string | null
+          id: string
+          question_text: string
+          question_type: Database["public_web"]["Enums"]["question_type_enum"]
+          required: boolean | null
+          updated_at: string
+        }
+        Insert: {
+          business_id: number
+          created_at?: string
+          description?: string | null
+          id?: string
+          question_text: string
+          question_type: Database["public_web"]["Enums"]["question_type_enum"]
+          required?: boolean | null
+          updated_at?: string
+        }
+        Update: {
+          business_id?: number
+          created_at?: string
+          description?: string | null
+          id?: string
+          question_text?: string
+          question_type?: Database["public_web"]["Enums"]["question_type_enum"]
+          required?: boolean | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "questions_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      responses: {
+        Row: {
+          business_id: number
+          created_at: string
+          id: string
+          question_id: string
+          response_text: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          business_id: number
+          created_at?: string
+          id?: string
+          question_id: string
+          response_text: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          business_id?: number
+          created_at?: string
+          id?: string
+          question_id?: string
+          response_text?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "responses_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "responses_question_id_fkey"
+            columns: ["question_id"]
+            isOneToOne: false
+            referencedRelation: "questions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "responses_user_id_fkey"
+            columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "users"
             referencedColumns: ["id"]
@@ -1558,7 +1698,7 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      question_type_enum: "single" | "multiple" | "open"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -1688,6 +1828,8 @@ export const Constants = {
     Enums: {},
   },
   public_web: {
-    Enums: {},
+    Enums: {
+      question_type_enum: ["single", "multiple", "open"],
+    },
   },
 } as const
