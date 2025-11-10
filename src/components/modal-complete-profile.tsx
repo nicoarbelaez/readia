@@ -12,7 +12,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import { type NavUserProps } from "@/components/sidebar/nav-user";
-import { updateProfile } from "@/app/actions";
+import { updateProfile } from "@/app/actions/complete-profile-actions";
 import {
   Form,
   FormField,

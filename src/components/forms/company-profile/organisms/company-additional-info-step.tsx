@@ -6,100 +6,67 @@ import { Form, FormField } from "@/components/ui/form";
 import { NavigationButtons } from "@/components/forms/company-profile/components/navigation-buttons";
 import { useCompanyForm } from "@/components/forms/company-profile/context/company-form-context";
 import {
-  CompanyQuestions,
-  CompanyQuestionsSchema,
+  CompanyExtraQuestions,
+  CompanyExtraQuestionsSchema,
 } from "@/components/forms/company-profile/schemas/company-form-schemas";
 import { InputFormItem } from "@/components/forms/company-profile/components/input-form-item";
 import { useState } from "react";
-import { StepIndicator } from "@/components/forms/company-profile/components/step-indicator";
 import { RadioFormItem } from "@/components/forms/company-profile/components/radio-form-item";
-
-// Definición de las preguntas de manera estructurada
-const QUESTIONS = [
-  {
-    id: "q1",
-    type: "open" as const,
-    label: "¿Cuál es el principal desafío que enfrenta tu empresa actualmente?",
-  },
-  {
-    id: "q2",
-    type: "multiple" as const,
-    label: "¿En qué etapa de madurez digital consideras que está tu empresa?",
-    options: [
-      { value: "inicial", label: "Inicial - Procesos principalmente manuales" },
-      {
-        value: "desarrollo",
-        label: "En desarrollo - Algunos procesos digitalizados",
-      },
-      { value: "avanzado", label: "Avanzado - Mayoría de procesos digitales" },
-      { value: "optimizado", label: "Optimizado - Completamente digital" },
-    ],
-  },
-  {
-    id: "q3",
-    type: "open" as const,
-    label: "¿Cuáles son tus objetivos de crecimiento para el próximo año?",
-  },
-  {
-    id: "q4",
-    type: "single" as const,
-    label: "¿Tienes un plan de transformación digital?",
-    options: [
-      { value: "si", label: "Sí" },
-      { value: "no", label: "No" },
-      { value: "en_proceso", label: "En proceso de desarrollo" },
-    ],
-  },
-  {
-    id: "q5",
-    type: "open" as const,
-    label:
-      "¿Qué recursos necesitarías para alcanzar tus objetivos empresariales?",
-  },
-];
+import { QuestionsList } from "@/types/question";
 
 export function CompanyAdditionalInfoStep() {
-  const {setStepData, goToNextStep, goToPreviousStep } =
-    useCompanyForm();
+  const { questionsAI } = useCompanyForm();
 
-  const totalQuestions = QUESTIONS.length;
+  if (!questionsAI) {
+    return <div>Error cargando preguntas</div>;
+  }
 
-  const defaultQuestions: CompanyQuestions["questions"] = QUESTIONS.map((q) => {
-    if (q.type === "multiple") {
-      return {
-        label: q.label,
-        type: "multiple" as const,
-        answer: [] as string[],
-      };
-    } else if (q.type === "single") {
-      return {
-        label: q.label,
-        type: "single" as const,
-        answer: "" as string,
-      };
-    } else {
-      return {
-        label: q.label,
-        type: "open" as const,
-        answer: "" as string,
-      };
-    }
-  });
+  return <AdditionalInfoForm questionsAI={questionsAI} />;
+}
 
-  const form = useForm<CompanyQuestions>({
-    resolver: zodResolver(CompanyQuestionsSchema),
+function AdditionalInfoForm({ questionsAI }: { questionsAI: QuestionsList }) {
+  const { setStepData, goToNextStep, goToPreviousStep } = useCompanyForm();
+
+  const totalQuestions = questionsAI.length;
+
+  const defaultQuestions: CompanyExtraQuestions["additionalQuestions"] =
+    questionsAI.map((q) => {
+      if (q.type === "multiple") {
+        return {
+          label: q.label,
+          type: "multiple" as const,
+          answer: [] as string[],
+        };
+      } else if (q.type === "single") {
+        return {
+          label: q.label,
+          type: "single" as const,
+          answer: "" as string,
+        };
+      } else {
+        return {
+          label: q.label,
+          type: "open" as const,
+          answer: "" as string,
+        };
+      }
+    });
+
+  const form = useForm<CompanyExtraQuestions>({
+    resolver: zodResolver(CompanyExtraQuestionsSchema),
     defaultValues: {
-      questions: defaultQuestions,
+      additionalQuestions: defaultQuestions,
     },
   });
 
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
 
-  const currentQuestion = QUESTIONS[currentQuestionIndex];
+  const currentQuestion = questionsAI[currentQuestionIndex];
   const isLastQuestion = currentQuestionIndex === totalQuestions - 1;
   const isFirstQuestion = currentQuestionIndex === 0;
 
-  const currentPath = `questions.${currentQuestionIndex}.answer` as const;
+  const currentPath =
+    `additionalQuestions.${currentQuestionIndex}.answer` as const;
 
   const handleNextQuestion = async () => {
     const valid = await form.trigger(currentPath);
@@ -111,7 +78,7 @@ export function CompanyAdditionalInfoStep() {
     if (isLastQuestion) {
       const allValues = form.getValues();
       // Enviar datos al contexto de formulario
-      setStepData({ questions: allValues });
+      setStepData({ extraQuestions: allValues });
       goToNextStep();
     } else {
       setCurrentQuestionIndex((prev) => prev + 1);
@@ -126,19 +93,13 @@ export function CompanyAdditionalInfoStep() {
     }
   };
 
-  const onSubmit = (data: CompanyQuestions) => {
+  const onSubmit = (data: CompanyExtraQuestions) => {
     // En este diseño, no usamos submit normal, usamos handleNextQuestion
     console.log("Submit:", data);
   };
 
   return (
     <div className="space-y-6">
-      <StepIndicator
-        currentStep={currentQuestionIndex + 1}
-        totalSteps={totalQuestions}
-        className="mb-6"
-      />
-
       <div className="mb-4">
         <p className="text-muted-foreground text-sm">
           Pregunta {currentQuestionIndex + 1} de {totalQuestions}
@@ -184,8 +145,8 @@ export function CompanyAdditionalInfoStep() {
           <NavigationButtons
             onNext={handleNextQuestion}
             onBack={handlePreviousQuestion}
-            nextLabel={isLastQuestion ? "Finalizar" : "Siguiente pregunta"}
-            backLabel={isFirstQuestion ? "Atrás" : "Pregunta anterior"}
+            nextLabel={isLastQuestion ? "Finalizar" : "Siguiente"}
+            backLabel={"Atrás"}
             isNextDisabled={form.formState.isSubmitting}
             isBackDisabled={form.formState.isSubmitting}
           />

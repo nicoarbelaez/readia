@@ -11,11 +11,12 @@ import {
 } from "@/components/forms/company-profile/schemas/company-form-schemas";
 import { InputFormItem } from "@/components/forms/company-profile/components/input-form-item";
 import { useState } from "react";
-import { StepIndicator } from "@/components/forms/company-profile/components/step-indicator";
 import { RadioFormItem } from "@/components/forms/company-profile/components/radio-form-item";
+import { generarteIAQuestion } from "@/app/actions/business-profile-actions";
+import { QuestionsList } from "@/types/question";
 
 // Definición de las preguntas de manera estructurada
-const QUESTIONS = [
+const QUESTIONS: QuestionsList = [
   {
     id: "q1",
     type: "open" as const,
@@ -59,11 +60,14 @@ const QUESTIONS = [
 ];
 
 export function CompanyQuestionsStep() {
-  const {setStepData, goToNextStep, goToPreviousStep } =
-    useCompanyForm();
-
+  const {
+    setStepData,
+    goToNextStep,
+    goToPreviousStep,
+    questionsAI,
+    setQuestionsAI,
+  } = useCompanyForm();
   const totalQuestions = QUESTIONS.length;
-
   const defaultQuestions: CompanyQuestions["questions"] = QUESTIONS.map((q) => {
     if (q.type === "multiple") {
       return {
@@ -94,24 +98,28 @@ export function CompanyQuestionsStep() {
   });
 
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+  const [isLoadingNext, setIsLoadingNext] = useState(false);
 
   const currentQuestion = QUESTIONS[currentQuestionIndex];
   const isLastQuestion = currentQuestionIndex === totalQuestions - 1;
   const isFirstQuestion = currentQuestionIndex === 0;
-
   const currentPath = `questions.${currentQuestionIndex}.answer` as const;
 
   const handleNextQuestion = async () => {
     const valid = await form.trigger(currentPath);
-    if (!valid) {
-      return;
-    }
+    if (!valid) return;
 
-    // Si es la última, completar paso
     if (isLastQuestion) {
       const allValues = form.getValues();
-      // Enviar datos al contexto de formulario
       setStepData({ questions: allValues });
+
+      if (!questionsAI) {
+        setIsLoadingNext(true);
+        const questionsAI = await generarteIAQuestion(allValues);
+        setQuestionsAI(questionsAI);
+      }
+
+      setIsLoadingNext(false);
       goToNextStep();
     } else {
       setCurrentQuestionIndex((prev) => prev + 1);
@@ -126,6 +134,14 @@ export function CompanyQuestionsStep() {
     }
   };
 
+  if (isLoadingNext) {
+    return (
+      <div className="flex h-64 items-center justify-center">
+        <p>Cargando nuevas preguntas…</p>
+      </div>
+    );
+  }
+
   const onSubmit = (data: CompanyQuestions) => {
     // En este diseño, no usamos submit normal, usamos handleNextQuestion
     console.log("Submit:", data);
@@ -133,12 +149,6 @@ export function CompanyQuestionsStep() {
 
   return (
     <div className="space-y-6">
-      <StepIndicator
-        currentStep={currentQuestionIndex + 1}
-        totalSteps={totalQuestions}
-        className="mb-6"
-      />
-
       <div className="mb-4">
         <p className="text-muted-foreground text-sm">
           Pregunta {currentQuestionIndex + 1} de {totalQuestions}
@@ -184,8 +194,8 @@ export function CompanyQuestionsStep() {
           <NavigationButtons
             onNext={handleNextQuestion}
             onBack={handlePreviousQuestion}
-            nextLabel={isLastQuestion ? "Finalizar" : "Siguiente pregunta"}
-            backLabel={isFirstQuestion ? "Atrás" : "Pregunta anterior"}
+            nextLabel={"Siguiente"}
+            backLabel={"Atrás"}
             isNextDisabled={form.formState.isSubmitting}
             isBackDisabled={form.formState.isSubmitting}
           />

@@ -1,8 +1,11 @@
 import { createContext, useContext } from "react";
 import { CompanyFormData } from "@/components/forms/company-profile/schemas/company-form-schemas";
+import { QuestionsList } from "@/types/question";
 
 interface CompanyFormContextType {
   formData: Partial<CompanyFormData>;
+  questionsAI: QuestionsList | null;
+  setQuestionsAI: (questions: QuestionsList | null) => void;
   currentStep: number;
   setStepData: (data: Partial<CompanyFormData>) => void;
   goToNextStep: () => void;

@@ -1,5 +1,6 @@
 "use server";
 
+import { ActionResult } from "@/types/action-type";
 import { createClient } from "@/utils/supabase/server";
 import { revalidatePath } from "next/cache";
 
@@ -8,10 +9,6 @@ interface UpdateProfileParams {
   fullName: string;
   userName: string;
 }
-
-type ActionResult =
-  | { success: true; data: unknown }
-  | { success: false; message: string };
 
 export async function updateProfile({
   id,
