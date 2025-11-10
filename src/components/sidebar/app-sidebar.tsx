@@ -1,12 +1,15 @@
 "use client";
 
 import * as React from "react";
-import { Frame, GalleryVerticalEnd, House, SquareTerminal } from "lucide-react";
+import { Frame, House, SquareTerminal } from "lucide-react";
 
 import { NavMain } from "@/components/sidebar/nav-main";
 import { NavProjects } from "@/components/sidebar/nav-projects";
 import { NavUser, type NavUserProps } from "@/components/sidebar/nav-user";
-import { TeamSwitcher } from "@/components/sidebar/team-switcher";
+import {
+  BusinessSwitcher,
+  BusinessSwitcherProps,
+} from "@/components/sidebar/business-switcher";
 import {
   Sidebar,
   SidebarContent,
@@ -16,10 +19,14 @@ import {
 } from "@/components/ui/sidebar";
 import { IconSitemap } from "@tabler/icons-react";
 
-type SidebarProps = React.ComponentProps<typeof Sidebar> & NavUserProps;
+type SidebarProps = React.ComponentProps<typeof Sidebar> & {
+  user: NavUserProps["user"] & {
+    businesses: BusinessSwitcherProps["businessses"];
+  };
+};
 
 export function AppSidebar({
-  user: { email, fullName, userName, avatarUrl },
+  user: { email, fullName, userName, avatarUrl, businesses },
   ...props
 }: SidebarProps) {
   const data = {
@@ -29,13 +36,7 @@ export function AppSidebar({
       userName,
       avatarUrl,
     },
-    teams: [
-      {
-        name: "Acme Inc",
-        logo: GalleryVerticalEnd,
-        plan: "Enterprise",
-      },
-    ],
+    businessses: businesses,
     navMain: [
       {
         title: "Inicio",
@@ -82,7 +83,7 @@ export function AppSidebar({
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
-        <TeamSwitcher teams={data.teams} />
+        <BusinessSwitcher businessses={data.businessses} />
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={data.navMain} />

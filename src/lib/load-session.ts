@@ -11,7 +11,7 @@ const loadUser = async () => {
   const { data: user, error: errorUser } = await supabase
     .schema("public_web")
     .from("users")
-    .select("*")
+    .select("*, businesses(*)")
     .eq("id", userId)
     .single();
 
