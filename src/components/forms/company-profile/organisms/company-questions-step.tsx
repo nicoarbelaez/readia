@@ -15,6 +15,7 @@ import { RadioFormItem } from "@/components/forms/company-profile/components/rad
 import { generarteIAQuestion } from "@/app/actions/business-profile-actions";
 import { QuestionsList } from "@/types/question";
 import { Bot } from "lucide-react";
+import { toast } from "sonner";
 
 // Definición de las preguntas de manera estructurada
 const QUESTIONS: QuestionsList = [
@@ -116,14 +117,17 @@ export function CompanyQuestionsStep() {
       setStepData({ questions: allValues });
 
       if (!questionsAI && formData.generalInfo) {
-        setIsLoadingNext(true);
-        const generatedQuestionsAI = await generarteIAQuestion(
-          allValues,
-          formData.generalInfo,
-          QUESTIONS,
-        );
-        setQuestionsAI(generatedQuestionsAI);
-        setIsLoadingNext(false);
+        try {
+          setIsLoadingNext(true);
+          const generatedQuestionsAI = await generarteIAQuestion(
+            allValues,
+            formData.generalInfo,
+            QUESTIONS,
+          );
+          setQuestionsAI(generatedQuestionsAI);
+        } catch (e) {
+          toast.error((e as Error).message || "Error al generar preguntas");
+        }
       }
 
       goToNextStep();

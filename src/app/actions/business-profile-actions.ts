@@ -36,19 +36,23 @@ export async function generarteIAQuestion(
     Do not include any text, explanation, or comments outside the JSON output.
   `;
 
-  console.log("Prompt to AI:", prompt);
+  try {
+    const { object } = await generateObject({
+      model: google("gemini-2.5-flash-lite"),
+      output: "array",
+      schema: QuestionsListSchema,
+      prompt,
+    });
 
-  const { object } = await generateObject({
-    model: google("gemini-2.5-flash-lite"),
-    output: "array",
-    schema: QuestionsListSchema,
-    prompt,
-  });
-
-  const flattened: QuestionsList = object.flat();
-
-  console.log("Generated Questions from AI:", flattened);
-  return flattened;
+    const flattened: QuestionsList = object.flat();
+    return flattened;
+  } catch (error) {
+    console.error("Error generating AI questions:", error);
+    // Aquí lanzar o devolver un error estructurado
+    throw new Error(
+      "No se pudieron generar nuevas preguntas. Por favor intenta de nuevo.",
+    );
+  }
 }
 
 // export async function saveCompanyInfo({
