@@ -14,6 +14,7 @@ import { useState } from "react";
 import { RadioFormItem } from "@/components/forms/company-profile/components/radio-form-item";
 import { generarteIAQuestion } from "@/app/actions/business-profile-actions";
 import { QuestionsList } from "@/types/question";
+import { Bot } from "lucide-react";
 
 // Definición de las preguntas de manera estructurada
 const QUESTIONS: QuestionsList = [
@@ -61,6 +62,7 @@ const QUESTIONS: QuestionsList = [
 
 export function CompanyQuestionsStep() {
   const {
+    formData,
     setStepData,
     goToNextStep,
     goToPreviousStep,
@@ -113,13 +115,17 @@ export function CompanyQuestionsStep() {
       const allValues = form.getValues();
       setStepData({ questions: allValues });
 
-      if (!questionsAI) {
+      if (!questionsAI && formData.generalInfo) {
         setIsLoadingNext(true);
-        const questionsAI = await generarteIAQuestion(allValues);
-        setQuestionsAI(questionsAI);
+        const generatedQuestionsAI = await generarteIAQuestion(
+          allValues,
+          formData.generalInfo,
+          QUESTIONS,
+        );
+        setQuestionsAI(generatedQuestionsAI);
+        setIsLoadingNext(false);
       }
 
-      setIsLoadingNext(false);
       goToNextStep();
     } else {
       setCurrentQuestionIndex((prev) => prev + 1);
@@ -136,8 +142,14 @@ export function CompanyQuestionsStep() {
 
   if (isLoadingNext) {
     return (
-      <div className="flex h-64 items-center justify-center">
-        <p>Cargando nuevas preguntas…</p>
+      <div className="flex h-64 animate-pulse flex-col items-center justify-center space-x-4 text-gray-500">
+        <Bot className="size-28" strokeWidth={1.2} />
+        <p className="max-w-sm text-center text-lg text-balance">
+          Estamos utilizando inteligencia artificial para generar{" "}
+          <span className="inline-block animate-bounce delay-100">.</span>
+          <span className="inline-block animate-bounce delay-200">.</span>
+          <span className="inline-block animate-bounce delay-300">.</span>
+        </p>
       </div>
     );
   }
