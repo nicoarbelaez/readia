@@ -53,18 +53,6 @@ export function CompanyProfileDialog({
   initialData,
   onSubmit,
 }: CompanyProfileDialogProps) {
-  const toastData = (fullData: unknown) => {
-    toast.success("Formulario completado", {
-      description: (
-        <pre className="mt-2 rounded bg-neutral-950 p-4 text-white">
-          {(() => {
-            console.log(fullData);
-            return JSON.stringify(fullData, null, 2);
-          })()}
-        </pre>
-      ),
-    });
-  };
 
   const handleOpenChange = (newOpen: boolean) => {
     onOpenChange?.(newOpen);
@@ -75,7 +63,6 @@ export function CompanyProfileDialog({
     step: number,
   ) => {
     toast.success(`Paso ${step} completado`);
-    toastData(stepData);
   };
 
   const handleFormComplete = async (formData: CompanyFormData) => {
@@ -83,7 +70,6 @@ export function CompanyProfileDialog({
       await onSubmit?.(formData);
       toast.success("Formulario completado con éxito");
       handleOpenChange(false);
-      toastData(formData);
     } catch (error) {
       toast.error("Error al guardar el formulario");
       console.error("Error submitting form:", error);
