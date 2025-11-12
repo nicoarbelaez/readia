@@ -10,6 +10,7 @@ interface UseMultiStepFormProps<T> {
 
 interface UseMultiStepFormReturn<T, E> {
   currentStep: number;
+  totalSteps: number;
   formData: Partial<T>;
   questionsAI: E | null;
   setQuestionsAI: (questions: E | null) => void;
@@ -26,7 +27,7 @@ export function useMultiStepForm<T, E>({
   initialData = {} as T,
   onStepComplete,
   onFormComplete,
-  totalSteps,
+  totalSteps = 3,
 }: UseMultiStepFormProps<T>): UseMultiStepFormReturn<T, E> {
   const [questionsAI, setQuestionsAI] = useState<E | null>(null);
   const [currentStep, setCurrentStep] = useState(initialStep);
@@ -68,6 +69,7 @@ export function useMultiStepForm<T, E>({
 
   return {
     currentStep,
+    totalSteps,
     questionsAI,
     setQuestionsAI,
     formData,

@@ -41,6 +41,7 @@ export function CompanyFormProvider({
   return (
     <CompanyFormContext.Provider
       value={{
+        totalSteps,
         formData,
         questionsAI,
         setQuestionsAI,

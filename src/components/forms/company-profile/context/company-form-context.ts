@@ -7,6 +7,7 @@ interface CompanyFormContextType {
   questionsAI: QuestionsList | null;
   setQuestionsAI: (questions: QuestionsList | null) => void;
   currentStep: number;
+  totalSteps: number;
   setStepData: (data: Partial<CompanyFormData>) => void;
   goToNextStep: () => void;
   goToPreviousStep: () => void;

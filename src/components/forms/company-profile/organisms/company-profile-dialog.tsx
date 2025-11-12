@@ -35,7 +35,7 @@ interface CompanyProfileDialogProps {
 }
 
 function StepContent() {
-  const { currentStep } = useCompanyForm();
+  const { currentStep, totalSteps } = useCompanyForm();
 
   const renderStep = () => {
     switch (currentStep) {
@@ -52,7 +52,7 @@ function StepContent() {
 
   return (
     <>
-      <StepIndicator currentStep={currentStep} totalSteps={3} />
+      <StepIndicator currentStep={currentStep} totalSteps={totalSteps} />
       {renderStep()}
     </>
   );
@@ -67,6 +67,12 @@ function AlertCloseDialog({
   onConfirm: () => void;
   onCancel: () => void;
 }) {
+  const { currentStep, totalSteps, formData } = useCompanyForm();
+  if (currentStep > totalSteps || formData.extraQuestions) {
+    onConfirm();
+    return null;
+  }
+
   return (
     <AlertDialog
       open={isOpen}
@@ -150,13 +156,6 @@ export function CompanyProfileDialog({
           <DialogDescription>
             Por favor completa la información solicitada.
           </DialogDescription>
-          {pendingClose && (
-            <AlertCloseDialog
-              isOpen={pendingClose}
-              onConfirm={handleConfirm}
-              onCancel={handleCancel}
-            />
-          )}
         </DialogHeader>
 
         <CompanyFormProvider
@@ -164,6 +163,13 @@ export function CompanyProfileDialog({
           onStepComplete={handleStepComplete}
           onFormComplete={handleFormComplete}
         >
+          {pendingClose && (
+            <AlertCloseDialog
+              isOpen={pendingClose}
+              onConfirm={handleConfirm}
+              onCancel={handleCancel}
+            />
+          )}
           <div className="space-y-6">
             <StepContent />
           </div>
