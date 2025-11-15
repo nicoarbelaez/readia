@@ -1,5 +1,12 @@
 "use client";
 
+/**
+ * Este comopenente de puede refactorizar con el componente CompanyQuestionsStep,
+ * pero por claridad y para evitar complejidades innecesarias, se mantiene separado.
+ *
+ * src\components\forms\company-profile\organisms\company-questions-step.tsx
+ */
+
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Form, FormField } from "@/components/ui/form";
@@ -36,18 +43,21 @@ function AdditionalInfoForm({ questionsAI }: { questionsAI: QuestionsList }) {
           label: q.label,
           type: "multiple" as const,
           answer: [] as string[],
+          originalQuestion: q,
         };
       } else if (q.type === "single") {
         return {
           label: q.label,
           type: "single" as const,
           answer: "" as string,
+          originalQuestion: q,
         };
       } else {
         return {
           label: q.label,
           type: "open" as const,
           answer: "" as string,
+          originalQuestion: q,
         };
       }
     });
