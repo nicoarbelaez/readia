@@ -1,13 +1,19 @@
 "use server";
 
 import {
+  CompanyFormData,
   CompanyGeneralInfo,
+  CompanyQuestion,
   CompanyQuestions,
 } from "@/components/forms/company-profile/schemas/company-form-schemas";
-import { QuestionsList } from "@/types/question";
+import { QuestionsList, QuestionType } from "@/types/question";
 import { google } from "@ai-sdk/google";
 import { generateObject } from "ai";
 import { QuestionsListSchema } from "@/components/forms/company-profile/schemas/question-schema";
+import { ActionResult } from "@/types/action-type";
+import { createClient, CreateClientReturn } from "@/utils/supabase/server";
+import loadUser from "@/lib/load-session";
+import { Database } from "@/types/database";
 
 export async function generarteIAQuestion(
   questionsAnswered: CompanyQuestions,
@@ -54,33 +60,148 @@ export async function generarteIAQuestion(
     );
   }
 }
+type QuestionInsertData =
+  Database["public_web"]["Tables"]["questions"]["Insert"];
 
-// export async function saveCompanyInfo({
-//   companyName,
-//   sector,
-//   numberOfEmployees,
-//   largeDescription,
-// }: saveCompanyInfoParams): Promise<ActionResult> {
-//   const supabase = await createClient();
-//   const { id } = await loadUser();
+type QuestionOptionInsertData =
+  Database["public_web"]["Tables"]["question_options"]["Insert"];
 
-//   const { error, data } = await supabase
-//     .schema("public_web")
-//     .from("businesses")
-//     .insert([
-//       {
-//         company_name: companyName,
-//         sector: sector,
-//         employee_count: numberOfEmployees,
-//         description: largeDescription,
-//         user_owner_id: id,
-//       },
-//     ])
-//     .select();
+export async function createBusinessProfile(
+  formData: CompanyFormData,
+): Promise<ActionResult> {
+  try {
+    const supabase = await createClient();
+    const user = await loadUser();
 
-//   if (error) {
-//     return { success: false, message: `Error guardando business: ${error}` };
-//   }
+    if (!user?.id) {
+      throw new Error("Usuario no autenticado");
+    }
 
-//   return { success: true, data };
-// }
+    // 1. Crear el negocio
+    const businessId = await createBusiness(
+      supabase,
+      user.id,
+      formData.generalInfo,
+    );
+
+    // 2. Preparar y insertar preguntas
+    const allQuestions: CompanyQuestion[] = [
+      ...formData.questions.questions,
+      ...formData.extraQuestions.additionalQuestions,
+    ];
+
+    const questionIds = await insertQuestions(
+      supabase,
+      businessId,
+      allQuestions,
+    );
+
+    // 3. Insertar opciones de preguntas
+    await insertQuestionOptions(supabase, allQuestions, questionIds);
+
+    return {
+      success: true,
+      data: { businessId },
+      message: "Perfil de empresa creado exitosamente",
+    };
+  } catch (error) {
+    console.error("Error creating business profile:", error);
+    return {
+      success: false,
+      message:
+        error instanceof Error
+          ? error.message
+          : "Error desconocido al crear el perfil de empresa",
+    };
+  }
+}
+
+async function createBusiness(
+  supabase: CreateClientReturn,
+  userId: string,
+  generalInfo: CompanyFormData["generalInfo"],
+): Promise<number> {
+  const { data: businessData, error: businessError } = await supabase
+    .schema("public_web")
+    .from("businesses")
+    .insert({
+      company_name: generalInfo.companyName,
+      sector: generalInfo.sector,
+      employee_count: generalInfo.employeeCount,
+      description: generalInfo.description,
+      user_owner_id: userId,
+    })
+    .select()
+    .single();
+
+  if (businessError || !businessData) {
+    throw new Error(businessError?.message || "Error al crear el negocio");
+  }
+
+  return businessData.id;
+}
+
+async function insertQuestions(
+  supabase: CreateClientReturn,
+  businessId: number,
+  questions: CompanyQuestion[],
+): Promise<string[]> {
+  const questionsToInsert: QuestionInsertData[] = questions.map((question) => ({
+    business_id: businessId,
+    question_text: question.originalQuestion.label,
+    question_type: question.originalQuestion.type as QuestionType,
+    required: true,
+  }));
+
+  const { data: questionsData, error: questionsError } = await supabase
+    .schema("public_web")
+    .from("questions")
+    .insert(questionsToInsert)
+    .select("id, question_text");
+
+  if (questionsError || !questionsData) {
+    throw new Error(
+      questionsError?.message || "Error al insertar las preguntas",
+    );
+  }
+
+  return questionsData.map((q) => q.id);
+}
+
+async function insertQuestionOptions(
+  supabase: CreateClientReturn,
+  questions: CompanyQuestion[],
+  questionIds: string[],
+): Promise<void> {
+  const optionsToInsert: QuestionOptionInsertData[] = [];
+
+  questions.forEach((question, index) => {
+    if (
+      question.originalQuestion.type === "multiple" ||
+      question.originalQuestion.type === "single"
+    ) {
+      question.originalQuestion.options?.forEach(
+        (option, optionIndex: number) => {
+          optionsToInsert.push({
+            question_id: questionIds[index],
+            option_text: option.label,
+            option_order: optionIndex,
+          });
+        },
+      );
+    }
+  });
+
+  if (optionsToInsert.length > 0) {
+    const { error: optionsError } = await supabase
+      .schema("public_web")
+      .from("question_options")
+      .insert(optionsToInsert);
+
+    if (optionsError) {
+      throw new Error(
+        optionsError.message || "Error al insertar las opciones de preguntas",
+      );
+    }
+  }
+}

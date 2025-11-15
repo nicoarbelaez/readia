@@ -23,6 +23,7 @@ import { generarteIAQuestion } from "@/app/actions/business-profile-actions";
 import { QuestionsList } from "@/types/question";
 import { Bot } from "lucide-react";
 import { toast } from "sonner";
+import { Spinner } from "@/components/ui/spinner";
 
 // Definición de las preguntas de manera estructurada
 const QUESTIONS: QuestionsList = [
@@ -156,14 +157,20 @@ export function CompanyQuestionsStep() {
 
   if (isLoadingNext) {
     return (
-      <div className="flex h-64 animate-pulse flex-col items-center justify-center space-x-4 text-gray-500">
-        <Bot className="size-28" strokeWidth={1.2} />
-        <p className="max-w-sm text-center text-lg text-balance">
-          Estamos utilizando inteligencia artificial para generar{" "}
-          <span className="inline-block animate-bounce delay-100">.</span>
-          <span className="inline-block animate-bounce delay-200">.</span>
-          <span className="inline-block animate-bounce delay-300">.</span>
-        </p>
+      <div className="flex h-64 flex-col items-center justify-center space-x-4 text-gray-500">
+        <div className="flex flex-col items-center gap-3">
+          <Bot className="size-12 animate-bounce" strokeWidth={1} />
+          <div className="flex items-center gap-2">
+            <Spinner className="text-primary size-5" />
+            <span className="text-foreground text-sm font-medium">
+              Generando más preguntas…
+            </span>
+          </div>
+          <p className="text-muted-foreground max-w-xs text-center text-xs">
+            Esto puede tomar unos segundos. Estamos utilizando inteligencia
+            artificial para generar nuevas preguntas.
+          </p>
+        </div>
       </div>
     );
   }

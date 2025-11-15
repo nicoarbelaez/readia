@@ -15,7 +15,7 @@ import { toast } from "sonner";
 import { CompanyGeneralInfoStep } from "@/components/forms/company-profile/organisms/company-general-info-step";
 import { CompanyQuestionsStep } from "@/components/forms/company-profile/organisms/company-questions-step";
 import { CompanyAdditionalInfoStep } from "@/components/forms/company-profile/organisms/company-additional-info-step";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   AlertDialogAction,
   AlertDialogCancel,
@@ -26,6 +26,8 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { createBusinessProfile } from "@/app/actions/business-profile-actions";
+import { Spinner } from "@/components/ui/spinner";
 
 interface CompanyProfileDialogProps {
   isOpen?: boolean;
@@ -68,8 +70,19 @@ function AlertCloseDialog({
   onCancel: () => void;
 }) {
   const { currentStep, totalSteps, formData } = useCompanyForm();
-  if (currentStep > totalSteps || formData.extraQuestions) {
-    onConfirm();
+  const shouldConfirmImmediately =
+    currentStep > totalSteps || !!formData.extraQuestions;
+
+  // Efecto para llamar onConfirm después del render, si aplica
+  useEffect(() => {
+    if (shouldConfirmImmediately) {
+      onConfirm();
+    }
+    // Solo depende de los valores que determinan la condición
+  }, [shouldConfirmImmediately, onConfirm]);
+
+  if (shouldConfirmImmediately) {
+    // No renderizamos el dialog si ya decidimos confirmar
     return null;
   }
 
@@ -101,6 +114,24 @@ function AlertCloseDialog({
   );
 }
 
+function LoadingOverlay() {
+  return (
+    <div className="bg-background/80 absolute -inset-4 z-50 flex items-center justify-center backdrop-blur-sm">
+      <div className="flex flex-col items-center gap-3">
+        <div className="flex items-center gap-2">
+          <Spinner className="text-primary size-5" />
+          <span className="text-foreground text-sm font-medium">
+            Guardando perfil de empresa...
+          </span>
+        </div>
+        <p className="text-muted-foreground max-w-xs text-center text-xs">
+          Esto puede tomar unos segundos. Por favor, no cierres esta ventana.
+        </p>
+      </div>
+    </div>
+  );
+}
+
 export function CompanyProfileDialog({
   isOpen = false,
   onOpenChange,
@@ -108,9 +139,14 @@ export function CompanyProfileDialog({
   onSubmit,
 }: CompanyProfileDialogProps) {
   const [pendingClose, setPendingClose] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleOpenChange = (newOpen: boolean) => {
-    console.log("handleOpenChange", newOpen, pendingClose);
+    if (isSubmitting) {
+      // Prevenir el cierre mientras se está enviando
+      return;
+    }
+
     if (!newOpen) {
       setPendingClose(true);
     } else {
@@ -135,13 +171,37 @@ export function CompanyProfileDialog({
   };
 
   const handleFormComplete = async (formData: CompanyFormData) => {
+    setIsSubmitting(true);
+
     try {
-      await onSubmit?.(formData);
-      toast.success("Formulario completado con éxito");
+      // Si se proporciona un onSubmit personalizado, usarlo
+      if (onSubmit) {
+        await onSubmit(formData);
+        toast.success("Formulario completado con éxito");
+        handleOpenChange(false);
+        return;
+      }
+
+      // Usar la acción por defecto
+      const response = await createBusinessProfile(formData);
+
+      if (!response.success) {
+        throw new Error(
+          response.message || "Error al guardar el perfil de empresa",
+        );
+      }
+
+      toast.success("Perfil de empresa creado exitosamente");
       handleOpenChange(false);
     } catch (error) {
-      toast.error("Error al guardar el formulario");
       console.error("Error submitting form:", error);
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : "Error inesperado al guardar el formulario",
+      );
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -149,12 +209,24 @@ export function CompanyProfileDialog({
     <Dialog open={isOpen} onOpenChange={handleOpenChange}>
       <DialogContent
         className="sm:max-w-2xl"
-        onPointerDownOutside={(e) => e.preventDefault()}
+        onPointerDownOutside={(e) => {
+          // Prevenir el cierre al hacer clic fuera mientras se envía
+          if (isSubmitting) {
+            e.preventDefault();
+          }
+        }}
+        onEscapeKeyDown={(e) => {
+          // Prevenir el cierre con ESC mientras se envía
+          if (isSubmitting) {
+            e.preventDefault();
+          }
+        }}
       >
         <DialogHeader>
           <DialogTitle>Crear perfil de empresa</DialogTitle>
           <DialogDescription>
-            Por favor completa la información solicitada.
+            Completa la información solicitada para crear el perfil de tu
+            empresa.
           </DialogDescription>
         </DialogHeader>
 
@@ -170,8 +242,9 @@ export function CompanyProfileDialog({
               onCancel={handleCancel}
             />
           )}
-          <div className="space-y-6">
+          <div className="relative space-y-6">
             <StepContent />
+            {isSubmitting && <LoadingOverlay />}
           </div>
         </CompanyFormProvider>
       </DialogContent>

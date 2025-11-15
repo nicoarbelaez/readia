@@ -1,5 +1,9 @@
-import { QuestionSchema, QuestionsListSchema } from "@/components/forms/company-profile/schemas/question-schema";
+import {
+  QuestionSchema,
+  QuestionsListSchema,
+} from "@/components/forms/company-profile/schemas/question-schema";
 import z from "zod";
+import { Database } from "@/types/database";
 
 /**
  * Antes de usar Zod, la definición de tipos era la siguiente:
@@ -40,3 +44,6 @@ import z from "zod";
 
 export type Question = z.infer<typeof QuestionSchema>;
 export type QuestionsList = z.infer<typeof QuestionsListSchema>;
+
+export type QuestionType =
+  Database["public_web"]["Enums"]["question_type_enum"];
