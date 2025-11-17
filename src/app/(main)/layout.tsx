@@ -27,19 +27,12 @@ export default async function RootLayout({
     full_name: fullName,
     user_name: userName,
     avatar_url: avatarUrl,
-    businesses,
   } = await loadUser();
   const user = {
     email: email ?? "",
     fullName: fullName ?? "",
     userName: userName ?? "",
     avatarUrl: avatarUrl ?? "",
-    businesses: businesses.map((b) => ({
-      companyName: b.company_name,
-      description: b.description,
-      sector: b.sector ?? "",
-      employeeCount: b.employee_count ?? 0,
-    })),
   };
 
   return (
