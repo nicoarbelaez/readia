@@ -8,7 +8,6 @@ export function SidebarMenuCompany() {
   const [open, setOpen] = useState(false);
 
   const openModal = () => {
-    console.log("Open modal");
     setOpen(true);
   };
   return (

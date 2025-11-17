@@ -14,6 +14,13 @@ import { ActionResult } from "@/types/action-type";
 import { createClient, CreateClientReturn } from "@/utils/supabase/server";
 import loadUser from "@/lib/load-session";
 import { Database } from "@/types/database";
+import { type Business } from "@/components/sidebar/hooks/use-business-switcher";
+
+type QuestionInsertData =
+  Database["public_web"]["Tables"]["questions"]["Insert"];
+
+type QuestionOptionInsertData =
+  Database["public_web"]["Tables"]["question_options"]["Insert"];
 
 export async function generarteIAQuestion(
   questionsAnswered: CompanyQuestions,
@@ -60,11 +67,6 @@ export async function generarteIAQuestion(
     );
   }
 }
-type QuestionInsertData =
-  Database["public_web"]["Tables"]["questions"]["Insert"];
-
-type QuestionOptionInsertData =
-  Database["public_web"]["Tables"]["question_options"]["Insert"];
 
 export async function createBusinessProfile(
   formData: CompanyFormData,
@@ -203,5 +205,39 @@ async function insertQuestionOptions(
         optionsError.message || "Error al insertar las opciones de preguntas",
       );
     }
+  }
+}
+
+export async function getBusinesses(): Promise<Business[]> {
+  try {
+    const supabase = await createClient();
+    const user = await loadUser();
+
+    if (!user?.id) {
+      return [];
+    }
+
+    const { data: businesses, error } = await supabase
+      .schema("public_web")
+      .from("businesses")
+      .select("id, company_name, description, sector, employee_count")
+      .eq("user_owner_id", user.id)
+      .order("create_at", { ascending: true });
+
+    if (error) {
+      console.error("Error fetching businesses:", error);
+      return [];
+    }
+
+    return businesses.map((business) => ({
+      id: business.id,
+      companyName: business.company_name,
+      description: business.description,
+      sector: business.sector || "NaN",
+      employeeCount: business.employee_count || 0,
+    }));
+  } catch (error) {
+    console.error("Error in getBusinesses:", error);
+    return [];
   }
 }

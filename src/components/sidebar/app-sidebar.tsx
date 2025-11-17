@@ -6,10 +6,7 @@ import { Frame, House, SquareTerminal } from "lucide-react";
 import { NavMain } from "@/components/sidebar/nav-main";
 import { NavProjects } from "@/components/sidebar/nav-projects";
 import { NavUser, type NavUserProps } from "@/components/sidebar/nav-user";
-import {
-  BusinessSwitcher,
-  BusinessSwitcherProps,
-} from "@/components/sidebar/business-switcher";
+import { BusinessSwitcher } from "@/components/sidebar/business-switcher";
 import {
   Sidebar,
   SidebarContent,
@@ -20,13 +17,11 @@ import {
 import { IconSitemap } from "@tabler/icons-react";
 
 type SidebarProps = React.ComponentProps<typeof Sidebar> & {
-  user: NavUserProps["user"] & {
-    businesses: BusinessSwitcherProps["businessses"];
-  };
+  user: NavUserProps["user"];
 };
 
 export function AppSidebar({
-  user: { email, fullName, userName, avatarUrl, businesses },
+  user: { email, fullName, userName, avatarUrl },
   ...props
 }: SidebarProps) {
   const data = {
@@ -36,7 +31,6 @@ export function AppSidebar({
       userName,
       avatarUrl,
     },
-    businessses: businesses,
     navMain: [
       {
         title: "Inicio",
@@ -83,7 +77,7 @@ export function AppSidebar({
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
-        <BusinessSwitcher businessses={data.businessses} />
+        <BusinessSwitcher />
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={data.navMain} />
