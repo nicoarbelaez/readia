@@ -8,10 +8,8 @@ import { z } from 'zod';
 
 // Validación de entorno
 const SUPABASE_URL = process.env.SUPABASE_URL!;
-const SUPABASE_KEY = process.env.SUPABASE_KEY!;
+const SUPABASE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY!;
 const GOOGLE_API_KEY = process.env.GOOGLE_GENERATIVE_AI_API_KEY!;
-
-console.log(`[DEBUG] SUPABASE_URL recibida: "${SUPABASE_URL}"`); // TODO: Remover
 
 if (!SUPABASE_URL || !SUPABASE_KEY || !GOOGLE_API_KEY) {
     console.error('Missing Environment Variables');
@@ -70,13 +68,16 @@ export const lambdaHandler = async (event: APIGatewayProxyEvent): Promise<APIGat
 
         // 3. Persistencia en Supabase
         console.log('Persisting to Supabase...');
-        const { error: dbError } = await supabase.schema('public_web').from('businesses').insert({
-            company_name: 'generalInfo.companyName',
-            sector: 'generalInfo.sector',
-            employee_count: 999,
-            description: 'generalInfo.description',
-            user_owner_id: 'f8af9e28-f883-401f-ad48-23fcd6eaa356',
-        });
+        const { error: dbError } = await supabase
+            .schema('public_web')
+            .from('businesses')
+            .insert({
+                company_name: 'generalInfo.companyName',
+                sector: 'generalInfo.sector',
+                employee_count: 999,
+                description: JSON.stringify(diagnosisResult.diagnosis_summary),
+                user_owner_id: userId,
+            });
 
         if (dbError) {
             throw new Error(`Supabase Error: ${dbError.message}`);

@@ -9,14 +9,14 @@ Globals:
     Environment:
       Variables:
         SUPABASE_URL: !Ref SupabaseUrl
-        SUPABASE_KEY: !Ref SupabaseKey
+        SUPABASE_SERVICE_ROLE_KEY: !Ref SupabaseServiceRoleKey
         GOOGLE_GENERATIVE_AI_API_KEY: !Ref GoogleApiKey
 
 Parameters:
   SupabaseUrl:
     Type: String
     Description: URL of the Supabase instance
-  SupabaseKey:
+  SupabaseServiceRoleKey:
     Type: String
     Description: Service role key or Anon key for Supabase
     NoEcho: true
