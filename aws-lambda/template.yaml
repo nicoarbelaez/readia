@@ -1,49 +1,63 @@
-AWSTemplateFormatVersion: '2010-09-09'
+AWSTemplateFormatVersion: "2010-09-09"
 Transform: AWS::Serverless-2016-10-31
-Description: >
-  aws-lambda
+Description: GenAI Diagnosis Service
 
-  Sample SAM Template for aws-lambda
-  
-# More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
 Globals:
   Function:
-    Timeout: 3
+    Timeout: 60 # Aumentado para permitir inferencia de IA
+    MemorySize: 512 # Aumentado ligeramente para procesar JSON/Zod y Vercel SDK
+    Environment:
+      Variables:
+        SUPABASE_URL: !Ref SupabaseUrl
+        SUPABASE_KEY: !Ref SupabaseKey
+        GOOGLE_GENERATIVE_AI_API_KEY: !Ref GoogleApiKey
+
+Parameters:
+  SupabaseUrl:
+    Type: String
+    Description: URL of the Supabase instance
+  SupabaseKey:
+    Type: String
+    Description: Service role key or Anon key for Supabase
+    NoEcho: true
+  GoogleApiKey:
+    Type: String
+    Description: API Key for Google Gemini
+    NoEcho: true
 
 Resources:
-  HelloWorldFunction:
-    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+  DiagnosisRoadmapFunction:
+    Type: AWS::Serverless::Function
     Properties:
-      CodeUri: hello-world/
+      CodeUri: diagnosis-service/
       Handler: app.lambdaHandler
       Runtime: nodejs22.x
       Architectures:
         - x86_64
+      # Configuración de invocación asíncrona para robustez
+      EventInvokeConfig:
+        MaximumRetryAttempts: 1
+        MaximumEventAgeInSeconds: 600
       Events:
-        HelloWorld:
-          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+        GenerateDiagnosis:
+          Type: Api
           Properties:
-            Path: /hello
-            Method: get
-    Metadata: # Manage esbuild properties
+            Path: /diagnosis
+            Method: post
+
+    Metadata:
       BuildMethod: esbuild
       BuildProperties:
         Minify: true
-        Target: "es2020"
+        Target: "es2022"
         Sourcemap: true
-        EntryPoints: 
-        - app.ts
+        EntryPoints:
+          - app.ts
 
 Outputs:
-  # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
-  # Find out more about other implicit resources you can reference within SAM
-  # https://github.com/awslabs/serverless-application-model/blob/master/docs/internals/generated_resources.rst#api
-  HelloWorldApi:
-    Description: "API Gateway endpoint URL for Prod stage for Hello World function"
-    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.${AWS::URLSuffix}/Prod/hello/"
-  HelloWorldFunction:
-    Description: "Hello World Lambda Function ARN"
-    Value: !GetAtt HelloWorldFunction.Arn
-  HelloWorldFunctionIamRole:
-    Description: "Implicit IAM Role created for Hello World function"
-    Value: !GetAtt HelloWorldFunctionRole.Arn
+  DiagnosisApi:
+    Description: "API Gateway endpoint URL for Prod stage"
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.${AWS::URLSuffix}/Prod/diagnosis/"
+  DiagnosisFunctionArn:
+    Description: "Diagnosis Lambda Function ARN"
+    Value: !GetAtt DiagnosisRoadmapFunction.Arn

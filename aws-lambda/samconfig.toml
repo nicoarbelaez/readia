@@ -20,6 +20,7 @@
     s3_prefix = "aws-lambda"
     image_repositories = []
     disable_rollback = true
+    parameter_overrides = "SupabaseUrl=\"https://fglvypynatlwvxwjudlk.supabase.co\""
 
     [default.package.parameters]
     resolve_s3 = true
