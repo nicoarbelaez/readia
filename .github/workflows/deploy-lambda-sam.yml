@@ -1,0 +1,51 @@
+name: "Deploy Lambda via SAM"
+
+env:
+  SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+  SUPABASE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+  GOOGLE_API_KEY: ${{ secrets.GOOGLE_GENERATIVE_AI_API_KEY }}
+
+on:
+  push:
+    paths:
+      - "aws-lambda/**" # solo se dispara si hay cambios en la carpeta aws-lambda
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    permissions:
+      id-token: write # necesario si usas OIDC para IAM
+      contents: read
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }} # Arn del role de deploy
+          aws-region: us-east-1
+
+      - name: Set up SAM CLI
+        uses: aws-actions/setup-sam@v2
+        with:
+          use-installer: true
+
+      - name: Build SAM application
+        working-directory: aws-lambda
+        run: sam build --use-container
+
+      - name: Deploy SAM application
+        working-directory: aws-lambda
+        run: |
+          sam deploy \
+            --no-confirm-changeset \
+            --no-fail-on-empty-changeset \
+            --stack-name aws-lambda \
+            --capabilities CAPABILITY_IAM \
+            --parameter-overrides \
+              SupabaseUrl="${SUPABASE_URL}" \
+              SupabaseServiceRoleKey="${SUPABASE_KEY}" \
+              GoogleApiKey="${GOOGLE_API_KEY}"
