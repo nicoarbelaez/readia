@@ -1,6 +1,3 @@
-import { type LucideIcon } from "lucide-react";
-import { type TablerIcon } from "@tabler/icons-react";
-
 import {
   Collapsible,
   CollapsibleContent,
@@ -17,19 +14,9 @@ import {
   SidebarMenuButtonItem,
   SidebarMenuSubButtonItem,
 } from "@/components/sidebar/nav-items";
+import { NavItem } from "@/types/sidebar";
 
-interface NavMainProps {
-  items: {
-    title: string;
-    url: string;
-    icon?: LucideIcon | TablerIcon;
-    isActive?: boolean;
-    items?: {
-      title: string;
-      url: string;
-    }[];
-  }[];
-}
+type NavMainProps = { items: NavItem[] };
 
 export function NavMain({ items }: NavMainProps) {
   return (

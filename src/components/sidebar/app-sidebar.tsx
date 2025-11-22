@@ -1,11 +1,11 @@
 "use client";
 
-import * as React from "react";
-import { Frame, House, SquareTerminal } from "lucide-react";
+import { Building2, House, SquareTerminal } from "lucide-react";
+import { IconSitemap } from "@tabler/icons-react";
 
 import { NavMain } from "@/components/sidebar/nav-main";
-import { NavProjects } from "@/components/sidebar/nav-projects";
-import { NavUser, type NavUserProps } from "@/components/sidebar/nav-user";
+import { NavConfiguration } from "@/components/sidebar/nav-configuration";
+import { NavUser, NavUserProps } from "@/components/sidebar/nav-user";
 import { BusinessSwitcher } from "@/components/sidebar/business-switcher";
 import {
   Sidebar,
@@ -14,23 +14,19 @@ import {
   SidebarHeader,
   SidebarRail,
 } from "@/components/ui/sidebar";
-import { IconSitemap } from "@tabler/icons-react";
 
-type SidebarProps = React.ComponentProps<typeof Sidebar> & {
+import { useBusinessSwitcher } from "@/components/sidebar/hooks/use-business-switcher";
+import { SidebarData } from "@/types/sidebar";
+
+type AppSidebarProps = React.ComponentProps<typeof Sidebar> & {
   user: NavUserProps["user"];
 };
 
-export function AppSidebar({
-  user: { email, fullName, userName, avatarUrl },
-  ...props
-}: SidebarProps) {
-  const data = {
-    user: {
-      email,
-      fullName,
-      userName,
-      avatarUrl,
-    },
+export function AppSidebar({ user, ...props }: AppSidebarProps) {
+  const { businesses } = useBusinessSwitcher();
+
+  const data: SidebarData = {
+    user,
     navMain: [
       {
         title: "Inicio",
@@ -48,28 +44,19 @@ export function AppSidebar({
         title: "Playground",
         url: "#",
         icon: SquareTerminal,
-        isActive: true,
         items: [
-          {
-            title: "History",
-            url: "#",
-          },
-          {
-            title: "Starred",
-            url: "#",
-          },
-          {
-            title: "Settings",
-            url: "#",
-          },
+          { title: "History", url: "#" },
+          { title: "Starred", url: "#" },
+          { title: "Settings", url: "#" },
         ],
       },
     ],
-    projects: [
+    config: [
       {
-        name: "Design Engineering",
-        url: "#",
-        icon: Frame,
+        title: "Mi empresa",
+        url: "/business",
+        icon: Building2,
+        disabled: businesses.length <= 0,
       },
     ],
   };
@@ -81,7 +68,7 @@ export function AppSidebar({
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={data.navMain} />
-        <NavProjects projects={data.projects} />
+        <NavConfiguration items={data.config} />
       </SidebarContent>
       <SidebarFooter>
         <NavUser user={data.user} />
