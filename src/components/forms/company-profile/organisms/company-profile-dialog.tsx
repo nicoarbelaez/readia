@@ -26,7 +26,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { createBusinessProfile } from "@/app/actions/business-profile-actions";
+import { createBusinessProfile } from "@/app/actions/business/business-profile-actions";
 import { Spinner } from "@/components/ui/spinner";
 
 interface CompanyProfileDialogProps {
