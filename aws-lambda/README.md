@@ -1,127 +1,133 @@
-# aws-lambda
+# Configuración de OIDC entre GitHub Actions y AWS para despliegue de Lambda con SAM
 
-This project contains source code and supporting files for a serverless application that you can deploy with the SAM CLI. It includes the following files and folders.
+## Objetivo
 
-- hello-world - Code for the application's Lambda function written in TypeScript.
-- events - Invocation events that you can use to invoke the function.
-- hello-world/tests - Unit tests for the application code. 
-- template.yaml - A template that defines the application's AWS resources.
+Establecer una conexión segura entre GitHub Actions y AWS utilizando OIDC (OpenID Connect) para permitir el despliegue de funciones Lambda mediante AWS SAM sin necesidad de almacenar credenciales permanentes.
 
-The application uses several AWS resources, including Lambda functions and an API Gateway API. These resources are defined in the `template.yaml` file in this project. You can update the template to add AWS resources through the same deployment process that updates your application code.
+## Conceptos Clave
 
-If you prefer to use an integrated development environment (IDE) to build and test your application, you can use the AWS Toolkit.  
-The AWS Toolkit is an open source plug-in for popular IDEs that uses the SAM CLI to build and deploy serverless applications on AWS. The AWS Toolkit also adds a simplified step-through debugging experience for Lambda function code. See the following links to get started.
+### AWS_ROLE_TO_ASSUME
 
-* [CLion](https://docs.aws.amazon.com/toolkit-for-jetbrains/latest/userguide/welcome.html)
-* [GoLand](https://docs.aws.amazon.com/toolkit-for-jetbrains/latest/userguide/welcome.html)
-* [IntelliJ](https://docs.aws.amazon.com/toolkit-for-jetbrains/latest/userguide/welcome.html)
-* [WebStorm](https://docs.aws.amazon.com/toolkit-for-jetbrains/latest/userguide/welcome.html)
-* [Rider](https://docs.aws.amazon.com/toolkit-for-jetbrains/latest/userguide/welcome.html)
-* [PhpStorm](https://docs.aws.amazon.com/toolkit-for-jetbrains/latest/userguide/welcome.html)
-* [PyCharm](https://docs.aws.amazon.com/toolkit-for-jetbrains/latest/userguide/welcome.html)
-* [RubyMine](https://docs.aws.amazon.com/toolkit-for-jetbrains/latest/userguide/welcome.html)
-* [DataGrip](https://docs.aws.amazon.com/toolkit-for-jetbrains/latest/userguide/welcome.html)
-* [VS Code](https://docs.aws.amazon.com/toolkit-for-vscode/latest/userguide/welcome.html)
-* [Visual Studio](https://docs.aws.amazon.com/toolkit-for-visual-studio/latest/user-guide/welcome.html)
+El valor `AWS_ROLE_TO_ASSUME` representa el ARN (Amazon Resource Name) de un rol IAM en AWS que GitHub Actions puede asumir temporalmente. Este enfoque elimina la necesidad de almacenar credenciales AWS de larga duración en GitHub, utilizando en su lugar tokens JWT temporales obtenidos a través de OIDC.
 
-## Deploy the sample application
+## Implementación
 
-The Serverless Application Model Command Line Interface (SAM CLI) is an extension of the AWS CLI that adds functionality for building and testing Lambda applications. It uses Docker to run your functions in an Amazon Linux environment that matches Lambda. It can also emulate your application's build environment and API.
+### 1. Configuración del Proveedor OIDC en AWS
 
-To use the SAM CLI, you need the following tools.
+**Procedimiento en Consola AWS:**
 
-* SAM CLI - [Install the SAM CLI](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-sam-cli-install.html)
-* Node.js - [Install Node.js 22](https://nodejs.org/en/), including the NPM package management tool.
-* Docker - [Install Docker community edition](https://hub.docker.com/search/?type=edition&offering=community)
+1. Acceder a IAM → **Identity Providers**
+2. Seleccionar **Add Provider** → **OpenID Connect**
+3. Configurar los siguientes parámetros:
+   - **Provider URL**: `https://token.actions.githubusercontent.com`
+   - **Audience**: `sts.amazonaws.com`
 
-To build and deploy your application for the first time, run the following in your shell:
+Esta configuración establece a GitHub como un proveedor de identidad confiable para AWS, permitiendo la autenticación basada en tokens JWT emitidos por GitHub.
 
-```bash
-sam build
-sam deploy --guided
+### 2. Creación del Rol IAM para GitHub Actions
+
+**Política de Confianza Recomendada:**
+
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Principal": {
+        "Federated": "arn:aws:iam::TU_CUENTA_AWS:oidc-provider/token.actions.githubusercontent.com"
+      },
+      "Action": "sts:AssumeRoleWithWebIdentity",
+      "Condition": {
+        "StringEquals": {
+          "token.actions.githubusercontent.com:aud": "sts.amazonaws.com",
+          "token.actions.githubusercontent.com:sub": "repo:TU_ORG/TU_REPO:ref:refs/heads/main"
+        }
+      }
+    }
+  ]
+}
 ```
 
-The first command will build the source of your application. The second command will package and deploy your application to AWS, with a series of prompts:
+**Elementos de Seguridad en la Configuración:**
 
-* **Stack Name**: The name of the stack to deploy to CloudFormation. This should be unique to your account and region, and a good starting point would be something matching your project name.
-* **AWS Region**: The AWS region you want to deploy your app to.
-* **Confirm changes before deploy**: If set to yes, any change sets will be shown to you before execution for manual review. If set to no, the AWS SAM CLI will automatically deploy application changes.
-* **Allow SAM CLI IAM role creation**: Many AWS SAM templates, including this example, create AWS IAM roles required for the AWS Lambda function(s) included to access AWS services. By default, these are scoped down to minimum required permissions. To deploy an AWS CloudFormation stack which creates or modifies IAM roles, the `CAPABILITY_IAM` value for `capabilities` must be provided. If permission isn't provided through this prompt, to deploy this example you must explicitly pass `--capabilities CAPABILITY_IAM` to the `sam deploy` command.
-* **Save arguments to samconfig.toml**: If set to yes, your choices will be saved to a configuration file inside the project, so that in the future you can just re-run `sam deploy` without parameters to deploy changes to your application.
+- La condición `aud` garantiza que los tokens sean válidos solo para AWS STS
+- La condición `sub` restringe el acceso a repositorios y ramas específicas
+- El uso de `Federated` principal permite la asunción de roles mediante identidad federada
 
-You can find your API Gateway Endpoint URL in the output values displayed after deployment.
+### 3. Políticas de Permisos Específicas
 
-## Use the SAM CLI to build and test locally
+**Política de Despliegue (GitHubActionsDeployPolicy):**
 
-Build your application with the `sam build` command.
-
-```bash
-aws-lambda$ sam build
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "AllowS3Actions",
+      "Effect": "Allow",
+      "Action": ["s3:PutObject"],
+      "Resource": [
+        "arn:aws:s3:::aws-sam-cli-managed-default-samclisourcebucket-*",
+        "arn:aws:s3:::aws-sam-cli-managed-default-samclisourcebucket-*/*"
+      ]
+    }
+  ]
+}
 ```
 
-The SAM CLI installs dependencies defined in `hello-world/package.json`, compiles TypeScript with esbuild, creates a deployment package, and saves it in the `.aws-sam/build` folder.
+**Política de Seguridad Adicional (OidcSafetyPolicy):**
 
-Test a single function by invoking it directly with a test event. An event is a JSON document that represents the input that the function receives from the event source. Test events are included in the `events` folder in this project.
-
-Run functions locally and invoke them with the `sam local invoke` command.
-
-```bash
-aws-lambda$ sam local invoke HelloWorldFunction --event events/event.json
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "OidcSafeties",
+      "Effect": "Deny",
+      "Action": ["sts:AssumeRole"],
+      "Resource": "*"
+    }
+  ]
+}
 ```
 
-The SAM CLI can also emulate your application's API. Use the `sam local start-api` to run the API locally on port 3000.
+La política de seguridad complementaria previene la escalada de privilegios al denegar explícitamente la capacidad de asumir otros roles, manteniendo el principio de menor privilegio.
 
-```bash
-aws-lambda$ sam local start-api
-aws-lambda$ curl http://localhost:3000/
-```
+### 4. Configuración en GitHub
 
-The SAM CLI reads the application template to determine the API's routes and the functions that they invoke. The `Events` property on each function's definition includes the route and method for each path.
+**Creación del Secreto:**
+
+1. Navegar a Repository Settings → **Secrets and variables** → **Actions**
+2. Crear nuevo secreto con:
+   - **Name**: `AWS_ROLE_TO_ASSUME`
+   - **Value**: `arn:aws:iam::123456789012:role/GitHubActions-Deploy-Role`
+
+### 5. Integración en Workflow de GitHub Actions
+
+**Configuración del Workflow:**
 
 ```yaml
-      Events:
-        HelloWorld:
-          Type: Api
-          Properties:
-            Path: /hello
-            Method: get
+permissions:
+  id-token: write # Habilita el flujo OIDC
+  contents: read # Permite acceso al código del repositorio
+
+steps:
+  - name: Configure AWS credentials
+    uses: aws-actions/configure-aws-credentials@v2
+    with:
+      role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
+      aws-region: us-east-1
 ```
 
-## Add a resource to your application
-The application template uses AWS Serverless Application Model (AWS SAM) to define application resources. AWS SAM is an extension of AWS CloudFormation with a simpler syntax for configuring common serverless application resources such as functions, triggers, and APIs. For resources not included in [the SAM specification](https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md), you can use standard [AWS CloudFormation](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-template-resource-type-ref.html) resource types.
+Esta configuración permite a GitHub Actions obtener credenciales temporales de AWS automáticamente, utilizando el rol IAM configurado para realizar las operaciones de despliegue.
 
-## Fetch, tail, and filter Lambda function logs
+## Validación y Pruebas
 
-To simplify troubleshooting, SAM CLI has a command called `sam logs`. `sam logs` lets you fetch logs generated by your deployed Lambda function from the command line. In addition to printing the logs on the terminal, this command has several nifty features to help you quickly find the bug.
+1. Realizar un push a la rama autorizada (main en este ejemplo)
+2. Verificar en los logs de GitHub Actions que el paso `Configure AWS credentials` muestra el mensaje `Assuming role with OIDC`
+3. Confirmar que las operaciones subsiguientes de SAM deploy se ejecuten correctamente
 
-`NOTE`: This command works for all AWS Lambda functions; not just the ones you deploy using SAM.
+## Recursos Adicionales
 
-```bash
-aws-lambda$ sam logs -n HelloWorldFunction --stack-name aws-lambda --tail
-```
-
-You can find more information and examples about filtering Lambda function logs in the [SAM CLI Documentation](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-sam-cli-logging.html).
-
-## Unit tests
-
-Tests are defined in the `hello-world/tests` folder in this project. Use NPM to install the [Jest test framework](https://jestjs.io/) and run unit tests.
-
-```bash
-aws-lambda$ cd hello-world
-hello-world$ npm install
-hello-world$ npm run test
-```
-
-## Cleanup
-
-To delete the sample application that you created, use the AWS CLI. Assuming you used your project name for the stack name, you can run the following:
-
-```bash
-sam delete --stack-name aws-lambda
-```
-
-## Resources
-
-See the [AWS SAM developer guide](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/what-is-sam.html) for an introduction to SAM specification, the SAM CLI, and serverless application concepts.
-
-Next, you can use AWS Serverless Application Repository to deploy ready to use Apps that go beyond hello world samples and learn how authors developed their applications: [AWS Serverless Application Repository main page](https://aws.amazon.com/serverless/serverlessrepo/)
+Para una explicación visual del proceso, se recomienda el video: [Securely deploy to AWS with GitHub Actions and OIDC](https://www.youtube.com/watch?v=Io5UFJlEJKc&t=562s) que demuestra la implementación completa.

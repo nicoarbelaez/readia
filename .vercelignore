@@ -1,0 +1,8 @@
+aws-lambda/
+aws-lambda/**
+
+# otras cosas que no quieres en el upload
+node_modules/
+dist/
+.vscode/
+.env*
