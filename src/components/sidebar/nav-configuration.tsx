@@ -30,7 +30,15 @@ export function NavConfiguration({ items }: NavConfigurationProps) {
       <SidebarGroupLabel>Configuración</SidebarGroupLabel>
       <SidebarMenu>
         {items.map(
-          ({ title, isActive, url, icon: Icon, items: subItems, disabled }) => {
+          ({
+            title,
+            isActive,
+            url,
+            icon: Icon,
+            items: subItems,
+            disabled,
+            disabledMessage,
+          }) => {
             const hasItems = !!subItems?.length;
 
             const buttonContent = (
@@ -75,10 +83,10 @@ export function NavConfiguration({ items }: NavConfigurationProps) {
 
             // Renderizado condicional con Tooltip
             return disabled ? (
-              <Tooltip>
+              <Tooltip key={title}>
                 <TooltipTrigger asChild>{collapsibleContent}</TooltipTrigger>
                 <TooltipContent>
-                  <p>No se ha creado ninguna empresa de su propiedad.</p>
+                  <p>{disabledMessage}</p>
                 </TooltipContent>
               </Tooltip>
             ) : (

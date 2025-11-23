@@ -15,14 +15,25 @@ import {
   SidebarRail,
 } from "@/components/ui/sidebar";
 
-import { useBusinessSwitcher } from "@/components/sidebar/hooks/use-business-switcher";
 import { SidebarData } from "@/types/sidebar";
+import {
+  BusinessProvider,
+  useBusinessSwitcher,
+} from "@/context/business-context";
 
 type AppSidebarProps = React.ComponentProps<typeof Sidebar> & {
   user: NavUserProps["user"];
 };
 
-export function AppSidebar({ user, ...props }: AppSidebarProps) {
+export function AppSidebar(props: AppSidebarProps) {
+  return (
+    <BusinessProvider>
+      <AppSidebarContent {...props} />
+    </BusinessProvider>
+  );
+}
+
+function AppSidebarContent({ user, ...props }: AppSidebarProps) {
   const { businesses } = useBusinessSwitcher();
 
   const data: SidebarData = {
@@ -57,6 +68,7 @@ export function AppSidebar({ user, ...props }: AppSidebarProps) {
         url: "/business",
         icon: Building2,
         disabled: businesses.length <= 0,
+        disabledMessage: "No tienes empresas disponibles",
       },
     ],
   };

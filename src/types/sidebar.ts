@@ -10,6 +10,7 @@ export interface NavItem {
   icon?: IconComponent;
   isActive?: boolean;
   disabled?: boolean;
+  disabledMessage?: string
   items?: Array<{
     title: string;
     url: string;

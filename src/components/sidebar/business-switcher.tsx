@@ -17,11 +17,11 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
-import { useBusinessSwitcher } from "./hooks/use-business-switcher";
 import { SidebarMenuCompany } from "@/components/forms/company-profile/organisms/sidebar-menu-company";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Kbd, KbdGroup } from "@/components/ui/kbd";
 import { useEffect } from "react";
+import { useBusinessSwitcher } from "@/context/business-context";
 
 export function BusinessSwitcher() {
   const { isMobile } = useSidebar();

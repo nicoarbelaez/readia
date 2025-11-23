@@ -28,3 +28,11 @@ export type DbQuestionOptionInsert =
   PublicWebSchema["question_options"]["Insert"];
 export type DbQuestionOptionUpdate =
   PublicWebSchema["question_options"]["Update"];
+
+// ------------------------------------------------------------------
+// TABLE: BUSINESS OPTIONS
+// ------------------------------------------------------------------
+
+export type DbBusiness = PublicWebSchema["businesses"]["Row"];
+export type DbBusinessInsert = PublicWebSchema["businesses"]["Insert"];
+export type DbBusinessUpdate = PublicWebSchema["businesses"]["Update"];
