@@ -4,18 +4,13 @@ import {
   CompanyGeneralInfo,
   CompanyQuestion,
 } from "@/components/forms/company-profile/schemas/company-form-schemas";
-import { Database } from "@/types/database";
+import {
+  DbQuestionInsert,
+  DbQuestionOptionInsert,
+  DbResponseInsert,
+} from "@/types/database/entities";
 import { QuestionType } from "@/types/question";
 import { CreateClientReturn } from "@/utils/supabase/server";
-
-type QuestionInsertData =
-  Database["public_web"]["Tables"]["questions"]["Insert"];
-
-type ResponseInsertData =
-  Database["public_web"]["Tables"]["responses"]["Insert"];
-
-type QuestionOptionInsertData =
-  Database["public_web"]["Tables"]["question_options"]["Insert"];
 
 export async function createBusiness(
   supabase: CreateClientReturn,
@@ -48,7 +43,7 @@ export async function insertQuestions(
   businessId: number,
   questions: CompanyQuestion[],
 ): Promise<{ id: string; question_text: string }[]> {
-  const questionsToInsert: QuestionInsertData[] = questions.map((question) => ({
+  const questionsToInsert: DbQuestionInsert[] = questions.map((question) => ({
     business_id: businessId,
     // Usamos la etiqueta original del formulario, que es el texto de la pregunta
     question_text: question.originalQuestion.label,
@@ -76,7 +71,7 @@ export async function insertQuestionOptions(
   questions: CompanyQuestion[],
   questionIdMap: Map<string, string>, // question_text -> question_id
 ): Promise<void> {
-  const optionsToInsert: QuestionOptionInsertData[] = [];
+  const optionsToInsert: DbQuestionOptionInsert[] = [];
 
   questions.forEach((question) => {
     const questionId = questionIdMap.get(question.originalQuestion.label);
@@ -126,7 +121,7 @@ export async function insertResponses(
   questions: CompanyQuestion[],
   questionIdMap: Map<string, string>, // question_text -> question_id
 ): Promise<void> {
-  const responsesToInsert: ResponseInsertData[] = [];
+  const responsesToInsert: DbResponseInsert[] = [];
 
   questions.forEach((question) => {
     const questionId = questionIdMap.get(question.originalQuestion.label);

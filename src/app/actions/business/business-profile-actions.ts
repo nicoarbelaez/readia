@@ -13,7 +13,6 @@ import { QuestionsListSchema } from "@/components/forms/company-profile/schemas/
 import { ActionResult } from "@/types/action-type";
 import { createClient } from "@/utils/supabase/server";
 import loadUser from "@/lib/load-session";
-import { Database } from "@/types/database";
 import { type Business } from "@/components/sidebar/hooks/use-business-switcher";
 import {
   createBusiness,
@@ -21,10 +20,7 @@ import {
   insertQuestions,
   insertResponses,
 } from "@/app/actions/business/business-aux";
-
-type RawQuestionData = Database["public_web"]["Tables"]["questions"]["Row"];
-
-type RawResponseData = Database["public_web"]["Tables"]["responses"]["Row"];
+import { DbQuestion, DbResponse } from "@/types/database/entities";
 
 export interface ResponseData {
   id: string;
@@ -264,17 +260,17 @@ export async function getFullBusinessProfile(): Promise<BusinessProfile | null> 
       return null;
     }
 
-    const responsesData: ResponseData[] = (
-      rawResponses as RawResponseData[]
-    ).map((r) => ({
-      id: r.id,
-      businessId: r.business_id,
-      userId: r.user_id,
-      responseText: r.response_text,
-      createdAt: r.created_at,
-      updatedAt: r.updated_at,
-      questionId: r.question_id,
-    }));
+    const responsesData: ResponseData[] = (rawResponses as DbResponse[]).map(
+      (r) => ({
+        id: r.id,
+        businessId: r.business_id,
+        userId: r.user_id,
+        responseText: r.response_text,
+        createdAt: r.created_at,
+        updatedAt: r.updated_at,
+        questionId: r.question_id,
+      }),
+    );
 
     // 2b. Obtener todas las preguntas únicas asociadas
     const questionIds = [...new Set(responsesData.map((r) => r.questionId))];
@@ -291,12 +287,12 @@ export async function getFullBusinessProfile(): Promise<BusinessProfile | null> 
     }
 
     // Mapear RawQuestionData[] (snake_case) a QuestionData[] (camelCase)
-    const questionsData: QuestionData[] = (
-      rawQuestions as RawQuestionData[]
-    ).map((q) => ({
-      id: q.id,
-      questionText: q.question_text,
-    }));
+    const questionsData: QuestionData[] = (rawQuestions as DbQuestion[]).map(
+      (q) => ({
+        id: q.id,
+        questionText: q.question_text,
+      }),
+    );
 
     // 3. Procesar y estructurar la data (JOIN manual: Agrupar respuestas por pregunta)
     const questionsMap = new Map<string, QuestionWithResponses>();
