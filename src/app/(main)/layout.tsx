@@ -1,13 +1,5 @@
 import { AppSidebar } from "@/components/sidebar/app-sidebar";
 import { ModalCompleteProfile } from "@/components/modal-complete-profile";
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb";
 import { Separator } from "@/components/ui/separator";
 import {
   SidebarInset,
@@ -42,15 +34,21 @@ export default async function MainLayout({ children }: MainLayoutProps) {
         fullName={user.fullName}
         userName={user.userName}
       />
-      <SidebarProvider>
+      <SidebarProvider className="relative">
+        <span className="absolute top-0 left-0 h-full w-full overflow-hidden">
+          <span className="absolute top-[-30%] left-[50%] h-[500px] w-[500px] rounded-full bg-[radial-gradient(circle_farthest-side,var(--primary-soft),rgba(255,255,255,0))] md:top-[10%] md:left-[-20%]" />
+          <span className="absolute right-[-30%] bottom-[-30%] h-[1000px] w-[1000px] rounded-full bg-[radial-gradient(circle_farthest-side,var(--primary-soft),rgba(255,255,255,0))]" />
+        </span>
+
         <AppSidebar user={user} />
-        <SidebarInset>
+
+        <SidebarInset className="bg-surface-900/50">
           <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
             <div className="flex items-center gap-2 px-4">
-              <SidebarTrigger className="-ml-1 cursor-pointer" />
+              <SidebarTrigger className="z-10 -ml-1 cursor-pointer" />
               <Separator
                 orientation="vertical"
-                className="mr-2 data-[orientation=vertical]:h-4"
+                className="z-10 mr-2 data-[orientation=vertical]:h-4"
               />
             </div>
           </header>
