@@ -1,10 +1,8 @@
 "use client";
 
-import { Building2, House, SquareTerminal } from "lucide-react";
+import { Building2, House, LandPlot } from "lucide-react";
 import { IconSitemap } from "@tabler/icons-react";
 
-import { NavMain } from "@/components/sidebar/nav-main";
-import { NavConfiguration } from "@/components/sidebar/nav-configuration";
 import { NavUser, NavUserProps } from "@/components/sidebar/nav-user";
 import { BusinessSwitcher } from "@/components/sidebar/business-switcher";
 import {
@@ -20,6 +18,7 @@ import {
   BusinessProvider,
   useBusinessSwitcher,
 } from "@/context/business-context";
+import { NavButtonItem } from "@/components/sidebar/nav-button-item";
 
 type AppSidebarProps = React.ComponentProps<typeof Sidebar> & {
   user: NavUserProps["user"];
@@ -34,7 +33,10 @@ export function AppSidebar(props: AppSidebarProps) {
 }
 
 function AppSidebarContent({ user, ...props }: AppSidebarProps) {
+  const NO_AVAILABLE_BUSINESSES_MESSAGE = "No tienes empresas disponibles";
+
   const { businesses } = useBusinessSwitcher();
+  const hasBusinesses = businesses.length <= 0;
 
   const data: SidebarData = {
     user,
@@ -43,23 +45,20 @@ function AppSidebarContent({ user, ...props }: AppSidebarProps) {
         title: "Inicio",
         url: "/home",
         icon: House,
-        isActive: true,
+      },
+      {
+        title: "Diagnóstico",
+        url: "/diagnostic",
+        icon: LandPlot,
+        disabled: hasBusinesses,
+        disabledMessage: NO_AVAILABLE_BUSINESSES_MESSAGE,
       },
       {
         title: "Hoja de ruta",
         url: "/roadmap",
         icon: IconSitemap,
-        isActive: true,
-      },
-      {
-        title: "Playground",
-        url: "#",
-        icon: SquareTerminal,
-        items: [
-          { title: "History", url: "#" },
-          { title: "Starred", url: "#" },
-          { title: "Settings", url: "#" },
-        ],
+        disabled: hasBusinesses,
+        disabledMessage: NO_AVAILABLE_BUSINESSES_MESSAGE,
       },
     ],
     config: [
@@ -67,8 +66,8 @@ function AppSidebarContent({ user, ...props }: AppSidebarProps) {
         title: "Mi empresa",
         url: "/business",
         icon: Building2,
-        disabled: businesses.length <= 0,
-        disabledMessage: "No tienes empresas disponibles",
+        disabled: hasBusinesses,
+        disabledMessage: NO_AVAILABLE_BUSINESSES_MESSAGE,
       },
     ],
   };
@@ -79,8 +78,8 @@ function AppSidebarContent({ user, ...props }: AppSidebarProps) {
         <BusinessSwitcher />
       </SidebarHeader>
       <SidebarContent>
-        <NavMain items={data.navMain} />
-        <NavConfiguration items={data.config} />
+        <NavButtonItem items={data.navMain} />
+        <NavButtonItem items={data.config} title="Configuración" />
       </SidebarContent>
       <SidebarFooter>
         <NavUser user={data.user} />

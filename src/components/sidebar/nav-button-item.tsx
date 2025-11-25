@@ -22,12 +22,12 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 
-type NavConfigurationProps = { items: NavItem[] };
+type NavButtonItemProps = { title?: string; items: NavItem[] };
 
-export function NavConfiguration({ items }: NavConfigurationProps) {
+export function NavButtonItem({ title, items }: NavButtonItemProps) {
   return (
     <SidebarGroup className="group-data-[collapsible=icon]:hidden">
-      <SidebarGroupLabel>Configuración</SidebarGroupLabel>
+      {title && <SidebarGroupLabel>{title}</SidebarGroupLabel>}
       <SidebarMenu>
         {items.map(
           ({
@@ -37,18 +37,24 @@ export function NavConfiguration({ items }: NavConfigurationProps) {
             icon: Icon,
             items: subItems,
             disabled,
-            disabledMessage,
+            disabledMessage = "Elemento deshabilitado",
           }) => {
             const hasItems = !!subItems?.length;
 
             const buttonContent = (
-              <SidebarMenuButtonItem
-                hasItems={hasItems}
-                title={title}
-                url={url}
-                icon={Icon}
-                disabled={disabled}
-              />
+              <span className="relative">
+                <SidebarMenuButtonItem
+                  hasItems={hasItems}
+                  title={title}
+                  url={url}
+                  icon={Icon}
+                  disabled={disabled}
+                />
+
+                {disabled && (
+                  <div className="pointer-events-auto absolute inset-0 z-10 bg-transparent" />
+                )}
+              </span>
             );
 
             const collapsibleContent = (
@@ -63,7 +69,7 @@ export function NavConfiguration({ items }: NavConfigurationProps) {
                     {buttonContent}
                   </CollapsibleTrigger>
 
-                  {hasItems && (
+                  {hasItems && !disabled && (
                     <CollapsibleContent>
                       <SidebarMenuSub>
                         {subItems!.map((sub) => (
