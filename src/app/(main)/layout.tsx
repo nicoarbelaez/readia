@@ -16,11 +16,11 @@ import {
 } from "@/components/ui/sidebar";
 import loadUser from "@/lib/load-session";
 
-export default async function RootLayout({
-  children,
-}: {
+interface MainLayoutProps {
   children: React.ReactNode;
-}) {
+}
+
+export default async function MainLayout({ children }: MainLayoutProps) {
   const {
     id,
     email,
@@ -52,19 +52,6 @@ export default async function RootLayout({
                 orientation="vertical"
                 className="mr-2 data-[orientation=vertical]:h-4"
               />
-              <Breadcrumb>
-                <BreadcrumbList>
-                  <BreadcrumbItem className="hidden md:block">
-                    <BreadcrumbLink href="#">
-                      Building Your Application
-                    </BreadcrumbLink>
-                  </BreadcrumbItem>
-                  <BreadcrumbSeparator className="hidden md:block" />
-                  <BreadcrumbItem>
-                    <BreadcrumbPage>Data Fetching</BreadcrumbPage>
-                  </BreadcrumbItem>
-                </BreadcrumbList>
-              </Breadcrumb>
             </div>
           </header>
           {children}
