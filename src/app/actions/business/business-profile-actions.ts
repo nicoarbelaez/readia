@@ -13,7 +13,6 @@ import { QuestionsListSchema } from "@/components/forms/company-profile/schemas/
 import { ActionResult } from "@/types/action-type";
 import { createClient } from "@/utils/supabase/server";
 import loadUser from "@/lib/load-session";
-import { type Business } from "@/components/sidebar/hooks/use-business-switcher";
 import {
   createBusiness,
   insertQuestionOptions,
@@ -21,6 +20,7 @@ import {
   insertResponses,
 } from "@/app/actions/business/business-aux";
 import { DbQuestion, DbResponse } from "@/types/database/entities";
+import { Business } from "@/context/business-context";
 
 export interface ResponseData {
   id: string;
