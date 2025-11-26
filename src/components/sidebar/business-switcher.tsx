@@ -17,11 +17,11 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
-import { useBusinessSwitcher } from "./hooks/use-business-switcher";
 import { SidebarMenuCompany } from "@/components/forms/company-profile/organisms/sidebar-menu-company";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Kbd, KbdGroup } from "@/components/ui/kbd";
 import { useEffect } from "react";
+import { useBusinessSwitcher } from "@/context/business-context";
 
 export function BusinessSwitcher() {
   const { isMobile } = useSidebar();
@@ -49,7 +49,11 @@ export function BusinessSwitcher() {
         return;
       }
 
-      if (event.altKey && event.key >= "1" && event.key <= businesses.length.toString()) {
+      if (
+        event.altKey &&
+        event.key >= "1" &&
+        event.key <= businesses.length.toString()
+      ) {
         const index = parseInt(event.key) - 1;
 
         if (index >= 0 && index < businesses.length) {
@@ -163,7 +167,7 @@ export function BusinessSwitcher() {
                     </div>
                   )}
                 </div>
-                <DropdownMenuShortcut>
+                <DropdownMenuShortcut className="hidden md:block">
                   <KbdGroup>
                     <Kbd>Alt</Kbd>
                     <span>+</span>
