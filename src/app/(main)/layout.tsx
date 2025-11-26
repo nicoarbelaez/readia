@@ -44,7 +44,7 @@ export default async function MainLayout({ children }: MainLayoutProps) {
 
         <SidebarInset className="bg-surface-900/50">
           <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
-            <div className="flex items-center gap-2 px-4">
+            <div className="fixed flex items-center gap-2 px-4">
               <SidebarTrigger className="z-10 -ml-1 cursor-pointer" />
               <Separator
                 orientation="vertical"
@@ -52,7 +52,9 @@ export default async function MainLayout({ children }: MainLayoutProps) {
               />
             </div>
           </header>
-          {children}
+          <div className="container mx-auto h-full px-4 lg:px-8">
+            {children}
+          </div>
         </SidebarInset>
       </SidebarProvider>
     </>
