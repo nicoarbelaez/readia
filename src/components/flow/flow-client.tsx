@@ -1,88 +1,87 @@
 "use client";
 
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   ReactFlow,
-  addEdge,
-  useNodesState,
-  useEdgesState,
   ReactFlowProvider,
-  Connection,
-  Edge,
-  Controls,
   Background,
   BackgroundVariant,
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 import { useTheme } from "next-themes";
+import { Card } from "@/components/ui/card";
+import dagre from "dagre";
+
 import type {
   NodeTypesMap,
   NodeCustomType,
   ReactFlowEdges,
   ReactFlowNode,
 } from "@/types/roadmap-flow";
-import CustomNode from "@/components/flow/custom-node";
+import RoadmapNode from "@/components/flow/nodes/roadmap-node";
+import { getLayoutedElements } from "@/components/flow/lib/layouted-element-node";
 
-type Props = {
-  initialNodes: ReactFlowNode[];
-  initialEdges: ReactFlowEdges[];
+export type RoadmapFlowProps = {
+  nodes: ReactFlowNode[];
+  edges: ReactFlowEdges[];
 };
+
+const dagreGraph = new dagre.graphlib.Graph().setDefaultEdgeLabel(() => ({}));
+
+const NODE_WIDTH = 320;
+const NODE_HEIGHT = 320;
+const DIRECTION = "LR";
 
 export const nodeTypes: NodeTypesMap<NodeCustomType> = {
-  customNode: CustomNode,
+  CustomNode: RoadmapNode,
 };
 
-export default function FlowClient({ initialNodes, initialEdges }: Props) {
-  const [nodes, setNodes, onNodesChange] =
-    useNodesState<ReactFlowNode>(initialNodes);
-  const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
-  const { theme } = useTheme();
+export default function RoadmapFlow({
+  edges: initialEdges,
+  nodes: initialNodes,
+}: RoadmapFlowProps) {
+  const { nodes, edges } = getLayoutedElements({
+    nodes: initialNodes,
+    edges: initialEdges,
+    direction: DIRECTION,
+    dagreGraph,
+    nodeWidth: NODE_WIDTH,
+    nodeHeight: NODE_HEIGHT,
+  });
 
-  const [colorMode, setColorMode] = useState<"light" | "dark">("light");
+  const { resolvedTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
 
-  // Actualizamos colorMode después de montar
   useEffect(() => {
-    if (theme === "dark") setColorMode("dark");
-    else setColorMode("light");
-  }, [theme]);
+    setMounted(true);
+  }, []);
 
-  const onConnect = useCallback(
-    (connection: Connection) => {
-      const newEdge: Edge = {
-        id: `${connection.source}-${connection.target}`,
-        source: connection.source,
-        target: connection.target,
-        animated: true,
-      };
-      setEdges((els) => addEdge(newEdge, els));
-    },
-    [setEdges],
-  );
+  if (!mounted) {
+    return null;
+  }
+
+  const colorMode = resolvedTheme === "dark" ? "dark" : "light";
 
   return (
-    // ReactFlowProvider puede envolver y compartir estado entre rutas/componentes.
     <ReactFlowProvider>
-      <div className="bg-background dark:bg-background h-full w-full overflow-hidden rounded-xl border">
+      <Card className="size-full overflow-hidden shadow-xl">
         <ReactFlow
           nodes={nodes}
           edges={edges}
-          onNodesChange={onNodesChange}
-          onEdgesChange={onEdgesChange}
-          onConnect={onConnect}
           nodeTypes={nodeTypes}
           colorMode={colorMode}
           nodesConnectable={false}
           fitView
+          defaultEdgeOptions={{ type: "smoothstep" }}
         >
-          <Controls />
           <Background
-            style={{
-              background:
-                "linear-gradient(135deg, var(--background), var(--secondary))",
-            }}
+            variant={BackgroundVariant.Dots}
+            gap={12}
+            size={1}
+            color={colorMode === "dark" ? "#475569" : "#cbd5e1"}
           />
         </ReactFlow>
-      </div>
+      </Card>
     </ReactFlowProvider>
   );
 }

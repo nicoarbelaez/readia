@@ -6,6 +6,10 @@ html {
   scroll-behavior: smooth;
 }
 
+@theme {
+  --text-tiny: 0.625rem;
+}
+
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
