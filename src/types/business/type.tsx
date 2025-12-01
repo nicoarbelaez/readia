@@ -1,10 +1,9 @@
-export interface Business {
+import { CompanyGeneralInfo } from "@/components/forms/company-profile/schemas/company-form-schemas";
+import { Database } from "@/types/database";
+
+export type Business = {
   id: number;
-  companyName: string;
-  description: string | null;
-  sector: string;
-  employeeCount: number;
-}
+} & CompanyGeneralInfo;
 
 export interface ResponseData {
   id: string;
@@ -18,7 +17,9 @@ export interface ResponseData {
 
 export interface QuestionData {
   id: string;
+  questionType: Database["public_web"]["Enums"]["question_type_enum"];
   questionText: string;
+  options?: { label: string; value: string }[];
 }
 
 export interface QuestionWithResponses extends QuestionData {

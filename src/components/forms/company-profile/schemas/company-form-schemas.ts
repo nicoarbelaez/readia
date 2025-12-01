@@ -15,6 +15,7 @@ export const CompanyGeneralInfoSchema = z.object({
     .number({ error: "Debe ser número" })
     .min(0, "No puede ser negativo")
     .transform((val) => Math.round(val)),
+  category: z.string().optional(),
 });
 
 export const QuestionSchema = z.discriminatedUnion("type", [

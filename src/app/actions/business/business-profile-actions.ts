@@ -27,6 +27,7 @@ import {
   QuestionWithResponses,
   ResponseData,
 } from "@/types/business/type";
+import { revalidatePath } from "next/cache";
 
 export async function generarteIAQuestion(
   questionsAnswered: CompanyQuestions,
@@ -153,7 +154,7 @@ export async function getBusinesses(): Promise<Business[]> {
     const { data: businesses, error } = await supabase
       .schema("public_web")
       .from("businesses")
-      .select("id, company_name, description, sector, employee_count")
+      .select("*")
       .eq("user_owner_id", user.id)
       .order("create_at", { ascending: true });
 
@@ -168,7 +169,9 @@ export async function getBusinesses(): Promise<Business[]> {
       description: business.description,
       sector: business.sector || "NaN",
       employeeCount: business.employee_count || 0,
-    }));
+      category: business.category || "NaN",
+      netEarnings: business.net_earnings || 0,
+    })) as Business[];
   } catch (error) {
     console.error("Error in getBusinesses:", error);
     return [];
@@ -210,7 +213,7 @@ export async function getFullBusinessProfile(): Promise<BusinessProfile | null> 
     const { data: businessData, error: businessError } = await supabase
       .schema("public_web")
       .from("businesses")
-      .select("id, company_name, description, sector, employee_count")
+      .select("*")
       .eq("id", firstBusinessId)
       .single();
 
@@ -223,9 +226,11 @@ export async function getFullBusinessProfile(): Promise<BusinessProfile | null> 
     const business: Business = {
       id: rawBusiness.id,
       companyName: rawBusiness.company_name,
-      description: rawBusiness.description,
+      description: rawBusiness.description || "N/A",
       sector: rawBusiness.sector || "N/A",
       employeeCount: rawBusiness.employee_count || 0,
+      category: rawBusiness.category || "N/A",
+      netEarnings: rawBusiness.net_earnings || 0,
     };
 
     const { data: rawResponses, error: responsesError } = await supabase
@@ -260,7 +265,7 @@ export async function getFullBusinessProfile(): Promise<BusinessProfile | null> 
     const { data: rawQuestions, error: questionsError } = await supabase
       .schema("public_web")
       .from("questions")
-      .select("id, question_text")
+      .select("id, question_text, question_type")
       .in("id", questionIds);
 
     if (questionsError) {
@@ -268,13 +273,39 @@ export async function getFullBusinessProfile(): Promise<BusinessProfile | null> 
       return null;
     }
 
-    // Mapear RawQuestionData[] (snake_case) a QuestionData[] (camelCase)
     const questionsData: QuestionData[] = (rawQuestions as DbQuestion[]).map(
       (q) => ({
         id: q.id,
+        questionType: q.question_type,
         questionText: q.question_text,
+        options: [],
       }),
     );
+
+    // 2c. Obtener opciones para las preguntas (si las hay)
+    const { data: rawOptions, error: optionsError } = await supabase
+      .schema("public_web")
+      .from("question_options")
+      .select("question_id, option_text, option_order")
+      .in("question_id", questionIds)
+      .order("option_order", { ascending: true });
+
+    if (optionsError) {
+      console.error("Error fetching question options:", optionsError);
+      // No fallamos todo, solo no habrá opciones
+    } else if (rawOptions) {
+      // Asignar opciones a las preguntas correspondientes
+      rawOptions.forEach((opt) => {
+        const q = questionsData.find((q) => q.id === opt.question_id);
+        if (q) {
+          if (!q.options) q.options = [];
+          q.options.push({
+            label: opt.option_text,
+            value: opt.option_text,
+          });
+        }
+      });
+    }
 
     // 3. Procesar y estructurar la data (JOIN manual: Agrupar respuestas por pregunta)
     const questionsMap = new Map<string, QuestionWithResponses>();
@@ -311,5 +342,80 @@ export async function getFullBusinessProfile(): Promise<BusinessProfile | null> 
   } catch (error) {
     console.error("Error in getFullBusinessProfile:", error);
     return null;
+  }
+}
+
+export async function updateBusinessResponses(
+  businessId: number,
+  responses: { questionId: string; response: string | string[] }[],
+): Promise<ActionResult> {
+  try {
+    const supabase = await createClient();
+    const user = await loadUser();
+
+    if (!user?.id) {
+      return { success: false, message: "Usuario no autenticado" };
+    }
+
+    // Validar que el negocio pertenezca al usuario (opcional pero recomendado)
+    // ...
+
+    const updates = responses.map((r) => {
+      const responseText = Array.isArray(r.response)
+        ? JSON.stringify(r.response)
+        : r.response;
+
+      return {
+        business_id: businessId,
+        question_id: r.questionId,
+        user_id: user.id,
+        response_text: responseText,
+        updated_at: new Date().toISOString(),
+      };
+    });
+
+    const { error } = await supabase
+      .schema("public_web")
+      .from("responses")
+      .upsert(updates, {
+        onConflict: "business_id, question_id, user_id",
+        ignoreDuplicates: false,
+      });
+
+    if (error) {
+      console.error("Error updating responses:", error);
+      throw new Error(error.message);
+    }
+
+    revalidatePath("/business");
+    return { success: true, message: "Respuestas actualizadas correctamente" };
+  } catch (error) {
+    console.error("Error in updateBusinessResponses:", error);
+    return {
+      success: false,
+      message:
+        error instanceof Error
+          ? error.message
+          : "Error al actualizar respuestas",
+    };
+  }
+}
+
+export async function regenerateDiagnostic(
+  businessId: number,
+): Promise<ActionResult> {
+  try {
+    console.log("Regenerating diagnostic for business:", businessId);
+
+    revalidatePath("/business");
+    return {
+      success: true,
+      message: "Diagnóstico regenerado (simulado)",
+    };
+  } catch (error) {
+    return {
+      success: false,
+      message: "Error al regenerar diagnóstico: " + error,
+    };
   }
 }

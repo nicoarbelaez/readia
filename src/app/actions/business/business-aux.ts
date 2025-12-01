@@ -26,6 +26,8 @@ export async function createBusiness(
       employee_count: generalInfo.employeeCount,
       description: generalInfo.description,
       user_owner_id: userId,
+      category: generalInfo.category,
+      net_earnings: generalInfo.netEarnings,
     })
     .select()
     .single();
@@ -69,7 +71,7 @@ export async function insertQuestions(
 export async function insertQuestionOptions(
   supabase: CreateClientReturn,
   questions: CompanyQuestion[],
-  questionIdMap: Map<string, string>, // question_text -> question_id
+  questionIdMap: Map<string, string>,
 ): Promise<void> {
   const optionsToInsert: DbQuestionOptionInsert[] = [];
 
@@ -92,7 +94,8 @@ export async function insertQuestionOptions(
         (option, optionIndex: number) => {
           optionsToInsert.push({
             question_id: questionId,
-            option_text: option.label,
+            option_text: option.value,
+            option_label: option.label,
             option_order: optionIndex,
           });
         },
