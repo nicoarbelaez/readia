@@ -1,14 +1,7 @@
 import { useEffect, useState, useCallback } from "react";
 import { createClient } from "@/utils/supabase/client";
 import { getBusinesses } from "@/app/actions/business/business-profile-actions";
-
-export interface Business {
-  id: number;
-  companyName: string;
-  description: string | null;
-  sector: string;
-  employeeCount: number;
-}
+import { Business } from "@/types/business/type";
 
 export function useBusinessSwitcher() {
   const [businesses, setBusinesses] = useState<Business[]>([]);
