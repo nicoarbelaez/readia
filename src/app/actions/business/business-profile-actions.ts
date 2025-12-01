@@ -361,9 +361,6 @@ export async function updateBusinessResponses(
       return { success: false, message: "Usuario no autenticado" };
     }
 
-    // Validar que el negocio pertenezca al usuario (opcional pero recomendado)
-    // ...
-
     const updates = responses.map((r) => {
       const responseText = Array.isArray(r.response)
         ? JSON.stringify(r.response)

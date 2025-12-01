@@ -73,9 +73,11 @@ export function BusinessProvider({ children }: { children: React.ReactNode }) {
   const mapDbBusinessToBusiness = (row: DbBusiness): Business => ({
     id: row.id,
     companyName: row.company_name,
-    description: row.description,
+    description: row.description || "N/A",
     sector: row.sector || "N/A",
     employeeCount: row.employee_count || 0,
+    netEarnings: row.net_earnings || 0,
+    category: row.category || "N/A",
   });
 
   // Lógica de actualización local (Optimizada)

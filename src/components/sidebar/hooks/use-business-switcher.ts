@@ -38,6 +38,8 @@ export function useBusinessSwitcher() {
       description: newRow.description,
       sector: newRow.sector,
       employeeCount: newRow.employee_count,
+      netEarnings: newRow.net_earnings,
+      category: newRow.category,
     };
 
     setBusinesses((prev) => {
@@ -65,6 +67,8 @@ export function useBusinessSwitcher() {
       description: newRow.description,
       sector: newRow.sector,
       employeeCount: newRow.employee_count,
+      netEarnings: newRow.net_earnings,
+      category: newRow.category,
     };
 
     setBusinesses((prev) =>
