@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "gen:types": "npx -y supabase@2.47.2 gen types typescript --project-id fglvypynatlwvxwjudlk --schema public,public_web > ./src/types/database.ts"
+    "gen:types": "npx -y supabase@2.47.2 gen types typescript --project-id fglvypynatlwvxwjudlk --schema public,public_web > ./src/types/database.ts",
+    "db:push": "supabase db push && pnpm gen:types"
   },
   "dependencies": {
     "@ai-sdk/google": "^2.0.13",
