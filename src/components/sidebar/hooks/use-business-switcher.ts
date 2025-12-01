@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback } from "react";
 import { createClient } from "@/utils/supabase/client";
-import { getBusinesses } from "@/app/actions/business-profile-actions";
+import { getBusinesses } from "@/app/actions/business/business-profile-actions";
 
 export interface Business {
   id: number;
