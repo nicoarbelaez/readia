@@ -1,5 +1,8 @@
 import { z } from "zod";
-import { QuestionSchema as QuestionOptionSchema } from "./question-schema";
+import {
+  BaseQuestionSchema,
+  QuestionSchema as QuestionOptionSchema,
+} from "@/components/forms/company-profile/schemas/question-schema";
 
 export const CompanyGeneralInfoSchema = z.object({
   sector: z.string().min(2, "Sector obligatorio"),
@@ -53,7 +56,11 @@ export const CompanyFormSchema = z.object({
   extraQuestions: CompanyExtraQuestionsSchema,
 });
 
-export type CompanyQuestion = z.infer<typeof QuestionSchema>;
+export type CompanyQuestion = z.infer<typeof QuestionSchema> & {
+  aiGenerated?: boolean;
+};
+
+export type BaseQuestion = z.infer<typeof BaseQuestionSchema>;
 
 export type CompanyGeneralInfo = z.infer<typeof CompanyGeneralInfoSchema>;
 export type CompanyQuestions = z.infer<typeof CompanyQuestionsSchema>;

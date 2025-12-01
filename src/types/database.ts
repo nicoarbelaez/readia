@@ -2011,6 +2011,7 @@ export type Database = {
       }
       questions: {
         Row: {
+          ai_generated: boolean | null
           business_id: number
           created_at: string
           description: string | null
@@ -2021,6 +2022,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          ai_generated?: boolean | null
           business_id: number
           created_at?: string
           description?: string | null
@@ -2031,6 +2033,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          ai_generated?: boolean | null
           business_id?: number
           created_at?: string
           description?: string | null

@@ -19,6 +19,7 @@ export interface QuestionData {
   id: string;
   questionType: Database["public_web"]["Enums"]["question_type_enum"];
   questionText: string;
+  aiGenerated: boolean;
   options?: { label: string; value: string }[];
 }
 

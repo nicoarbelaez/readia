@@ -96,7 +96,10 @@ export async function createBusinessProfile(
     // 2. Preparar y obtener la lista unificada de preguntas
     const allQuestions: CompanyQuestion[] = [
       ...formData.questions.questions,
-      ...formData.extraQuestions.additionalQuestions,
+      ...formData.extraQuestions.additionalQuestions.map((q) => ({
+        ...q,
+        aiGenerated: true,
+      })),
     ];
 
     // 3. Insertar Preguntas y obtener sus IDs de vuelta
@@ -265,7 +268,7 @@ export async function getFullBusinessProfile(): Promise<BusinessProfile | null> 
     const { data: rawQuestions, error: questionsError } = await supabase
       .schema("public_web")
       .from("questions")
-      .select("id, question_text, question_type")
+      .select("*")
       .in("id", questionIds);
 
     if (questionsError) {
@@ -278,6 +281,7 @@ export async function getFullBusinessProfile(): Promise<BusinessProfile | null> 
         id: q.id,
         questionType: q.question_type,
         questionText: q.question_text,
+        aiGenerated: q.ai_generated || false,
         options: [],
       }),
     );
@@ -286,7 +290,7 @@ export async function getFullBusinessProfile(): Promise<BusinessProfile | null> 
     const { data: rawOptions, error: optionsError } = await supabase
       .schema("public_web")
       .from("question_options")
-      .select("question_id, option_text, option_order")
+      .select("*")
       .in("question_id", questionIds)
       .order("option_order", { ascending: true });
 
@@ -300,7 +304,7 @@ export async function getFullBusinessProfile(): Promise<BusinessProfile | null> 
         if (q) {
           if (!q.options) q.options = [];
           q.options.push({
-            label: opt.option_text,
+            label: opt.option_label ?? "N/A",
             value: opt.option_text,
           });
         }

@@ -51,6 +51,7 @@ export async function insertQuestions(
     question_text: question.originalQuestion.label,
     question_type: question.originalQuestion.type as QuestionType,
     required: true,
+    ai_generated: question.aiGenerated,
   }));
 
   const { data: questionsData, error: questionsError } = await supabase

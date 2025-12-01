@@ -18,6 +18,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { ControllerRenderProps, FieldPath, FieldValues } from "react-hook-form";
+import { Textarea } from "@/components/ui/textarea";
 
 interface BaseInputProps<
   TFieldValues extends FieldValues,
@@ -68,7 +69,7 @@ function TextAreaInput<
   TName extends FieldPath<TFieldValues>,
 >({ field, inputProps }: BaseInputProps<TFieldValues, TName>) {
   return (
-    <textarea
+    <Textarea
       {...field}
       className="bg-background min-h-[100px] w-full rounded-md border px-3 py-2"
       placeholder={inputProps?.placeholder ?? ""}
