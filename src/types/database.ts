@@ -109,227 +109,6 @@ export type Database = {
         }
         Relationships: []
       }
-      chat_hub_agents: {
-        Row: {
-          createdAt: string
-          credentialId: string | null
-          description: string | null
-          id: string
-          model: string
-          name: string
-          ownerId: string
-          provider: string
-          systemPrompt: string
-          updatedAt: string
-        }
-        Insert: {
-          createdAt?: string
-          credentialId?: string | null
-          description?: string | null
-          id: string
-          model: string
-          name: string
-          ownerId: string
-          provider: string
-          systemPrompt: string
-          updatedAt?: string
-        }
-        Update: {
-          createdAt?: string
-          credentialId?: string | null
-          description?: string | null
-          id?: string
-          model?: string
-          name?: string
-          ownerId?: string
-          provider?: string
-          systemPrompt?: string
-          updatedAt?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "FK_441ba2caba11e077ce3fbfa2cd8"
-            columns: ["ownerId"]
-            isOneToOne: false
-            referencedRelation: "user"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "FK_9c61ad497dcbae499c96a6a78ba"
-            columns: ["credentialId"]
-            isOneToOne: false
-            referencedRelation: "credentials_entity"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      chat_hub_messages: {
-        Row: {
-          agentId: string | null
-          content: string
-          createdAt: string
-          executionId: number | null
-          id: string
-          model: string | null
-          name: string
-          previousMessageId: string | null
-          provider: string | null
-          retryOfMessageId: string | null
-          revisionOfMessageId: string | null
-          sessionId: string
-          status: string
-          type: string
-          updatedAt: string
-          workflowId: string | null
-        }
-        Insert: {
-          agentId?: string | null
-          content: string
-          createdAt?: string
-          executionId?: number | null
-          id: string
-          model?: string | null
-          name: string
-          previousMessageId?: string | null
-          provider?: string | null
-          retryOfMessageId?: string | null
-          revisionOfMessageId?: string | null
-          sessionId: string
-          status?: string
-          type: string
-          updatedAt?: string
-          workflowId?: string | null
-        }
-        Update: {
-          agentId?: string | null
-          content?: string
-          createdAt?: string
-          executionId?: number | null
-          id?: string
-          model?: string | null
-          name?: string
-          previousMessageId?: string | null
-          provider?: string | null
-          retryOfMessageId?: string | null
-          revisionOfMessageId?: string | null
-          sessionId?: string
-          status?: string
-          type?: string
-          updatedAt?: string
-          workflowId?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "FK_1f4998c8a7dec9e00a9ab15550e"
-            columns: ["revisionOfMessageId"]
-            isOneToOne: false
-            referencedRelation: "chat_hub_messages"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "FK_25c9736e7f769f3a005eef4b372"
-            columns: ["retryOfMessageId"]
-            isOneToOne: false
-            referencedRelation: "chat_hub_messages"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "FK_6afb260449dd7a9b85355d4e0c9"
-            columns: ["executionId"]
-            isOneToOne: false
-            referencedRelation: "execution_entity"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "FK_acf8926098f063cdbbad8497fd1"
-            columns: ["workflowId"]
-            isOneToOne: false
-            referencedRelation: "workflow_entity"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "FK_e22538eb50a71a17954cd7e076c"
-            columns: ["sessionId"]
-            isOneToOne: false
-            referencedRelation: "chat_hub_sessions"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "FK_e5d1fa722c5a8d38ac204746662"
-            columns: ["previousMessageId"]
-            isOneToOne: false
-            referencedRelation: "chat_hub_messages"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      chat_hub_sessions: {
-        Row: {
-          agentId: string | null
-          agentName: string | null
-          createdAt: string
-          credentialId: string | null
-          id: string
-          lastMessageAt: string | null
-          model: string | null
-          ownerId: string
-          provider: string | null
-          title: string
-          updatedAt: string
-          workflowId: string | null
-        }
-        Insert: {
-          agentId?: string | null
-          agentName?: string | null
-          createdAt?: string
-          credentialId?: string | null
-          id: string
-          lastMessageAt?: string | null
-          model?: string | null
-          ownerId: string
-          provider?: string | null
-          title: string
-          updatedAt?: string
-          workflowId?: string | null
-        }
-        Update: {
-          agentId?: string | null
-          agentName?: string | null
-          createdAt?: string
-          credentialId?: string | null
-          id?: string
-          lastMessageAt?: string | null
-          model?: string | null
-          ownerId?: string
-          provider?: string | null
-          title?: string
-          updatedAt?: string
-          workflowId?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "FK_7bc13b4c7e6afbfaf9be326c189"
-            columns: ["credentialId"]
-            isOneToOne: false
-            referencedRelation: "credentials_entity"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "FK_9f9293d9f552496c40e0d1a8f80"
-            columns: ["workflowId"]
-            isOneToOne: false
-            referencedRelation: "workflow_entity"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "FK_e9ecf8ede7d989fcd18790fe36a"
-            columns: ["ownerId"]
-            isOneToOne: false
-            referencedRelation: "user"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       credentials_entity: {
         Row: {
           createdAt: string
@@ -360,12 +139,13 @@ export type Database = {
         }
         Relationships: []
       }
-      data_table: {
+      data_store: {
         Row: {
           createdAt: string
           id: string
           name: string
           projectId: string
+          sizeBytes: number
           updatedAt: string
         }
         Insert: {
@@ -373,6 +153,7 @@ export type Database = {
           id: string
           name: string
           projectId: string
+          sizeBytes?: number
           updatedAt?: string
         }
         Update: {
@@ -380,11 +161,12 @@ export type Database = {
           id?: string
           name?: string
           projectId?: string
+          sizeBytes?: number
           updatedAt?: string
         }
         Relationships: [
           {
-            foreignKeyName: "FK_c2a794257dee48af7c9abf681de"
+            foreignKeyName: "FK_74fdb2d31889a91da14bb711b35"
             columns: ["projectId"]
             isOneToOne: false
             referencedRelation: "project"
@@ -392,10 +174,10 @@ export type Database = {
           },
         ]
       }
-      data_table_column: {
+      data_store_column: {
         Row: {
           createdAt: string
-          dataTableId: string
+          dataStoreId: string
           id: string
           index: number
           name: string
@@ -404,7 +186,7 @@ export type Database = {
         }
         Insert: {
           createdAt?: string
-          dataTableId: string
+          dataStoreId: string
           id: string
           index: number
           name: string
@@ -413,7 +195,7 @@ export type Database = {
         }
         Update: {
           createdAt?: string
-          dataTableId?: string
+          dataStoreId?: string
           id?: string
           index?: number
           name?: string
@@ -422,13 +204,43 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "FK_930b6e8faaf88294cef23484160"
-            columns: ["dataTableId"]
+            foreignKeyName: "FK_07172caded772d9c9d1a96d8317"
+            columns: ["dataStoreId"]
             isOneToOne: false
-            referencedRelation: "data_table"
+            referencedRelation: "data_store"
             referencedColumns: ["id"]
           },
         ]
+      }
+      empresas: {
+        Row: {
+          id: number
+          nombre: string
+          pagina_web: string | null
+          redes_sociales: string | null
+          sector: string | null
+          tamanio: string | null
+          user_id: string | null
+        }
+        Insert: {
+          id?: number
+          nombre: string
+          pagina_web?: string | null
+          redes_sociales?: string | null
+          sector?: string | null
+          tamanio?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          id?: number
+          nombre?: string
+          pagina_web?: string | null
+          redes_sociales?: string | null
+          sector?: string | null
+          tamanio?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
       }
       event_destinations: {
         Row: {
@@ -873,27 +685,6 @@ export type Database = {
         }
         Relationships: []
       }
-      mensaje: {
-        Row: {
-          created_at: string
-          id: number
-          id_usuario: string | null
-          mensaje: string | null
-        }
-        Insert: {
-          created_at?: string
-          id?: number
-          id_usuario?: string | null
-          mensaje?: string | null
-        }
-        Update: {
-          created_at?: string
-          id?: number
-          id_usuario?: string | null
-          mensaje?: string | null
-        }
-        Relationships: []
-      }
       migrations: {
         Row: {
           id: number
@@ -912,209 +703,20 @@ export type Database = {
         }
         Relationships: []
       }
-      oauth_access_tokens: {
+      preguntas: {
         Row: {
-          clientId: string
-          token: string
-          userId: string
+          id: number
+          texto: string
         }
         Insert: {
-          clientId: string
-          token: string
-          userId: string
+          id?: number
+          texto: string
         }
         Update: {
-          clientId?: string
-          token?: string
-          userId?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "FK_7234a36d8e49a1fa85095328845"
-            columns: ["userId"]
-            isOneToOne: false
-            referencedRelation: "user"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "FK_78b26968132b7e5e45b75876481"
-            columns: ["clientId"]
-            isOneToOne: false
-            referencedRelation: "oauth_clients"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      oauth_authorization_codes: {
-        Row: {
-          clientId: string
-          code: string
-          codeChallenge: string
-          codeChallengeMethod: string
-          createdAt: string
-          expiresAt: number
-          redirectUri: string
-          state: string | null
-          updatedAt: string
-          used: boolean
-          userId: string
-        }
-        Insert: {
-          clientId: string
-          code: string
-          codeChallenge: string
-          codeChallengeMethod: string
-          createdAt?: string
-          expiresAt: number
-          redirectUri: string
-          state?: string | null
-          updatedAt?: string
-          used?: boolean
-          userId: string
-        }
-        Update: {
-          clientId?: string
-          code?: string
-          codeChallenge?: string
-          codeChallengeMethod?: string
-          createdAt?: string
-          expiresAt?: number
-          redirectUri?: string
-          state?: string | null
-          updatedAt?: string
-          used?: boolean
-          userId?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "FK_64d965bd072ea24fb6da55468cd"
-            columns: ["clientId"]
-            isOneToOne: false
-            referencedRelation: "oauth_clients"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "FK_aa8d3560484944c19bdf79ffa16"
-            columns: ["userId"]
-            isOneToOne: false
-            referencedRelation: "user"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      oauth_clients: {
-        Row: {
-          clientSecret: string | null
-          clientSecretExpiresAt: number | null
-          createdAt: string
-          grantTypes: Json
-          id: string
-          name: string
-          redirectUris: Json
-          tokenEndpointAuthMethod: string
-          updatedAt: string
-        }
-        Insert: {
-          clientSecret?: string | null
-          clientSecretExpiresAt?: number | null
-          createdAt?: string
-          grantTypes: Json
-          id: string
-          name: string
-          redirectUris: Json
-          tokenEndpointAuthMethod?: string
-          updatedAt?: string
-        }
-        Update: {
-          clientSecret?: string | null
-          clientSecretExpiresAt?: number | null
-          createdAt?: string
-          grantTypes?: Json
-          id?: string
-          name?: string
-          redirectUris?: Json
-          tokenEndpointAuthMethod?: string
-          updatedAt?: string
+          id?: number
+          texto?: string
         }
         Relationships: []
-      }
-      oauth_refresh_tokens: {
-        Row: {
-          clientId: string
-          createdAt: string
-          expiresAt: number
-          token: string
-          updatedAt: string
-          userId: string
-        }
-        Insert: {
-          clientId: string
-          createdAt?: string
-          expiresAt: number
-          token: string
-          updatedAt?: string
-          userId: string
-        }
-        Update: {
-          clientId?: string
-          createdAt?: string
-          expiresAt?: number
-          token?: string
-          updatedAt?: string
-          userId?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "FK_a699f3ed9fd0c1b19bc2608ac53"
-            columns: ["userId"]
-            isOneToOne: false
-            referencedRelation: "user"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "FK_b388696ce4d8be7ffbe8d3e4b69"
-            columns: ["clientId"]
-            isOneToOne: false
-            referencedRelation: "oauth_clients"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      oauth_user_consents: {
-        Row: {
-          clientId: string
-          grantedAt: number
-          id: number
-          userId: string
-        }
-        Insert: {
-          clientId: string
-          grantedAt: number
-          id?: number
-          userId: string
-        }
-        Update: {
-          clientId?: string
-          grantedAt?: number
-          id?: number
-          userId?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "FK_21e6c3c2d78a097478fae6aaefa"
-            columns: ["userId"]
-            isOneToOne: false
-            referencedRelation: "user"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "FK_a651acea2f6c97f8c4514935486"
-            columns: ["clientId"]
-            isOneToOne: false
-            referencedRelation: "oauth_clients"
-            referencedColumns: ["id"]
-          },
-        ]
       }
       processed_data: {
         Row: {
@@ -1215,42 +817,65 @@ export type Database = {
             referencedRelation: "project"
             referencedColumns: ["id"]
           },
+        ]
+      }
+      respuestas: {
+        Row: {
+          empresa_id: number | null
+          id: number
+          pregunta_id: number | null
+          respuesta: string | null
+        }
+        Insert: {
+          empresa_id?: number | null
+          id?: number
+          pregunta_id?: number | null
+          respuesta?: string | null
+        }
+        Update: {
+          empresa_id?: number | null
+          id?: number
+          pregunta_id?: number | null
+          respuesta?: string | null
+        }
+        Relationships: [
           {
-            foreignKeyName: "FK_c6b99592dc96b0d836d7a21db91"
-            columns: ["role"]
+            foreignKeyName: "respuestas_empresa_id_fkey"
+            columns: ["empresa_id"]
             isOneToOne: false
-            referencedRelation: "role"
-            referencedColumns: ["slug"]
+            referencedRelation: "empresas"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "respuestas_pregunta_id_fkey"
+            columns: ["pregunta_id"]
+            isOneToOne: false
+            referencedRelation: "preguntas"
+            referencedColumns: ["id"]
           },
         ]
       }
       role: {
         Row: {
-          createdAt: string
           description: string | null
           displayName: string | null
           roleType: string | null
           slug: string
           systemRole: boolean
-          updatedAt: string
         }
         Insert: {
-          createdAt?: string
           description?: string | null
           displayName?: string | null
           roleType?: string | null
           slug: string
           systemRole?: boolean
-          updatedAt?: string
         }
         Update: {
-          createdAt?: string
           description?: string | null
           displayName?: string | null
           roleType?: string | null
           slug?: string
           systemRole?: boolean
-          updatedAt?: string
         }
         Relationships: []
       }
@@ -1543,6 +1168,7 @@ export type Database = {
           mfaSecret: string | null
           password: string | null
           personalizationAnswers: Json | null
+          role: string
           roleSlug: string
           settings: Json | null
           updatedAt: string
@@ -1560,6 +1186,7 @@ export type Database = {
           mfaSecret?: string | null
           password?: string | null
           personalizationAnswers?: Json | null
+          role: string
           roleSlug?: string
           settings?: Json | null
           updatedAt?: string
@@ -1577,6 +1204,7 @@ export type Database = {
           mfaSecret?: string | null
           password?: string | null
           personalizationAnswers?: Json | null
+          role?: string
           roleSlug?: string
           settings?: Json | null
           updatedAt?: string
@@ -1594,7 +1222,6 @@ export type Database = {
       user_api_keys: {
         Row: {
           apiKey: string
-          audience: string
           createdAt: string
           id: string
           label: string
@@ -1604,7 +1231,6 @@ export type Database = {
         }
         Insert: {
           apiKey: string
-          audience?: string
           createdAt?: string
           id: string
           label: string
@@ -1614,7 +1240,6 @@ export type Database = {
         }
         Update: {
           apiKey?: string
-          audience?: string
           createdAt?: string
           id?: string
           label?: string
@@ -1636,33 +1261,22 @@ export type Database = {
         Row: {
           id: string
           key: string
-          projectId: string | null
           type: string
           value: string | null
         }
         Insert: {
           id: string
           key: string
-          projectId?: string | null
           type?: string
           value?: string | null
         }
         Update: {
           id?: string
           key?: string
-          projectId?: string | null
           type?: string
           value?: string | null
         }
-        Relationships: [
-          {
-            foreignKeyName: "FK_42f6c766f9f9d2edcc15bdd6e9b"
-            columns: ["projectId"]
-            isOneToOne: false
-            referencedRelation: "project"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       webhook_entity: {
         Row: {
@@ -1699,53 +1313,11 @@ export type Database = {
           },
         ]
       }
-      workflow_dependency: {
-        Row: {
-          createdAt: string
-          dependencyInfo: Json | null
-          dependencyKey: string
-          dependencyType: string
-          id: number
-          indexVersionId: number
-          workflowId: string
-          workflowVersionId: number
-        }
-        Insert: {
-          createdAt?: string
-          dependencyInfo?: Json | null
-          dependencyKey: string
-          dependencyType: string
-          id?: number
-          indexVersionId?: number
-          workflowId: string
-          workflowVersionId: number
-        }
-        Update: {
-          createdAt?: string
-          dependencyInfo?: Json | null
-          dependencyKey?: string
-          dependencyType?: string
-          id?: number
-          indexVersionId?: number
-          workflowId?: string
-          workflowVersionId?: number
-        }
-        Relationships: [
-          {
-            foreignKeyName: "FK_a4ff2d9b9628ea988fa9e7d0bf8"
-            columns: ["workflowId"]
-            isOneToOne: false
-            referencedRelation: "workflow_entity"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       workflow_entity: {
         Row: {
           active: boolean
           connections: Json
           createdAt: string
-          description: string | null
           id: string
           isArchived: boolean
           meta: Json | null
@@ -1757,14 +1329,12 @@ export type Database = {
           staticData: Json | null
           triggerCount: number
           updatedAt: string
-          versionCounter: number
           versionId: string | null
         }
         Insert: {
           active: boolean
           connections: Json
           createdAt?: string
-          description?: string | null
           id: string
           isArchived?: boolean
           meta?: Json | null
@@ -1776,14 +1346,12 @@ export type Database = {
           staticData?: Json | null
           triggerCount?: number
           updatedAt?: string
-          versionCounter?: number
           versionId?: string | null
         }
         Update: {
           active?: boolean
           connections?: Json
           createdAt?: string
-          description?: string | null
           id?: string
           isArchived?: boolean
           meta?: Json | null
@@ -1795,7 +1363,6 @@ export type Database = {
           staticData?: Json | null
           triggerCount?: number
           updatedAt?: string
-          versionCounter?: number
           versionId?: string | null
         }
         Relationships: [
@@ -1926,38 +1493,20 @@ export type Database = {
     Tables: {
       businesses: {
         Row: {
-          category: string | null
-          company_name: string
           create_at: string
-          description: string | null
-          employee_count: number | null
           id: number
-          net_earnings: number | null
-          sector: string | null
           update_at: string
           user_owner_id: string
         }
         Insert: {
-          category?: string | null
-          company_name?: string
           create_at?: string
-          description?: string | null
-          employee_count?: number | null
           id?: number
-          net_earnings?: number | null
-          sector?: string | null
           update_at?: string
           user_owner_id: string
         }
         Update: {
-          category?: string | null
-          company_name?: string
           create_at?: string
-          description?: string | null
-          employee_count?: number | null
           id?: number
-          net_earnings?: number | null
-          sector?: string | null
           update_at?: string
           user_owner_id?: string
         }
@@ -1965,140 +1514,6 @@ export type Database = {
           {
             foreignKeyName: "businesses_user_owner_id_fkey"
             columns: ["user_owner_id"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      question_options: {
-        Row: {
-          created_at: string
-          id: string
-          option_label: string | null
-          option_order: number | null
-          option_text: string
-          question_id: string
-          updated_at: string
-        }
-        Insert: {
-          created_at?: string
-          id?: string
-          option_label?: string | null
-          option_order?: number | null
-          option_text: string
-          question_id: string
-          updated_at?: string
-        }
-        Update: {
-          created_at?: string
-          id?: string
-          option_label?: string | null
-          option_order?: number | null
-          option_text?: string
-          question_id?: string
-          updated_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "question_options_question_id_fkey"
-            columns: ["question_id"]
-            isOneToOne: false
-            referencedRelation: "questions"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      questions: {
-        Row: {
-          ai_generated: boolean | null
-          business_id: number
-          created_at: string
-          description: string | null
-          id: string
-          question_text: string
-          question_type: Database["public_web"]["Enums"]["question_type_enum"]
-          required: boolean | null
-          updated_at: string
-        }
-        Insert: {
-          ai_generated?: boolean | null
-          business_id: number
-          created_at?: string
-          description?: string | null
-          id?: string
-          question_text: string
-          question_type: Database["public_web"]["Enums"]["question_type_enum"]
-          required?: boolean | null
-          updated_at?: string
-        }
-        Update: {
-          ai_generated?: boolean | null
-          business_id?: number
-          created_at?: string
-          description?: string | null
-          id?: string
-          question_text?: string
-          question_type?: Database["public_web"]["Enums"]["question_type_enum"]
-          required?: boolean | null
-          updated_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "questions_business_id_fkey"
-            columns: ["business_id"]
-            isOneToOne: false
-            referencedRelation: "businesses"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      responses: {
-        Row: {
-          business_id: number
-          created_at: string
-          id: string
-          question_id: string
-          response_text: string
-          updated_at: string
-          user_id: string
-        }
-        Insert: {
-          business_id: number
-          created_at?: string
-          id?: string
-          question_id: string
-          response_text: string
-          updated_at?: string
-          user_id: string
-        }
-        Update: {
-          business_id?: number
-          created_at?: string
-          id?: string
-          question_id?: string
-          response_text?: string
-          updated_at?: string
-          user_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "responses_business_id_fkey"
-            columns: ["business_id"]
-            isOneToOne: false
-            referencedRelation: "businesses"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "responses_question_id_fkey"
-            columns: ["question_id"]
-            isOneToOne: false
-            referencedRelation: "questions"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "responses_user_id_fkey"
-            columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "users"
             referencedColumns: ["id"]
@@ -2143,7 +1558,7 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      question_type_enum: "single" | "multiple" | "open"
+      [_ in never]: never
     }
     CompositeTypes: {
       [_ in never]: never
@@ -2273,8 +1688,6 @@ export const Constants = {
     Enums: {},
   },
   public_web: {
-    Enums: {
-      question_type_enum: ["single", "multiple", "open"],
-    },
+    Enums: {},
   },
 } as const
