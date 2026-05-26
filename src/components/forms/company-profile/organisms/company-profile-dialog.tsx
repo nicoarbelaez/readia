@@ -7,15 +7,12 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog";
-import { CompanyFormProvider } from "@/components/forms/company-profile/context/company-form-provider";
 import { StepIndicator } from "@/components/forms/company-profile/components/step-indicator";
-import { useCompanyForm } from "@/components/forms/company-profile/context/company-form-context";
+import { useCompanyFormStore } from "@/stores/use-company-form-store";
 import { CompanyFormData } from "@/components/forms/company-profile/schemas/company-form-schemas";
-import { toast } from "sonner";
 import { CompanyGeneralInfoStep } from "@/components/forms/company-profile/organisms/company-general-info-step";
-import { CompanyQuestionsStep } from "@/components/forms/company-profile/organisms/company-questions-step";
-import { CompanyAdditionalInfoStep } from "@/components/forms/company-profile/organisms/company-additional-info-step";
-import { useEffect, useState } from "react";
+import { QuestionCarouselStep } from "@/components/forms/company-profile/organisms/question-carousel-step";
+import { useEffect, useState, useCallback } from "react";
 import {
   AlertDialogAction,
   AlertDialogCancel,
@@ -26,27 +23,134 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { createBusinessProfile } from "@/app/actions/business/business-profile-actions";
 import { Spinner } from "@/components/ui/spinner";
+import { useGenerateQuestions } from "@/hooks/use-generate-questions";
+import { useCreateBusinessProfile } from "@/hooks/use-create-business-profile";
+import { QuestionsList } from "@/types/question";
+import { toast } from "sonner";
+import { Building2, Sparkles } from "lucide-react";
 
-interface CompanyProfileDialogProps {
-  isOpen?: boolean;
-  onOpenChange?: (open: boolean) => void;
-  initialData?: Partial<CompanyFormData>;
-  onSubmit?: (data: CompanyFormData) => Promise<void>;
-}
+// ─────────────────────────────────────────────────────────────────
+// Preguntas base (movidas aquí para cohesión)
+// ─────────────────────────────────────────────────────────────────
 
-function StepContent() {
-  const { currentStep, totalSteps } = useCompanyForm();
+const BASE_QUESTIONS: QuestionsList = [
+  { id: "q1", type: "open", label: "¿Cuál es el principal desafío que enfrenta tu empresa actualmente?" },
+  {
+    id: "q2",
+    type: "multiple",
+    label: "¿En qué etapa de madurez digital consideras que está tu empresa?",
+    options: [
+      { value: "inicial", label: "Inicial - Procesos principalmente manuales" },
+      { value: "desarrollo", label: "En desarrollo - Algunos procesos digitalizados" },
+      { value: "avanzado", label: "Avanzado - Mayoría de procesos digitales" },
+      { value: "optimizado", label: "Optimizado - Completamente digital" },
+    ],
+  },
+  { id: "q3", type: "open", label: "¿Cuáles son tus objetivos de crecimiento para el próximo año?" },
+  {
+    id: "q4",
+    type: "single",
+    label: "¿Tienes un plan de transformación digital?",
+    options: [
+      { value: "si", label: "Sí" },
+      { value: "no", label: "No" },
+      { value: "en_proceso", label: "En proceso de desarrollo" },
+    ],
+  },
+  { id: "q5", type: "open", label: "¿Qué recursos necesitarías para alcanzar tus objetivos empresariales?" },
+];
+
+// ─────────────────────────────────────────────────────────────────
+// Sub-componentes
+// ─────────────────────────────────────────────────────────────────
+
+/**
+ * StepContent renderiza el paso actual del formulario.
+ * Recibe `onFormComplete` para llamarlo directamente cuando el usuario
+ * termina el último paso — evita el patrón frágil de currentStep > totalSteps.
+ */
+function StepContent({ onFormComplete }: { onFormComplete: () => void }) {
+  const store = useCompanyFormStore();
+  const generateQuestions = useGenerateQuestions();
+
+  // Inicializar preguntas base en el store si está vacío
+  useEffect(() => {
+    if (store.questionsAnswers.length === 0) {
+      store.setQuestionsAnswers(
+        BASE_QUESTIONS.map((q) => ({
+          label: q.label,
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          type: q.type as any,
+          answer: q.type === "multiple" ? [] : "",
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          originalQuestion: q as any,
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        }) as any)
+      );
+    }
+    // Solo inicializar una vez
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const handleBaseQuestionsComplete = () => {
+    generateQuestions.mutate(
+      {
+        questionsAnswered: store.questionsAnswers,
+        generalInfo: store.generalInfo,
+        existingQuestions: BASE_QUESTIONS,
+      },
+      {
+        onSuccess: (data) => {
+          store.setAiQuestions(data);
+          store.setExtraQuestionsAnswers(
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            data.map((q: any) => ({
+              label: q.label,
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              type: q.type as any,
+              answer: q.type === "multiple" ? [] : "",
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              originalQuestion: q as any,
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            }) as any)
+          );
+          store.goToNextStep();
+        },
+        onError: (e) => {
+          toast.error("Error al generar preguntas: " + e.message);
+        },
+      }
+    );
+  };
 
   const renderStep = () => {
-    switch (currentStep) {
+    switch (store.currentStep) {
       case 1:
         return <CompanyGeneralInfoStep />;
+
       case 2:
-        return <CompanyQuestionsStep />;
+        return (
+          <QuestionCarouselStep
+            questions={BASE_QUESTIONS}
+            stepKey="questionsAnswers"
+            onComplete={handleBaseQuestionsComplete}
+            onBack={() => store.goToPreviousStep()}
+            isLoading={generateQuestions.isPending}
+          />
+        );
+
       case 3:
-        return <CompanyAdditionalInfoStep />;
+        return (
+          <QuestionCarouselStep
+            questions={store.aiQuestions || []}
+            stepKey="extraQuestionsAnswers"
+            // Paso final: llama directamente al callback de completado
+            onComplete={onFormComplete}
+            onBack={() => store.goToPreviousStep()}
+          />
+        );
+
       default:
         return null;
     }
@@ -54,12 +158,13 @@ function StepContent() {
 
   return (
     <>
-      <StepIndicator currentStep={currentStep} totalSteps={totalSteps} />
+      <StepIndicator currentStep={store.currentStep} totalSteps={store.totalSteps} />
       {renderStep()}
     </>
   );
 }
 
+/** Modal de confirmación para cerrar el formulario sin guardar */
 function AlertCloseDialog({
   isOpen = false,
   onConfirm,
@@ -69,184 +174,169 @@ function AlertCloseDialog({
   onConfirm: () => void;
   onCancel: () => void;
 }) {
-  const { currentStep, totalSteps, formData } = useCompanyForm();
-  const shouldConfirmImmediately =
-    currentStep > totalSteps || !!formData.extraQuestions;
-
-  // Efecto para llamar onConfirm después del render, si aplica
-  useEffect(() => {
-    if (shouldConfirmImmediately) {
-      onConfirm();
-    }
-    // Solo depende de los valores que determinan la condición
-  }, [shouldConfirmImmediately, onConfirm]);
-
-  if (shouldConfirmImmediately) {
-    // No renderizamos el dialog si ya decidimos confirmar
-    return null;
-  }
-
   return (
-    <AlertDialog
-      open={isOpen}
-      onOpenChange={(open) => {
-        if (!open) onCancel();
-      }}
-    >
+    <AlertDialog open={isOpen} onOpenChange={(open) => { if (!open) onCancel(); }}>
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>¿Deseas abandonar el formulario?</AlertDialogTitle>
           <AlertDialogDescription>
-            Todos los datos ingresados se perderán y no podrás deshacer esta
-            acción.
+            Todos los datos ingresados se perderán y no podrás deshacer esta acción.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel onClick={onCancel}>
-            No, mantener los cambios
-          </AlertDialogCancel>
-          <AlertDialogAction onClick={onConfirm}>
-            Sí, cerrar sin guardar
-          </AlertDialogAction>
+          <AlertDialogCancel onClick={onCancel}>No, mantener los cambios</AlertDialogCancel>
+          <AlertDialogAction onClick={onConfirm}>Sí, cerrar sin guardar</AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
   );
 }
 
-function LoadingOverlay() {
+/** Overlay que se muestra mientras se crea la empresa */
+function CreatingCompanyOverlay() {
   return (
-    <div className="bg-background/80 absolute -inset-4 z-50 flex items-center justify-center backdrop-blur-sm">
-      <div className="flex flex-col items-center gap-3">
-        <div className="flex items-center gap-2">
-          <Spinner className="text-primary size-5" />
-          <span className="text-foreground text-sm font-medium">
-            Guardando perfil de empresa...
-          </span>
+    <div className="bg-background/90 absolute -inset-4 z-50 flex items-center justify-center rounded-xl backdrop-blur-md">
+      <div className="flex flex-col items-center gap-5 px-8 text-center">
+        {/* Icono animado */}
+        <div className="relative flex h-16 w-16 items-center justify-center">
+          <div className="bg-primary/20 absolute inset-0 animate-ping rounded-full" />
+          <div className="bg-primary/10 absolute inset-2 rounded-full" />
+          <Building2 className="text-primary relative z-10 h-8 w-8" />
         </div>
-        <p className="text-muted-foreground max-w-xs text-center text-xs">
-          Esto puede tomar unos segundos. Por favor, no cierres esta ventana.
-        </p>
+
+        {/* Texto principal */}
+        <div className="space-y-2">
+          <div className="flex items-center justify-center gap-2">
+            <Spinner className="text-primary h-4 w-4" />
+            <span className="text-foreground text-base font-semibold">
+              Creando tu empresa…
+            </span>
+          </div>
+          <p className="text-muted-foreground max-w-[260px] text-sm">
+            Guardando toda la información. Una vez terminado, generaremos tu diagnóstico
+            y hoja de ruta con IA.
+          </p>
+        </div>
+
+        {/* Indicadores de pasos siguientes */}
+        <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+          <Sparkles className="h-3.5 w-3.5 text-yellow-500" />
+          <span>Diagnóstico + Hoja de ruta en camino</span>
+        </div>
       </div>
     </div>
   );
 }
 
+// ─────────────────────────────────────────────────────────────────
+// Componente principal
+// ─────────────────────────────────────────────────────────────────
+
+interface CompanyProfileDialogProps {
+  isOpen?: boolean;
+  onOpenChange?: (open: boolean) => void;
+  /** Prop opcional para override del submit (p.ej. en tests o Storybook) */
+  onSubmit?: (data: CompanyFormData) => Promise<void>;
+}
+
 export function CompanyProfileDialog({
   isOpen = false,
   onOpenChange,
-  initialData,
   onSubmit,
 }: CompanyProfileDialogProps) {
+  const store = useCompanyFormStore();
   const [pendingClose, setPendingClose] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const createMutation = useCreateBusinessProfile({
+    onSuccess: () => {
+      // Cerrar el modal y resetear el store una vez la empresa está creada.
+      // Las toasts de diagnóstico/roadmap se disparan en el hook de forma asíncrona.
+      store.reset();
+      onOpenChange?.(false);
+    },
+  });
+
+  const isSubmitting = createMutation.isPending;
+
+  // ── Handlers ──────────────────────────────────────────────
 
   const handleOpenChange = (newOpen: boolean) => {
-    if (isSubmitting) {
-      // Prevenir el cierre mientras se está enviando
-      return;
-    }
-
+    if (isSubmitting) return; // Bloquear cierre durante la creación
     if (!newOpen) {
       setPendingClose(true);
     } else {
+      store.reset();
       onOpenChange?.(true);
     }
   };
 
-  const handleConfirm = () => {
+  const handleConfirmClose = () => {
     setPendingClose(false);
+    store.reset();
     onOpenChange?.(false);
   };
 
-  const handleCancel = () => {
+  const handleCancelClose = () => {
     setPendingClose(false);
   };
 
-  const handleStepComplete = (
-    stepData: Partial<CompanyFormData>,
-    step: number,
-  ) => {
-    toast.success(`Paso ${step} completado`);
-  };
+  /**
+   * Se llama cuando el usuario pulsa "Completar" en la última pregunta.
+   * Ejecuta la mutación de React Query en lugar de llamar al server action directamente.
+   */
+  const handleFormComplete = useCallback(async () => {
+    const formData: CompanyFormData = {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      generalInfo: store.generalInfo as any,
+      questions: { questions: store.questionsAnswers },
+      extraQuestions: { additionalQuestions: store.extraQuestionsAnswers },
+    };
 
-  const handleFormComplete = async (formData: CompanyFormData) => {
-    setIsSubmitting(true);
-
-    try {
-      // Si se proporciona un onSubmit personalizado, usarlo
-      if (onSubmit) {
+    // Override: si se pasó una prop onSubmit, usarla (Storybook / tests)
+    if (onSubmit) {
+      try {
         await onSubmit(formData);
-        toast.success("Formulario completado con éxito");
-        handleOpenChange(false);
-        return;
+        store.reset();
+        onOpenChange?.(false);
+      } catch (e) {
+        toast.error(e instanceof Error ? e.message : "Error inesperado");
       }
-
-      // Usar la acción por defecto
-      const response = await createBusinessProfile(formData);
-
-      if (!response.success) {
-        throw new Error(
-          response.message || "Error al guardar el perfil de empresa",
-        );
-      }
-
-      toast.success("Perfil de empresa creado exitosamente");
-      handleOpenChange(false);
-    } catch (error) {
-      console.error("Error submitting form:", error);
-      toast.error(
-        error instanceof Error
-          ? error.message
-          : "Error inesperado al guardar el formulario",
-      );
-    } finally {
-      setIsSubmitting(false);
+      return;
     }
-  };
+
+    createMutation.mutate(formData);
+  }, [store, onSubmit, onOpenChange, createMutation]);
 
   return (
     <Dialog open={isOpen} onOpenChange={handleOpenChange}>
       <DialogContent
         className="sm:max-w-2xl"
-        onPointerDownOutside={(e) => {
-          // Prevenir el cierre al hacer clic fuera mientras se envía
-          if (isSubmitting) {
-            e.preventDefault();
-          }
-        }}
-        onEscapeKeyDown={(e) => {
-          // Prevenir el cierre con ESC mientras se envía
-          if (isSubmitting) {
-            e.preventDefault();
-          }
-        }}
+        onPointerDownOutside={(e) => { if (isSubmitting) e.preventDefault(); }}
+        onEscapeKeyDown={(e) => { if (isSubmitting) e.preventDefault(); }}
       >
         <DialogHeader>
           <DialogTitle>Crear perfil de empresa</DialogTitle>
           <DialogDescription>
-            Completa la información solicitada para crear el perfil de tu
-            empresa.
+            Completa la información solicitada para crear el perfil de tu empresa.
           </DialogDescription>
         </DialogHeader>
 
-        <CompanyFormProvider
-          initialData={initialData}
-          onStepComplete={handleStepComplete}
-          onFormComplete={handleFormComplete}
-        >
-          {pendingClose && (
-            <AlertCloseDialog
-              isOpen={pendingClose}
-              onConfirm={handleConfirm}
-              onCancel={handleCancel}
-            />
-          )}
-          <div className="relative space-y-6">
-            <StepContent />
-            {isSubmitting && <LoadingOverlay />}
-          </div>
-        </CompanyFormProvider>
+        {/* Alerta de confirmación para cerrar sin guardar */}
+        {pendingClose && (
+          <AlertCloseDialog
+            isOpen={pendingClose}
+            onConfirm={handleConfirmClose}
+            onCancel={handleCancelClose}
+          />
+        )}
+
+        {/* Contenido del formulario */}
+        <div className="relative space-y-6">
+          <StepContent onFormComplete={handleFormComplete} />
+
+          {/* Overlay de carga durante la creación */}
+          {isSubmitting && <CreatingCompanyOverlay />}
+        </div>
       </DialogContent>
     </Dialog>
   );

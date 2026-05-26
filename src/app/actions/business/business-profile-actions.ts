@@ -181,7 +181,9 @@ export async function getBusinesses(): Promise<Business[]> {
   }
 }
 
-export async function getFullBusinessProfile(): Promise<BusinessProfile | null> {
+export async function getFullBusinessProfile(
+  businessId?: number,
+): Promise<BusinessProfile | null> {
   try {
     const supabase = await createClient();
     const user = await loadUser();
@@ -191,33 +193,37 @@ export async function getFullBusinessProfile(): Promise<BusinessProfile | null> 
       return null;
     }
 
-    const { data: firstBusiness, error: firstBusinessError } = await supabase
-      .schema("public_web")
-      .from("businesses")
-      .select("id")
-      .eq("user_owner_id", user.id)
-      .order("create_at", { ascending: true })
-      .limit(1)
-      .maybeSingle();
+    let targetBusinessId = businessId;
 
-    if (firstBusinessError && firstBusinessError.code !== "PGRST116") {
-      // PGRST116 es 'Row not found', el cual es un caso de negocio válido
-      console.error("Error fetching first business ID:", firstBusinessError);
-      return null;
+    if (!targetBusinessId) {
+      const { data: firstBusiness, error: firstBusinessError } = await supabase
+        .schema("public_web")
+        .from("businesses")
+        .select("id")
+        .eq("user_owner_id", user.id)
+        .order("create_at", { ascending: true })
+        .limit(1)
+        .maybeSingle();
+
+      if (firstBusinessError && firstBusinessError.code !== "PGRST116") {
+        // PGRST116 es 'Row not found', el cual es un caso de negocio válido
+        console.error("Error fetching first business ID:", firstBusinessError);
+        return null;
+      }
+
+      if (!firstBusiness) {
+        console.log("No business found for user:", user.id);
+        return null;
+      }
+
+      targetBusinessId = firstBusiness.id;
     }
-
-    if (!firstBusiness) {
-      console.log("No business found for user:", user.id);
-      return null;
-    }
-
-    const firstBusinessId = firstBusiness.id;
 
     const { data: businessData, error: businessError } = await supabase
       .schema("public_web")
       .from("businesses")
       .select("*")
-      .eq("id", firstBusinessId)
+      .eq("id", targetBusinessId)
       .single();
 
     if (businessError || !businessData) {
@@ -242,7 +248,7 @@ export async function getFullBusinessProfile(): Promise<BusinessProfile | null> 
       .select(
         "id, business_id, user_id, response_text, created_at, updated_at, question_id",
       )
-      .eq("business_id", firstBusinessId)
+      .eq("business_id", targetBusinessId)
       .eq("user_id", user.id);
 
     if (responsesError) {
@@ -417,6 +423,61 @@ export async function regenerateDiagnostic(
     return {
       success: false,
       message: "Error al regenerar diagnóstico: " + error,
+    };
+  }
+}
+
+export async function deleteBusiness(
+  businessId: number,
+): Promise<ActionResult> {
+  try {
+    const supabase = await createClient();
+    const user = await loadUser();
+
+    if (!user?.id) {
+      return { success: false, message: "Usuario no autenticado" };
+    }
+
+    // Verify ownership
+    const { data: business, error: checkError } = await supabase
+      .schema("public_web")
+      .from("businesses")
+      .select("id")
+      .eq("id", businessId)
+      .eq("user_owner_id", user.id)
+      .maybeSingle();
+
+    if (checkError || !business) {
+      return {
+        success: false,
+        message: "Empresa no encontrada o sin permisos",
+      };
+    }
+
+    const { error: deleteError } = await supabase
+      .schema("public_web")
+      .from("businesses")
+      .delete()
+      .eq("id", businessId);
+
+    if (deleteError) {
+      console.error("Error deleting business:", deleteError);
+      return {
+        success: false,
+        message: "Error al eliminar la empresa: " + deleteError.message,
+      };
+    }
+
+    revalidatePath("/home");
+    return { success: true, message: "Empresa eliminada correctamente" };
+  } catch (error) {
+    console.error("Error in deleteBusiness:", error);
+    return {
+      success: false,
+      message:
+        error instanceof Error
+          ? error.message
+          : "Error inesperado al eliminar la empresa",
     };
   }
 }

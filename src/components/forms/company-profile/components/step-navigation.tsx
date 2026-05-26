@@ -14,7 +14,6 @@ interface StepNavigationProps {
 }
 
 export function StepNavigation({
-  onNext,
   onBack,
   isNextDisabled = false,
   isBackDisabled = false,

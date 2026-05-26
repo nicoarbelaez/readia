@@ -4,7 +4,7 @@ import { Control, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Form, FormField } from "@/components/ui/form";
 import { NavigationButtons } from "@/components/forms/company-profile/components/navigation-buttons";
-import { useCompanyForm } from "@/components/forms/company-profile/context/company-form-context";
+import { useCompanyFormStore } from "@/stores/use-company-form-store";
 import {
   CompanyGeneralInfo,
   CompanyGeneralInfoSchema,
@@ -114,11 +114,11 @@ const FormFieldGroup = ({
 };
 
 export function CompanyGeneralInfoStep() {
-  const { formData, setStepData, goToNextStep, isFirstStep } = useCompanyForm();
+  const store = useCompanyFormStore();
 
   const form = useForm<CompanyGeneralInfo>({
     resolver: zodResolver(CompanyGeneralInfoSchema),
-    defaultValues: formData.generalInfo || {
+    defaultValues: store.generalInfo || {
       companyName: "",
       sector: "",
       category: "",
@@ -129,8 +129,8 @@ export function CompanyGeneralInfoStep() {
   });
 
   const onSubmit = (data: CompanyGeneralInfo) => {
-    setStepData({ generalInfo: data });
-    goToNextStep();
+    store.setGeneralInfo(data);
+    store.goToNextStep();
   };
 
   return (
@@ -143,7 +143,7 @@ export function CompanyGeneralInfoStep() {
           isNextDisabled={form.formState.isSubmitting}
           nextLabel={form.formState.isSubmitting ? "Guardando..." : "Siguiente"}
           backLabel="Cancelar"
-          onBack={isFirstStep ? undefined : undefined}
+          onBack={undefined}
         />
       </form>
     </Form>

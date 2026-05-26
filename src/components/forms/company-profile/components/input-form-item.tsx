@@ -68,11 +68,13 @@ function TextAreaInput<
   TFieldValues extends FieldValues,
   TName extends FieldPath<TFieldValues>,
 >({ field, inputProps }: BaseInputProps<TFieldValues, TName>) {
+  const inputClassName = inputProps?.className;
+  const placeholder = inputProps?.placeholder;
   return (
     <Textarea
       {...field}
-      className="bg-background min-h-[100px] w-full rounded-md border px-3 py-2"
-      placeholder={inputProps?.placeholder ?? ""}
+      className={inputClassName ?? "bg-background min-h-[100px] w-full rounded-md border px-3 py-2"}
+      placeholder={placeholder ?? ""}
     />
   );
 }

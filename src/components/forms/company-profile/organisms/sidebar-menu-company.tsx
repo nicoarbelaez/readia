@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { CompanyProfileDialog } from "@/components/forms/company-profile/organisms//company-profile-dialog";
+import { CompanyProfileDialog } from "@/components/forms/company-profile/organisms/company-profile-dialog";
 import { Plus } from "lucide-react";
 
 export function SidebarMenuCompany() {

@@ -1,478 +1,239 @@
 "use client";
 
 import React from "react";
-import { Control, useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { toast } from "sonner";
-
+import Link from "next/link";
 import {
-  Form,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormControl,
-  FormMessage,
-} from "@/components/ui/form";
+  Building2,
+  Plus,
+  LandPlot,
+  Map,
+  ArrowRight,
+  Sparkles,
+  BarChart3,
+  Route,
+} from "lucide-react";
 
-import { Textarea } from "@/components/ui/textarea";
-import { Checkbox } from "@/components/ui/checkbox";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { useBusinessStore } from "@/stores/use-business-store";
 import { Button } from "@/components/ui/button";
-import { BusinessProfile } from "@/types/business/type";
-import {
-  getFullBusinessProfile,
-  updateBusinessResponses,
-  regenerateDiagnostic,
-} from "@/app/actions/business/business-profile-actions";
-import { RotateCcw, Loader2 } from "lucide-react";
-import { PageLayout } from "@/components/page-layout";
-import {
-  CompanyFormData,
-  CompanyFormSchema,
-} from "@/components/forms/company-profile/schemas/company-form-schemas";
-import { InputFormItem } from "@/components/forms/company-profile/components/input-form-item";
+import { CompanyProfileDialog } from "@/components/forms/company-profile/organisms/company-profile-dialog";
+import { Skeleton } from "@/components/ui/skeleton";
+
+// ----- Feature cards data -----
+const FEATURES = [
+  {
+    icon: LandPlot,
+    title: "Diagnóstico de Madurez",
+    description:
+      "Evalúa el nivel de adopción de IA en tu empresa con un análisis profundo de múltiples pilares estratégicos.",
+    href: "/diagnostic",
+    color: "from-emerald-500/20 to-emerald-600/5",
+    iconColor: "text-emerald-400",
+    borderColor: "hover:border-emerald-500/40",
+  },
+  {
+    icon: Map,
+    title: "Hoja de Ruta",
+    description:
+      "Visualiza un roadmap personalizado con pasos concretos para escalar la inteligencia artificial en tu negocio.",
+    href: "/roadmap",
+    color: "from-violet-500/20 to-violet-600/5",
+    iconColor: "text-violet-400",
+    borderColor: "hover:border-violet-500/40",
+  },
+  {
+    icon: BarChart3,
+    title: "Perfil de Empresa",
+    description:
+      "Gestiona la información de tu empresa y responde preguntas clave que alimentan el diagnóstico de IA.",
+    href: "/business",
+    color: "from-primary/20 to-primary/5",
+    iconColor: "text-primary",
+    borderColor: "hover:border-primary/40",
+  },
+];
 
 export default function Home() {
-  const [profile, setProfile] = React.useState<BusinessProfile | null>(null);
-  const [loading, setLoading] = React.useState(true);
-  const [isSubmitting, setIsSubmitting] = React.useState(false);
-  const [isRegenerating, setIsRegenerating] = React.useState(false);
-
-  const form = useForm<CompanyFormData>({
-    resolver: zodResolver(CompanyFormSchema),
-    defaultValues: {
-      extraQuestions: {
-        additionalQuestions: [{}],
-      },
-      generalInfo: {
-        companyName: "",
-        description: "",
-        sector: "",
-        employeeCount: 0,
-      },
-      questions: {
-        questions: [{}],
-      },
-    },
-  });
+  const { activeBusiness } = useBusinessStore();
+  const [isDialogOpen, setIsDialogOpen] = React.useState(false);
+  // businesses length === 0 means not loaded yet (context sets them); we track a mounted flag
+  const [mounted, setMounted] = React.useState(false);
 
   React.useEffect(() => {
-    let mounted = true;
-    async function fetchProfile() {
-      try {
-        const p = await getFullBusinessProfile();
-        if (mounted && p) {
-          setProfile(p);
+    // Small delay so Zustand hydrates from context before we decide to show "no company"
+    const t = setTimeout(() => setMounted(true), 300);
+    return () => clearTimeout(t);
+  }, []);
 
-          const defaultValues: CompanyFormData = {
-            extraQuestions: {
-              additionalQuestions: p.questionsAndResponses.filter((q) => q.aiGenerated).map((q) => {
-                const latestResponse =
-                  q.responses.length > 0
-                    ? q.responses[q.responses.length - 1].responseText
-                    : "";
-
-                const baseOriginal = {
-                  id: q.id,
-                  label: q.questionText,
-                  type: q.questionType,
-                };
-
-                if (q.questionType === "multiple") {
-                  let answer: string[] = [];
-                  try {
-                    answer = latestResponse ? JSON.parse(latestResponse) : [];
-                  } catch (e) {
-                    answer = [];
-                  }
-                  return {
-                    type: "multiple",
-                    label: q.questionText,
-                    answer,
-                    originalQuestion: {
-                      ...baseOriginal,
-                      type: "multiple",
-                      options: q.options || [],
-                    },
-                  };
-                } else if (q.questionType === "single") {
-                  return {
-                    type: "single",
-                    label: q.questionText,
-                    answer: latestResponse || "",
-                    originalQuestion: {
-                      ...baseOriginal,
-                      type: "single",
-                      options: q.options || [],
-                    },
-                  };
-                } else {
-                  return {
-                    type: "open",
-                    label: q.questionText,
-                    answer: latestResponse || "",
-                    originalQuestion: {
-                      ...baseOriginal,
-                      type: "open",
-                    },
-                  };
-                }
-              }),
-            },
-            generalInfo: {
-              companyName: p.business.companyName,
-              description: p.business.description ?? "",
-              sector: p.business.sector,
-              employeeCount: p.business.employeeCount,
-              netEarnings: p.business.netEarnings,
-              category: p.business.category,
-            },
-            questions: {
-              questions: p.questionsAndResponses.filter((q) => !q.aiGenerated).map((q) => {
-                const latestResponse =
-                  q.responses.length > 0
-                    ? q.responses[q.responses.length - 1].responseText
-                    : "";
-
-                const baseOriginal = {
-                  id: q.id,
-                  label: q.questionText,
-                  type: q.questionType,
-                };
-
-                if (q.questionType === "multiple") {
-                  let answer: string[] = [];
-                  try {
-                    answer = latestResponse ? JSON.parse(latestResponse) : [];
-                  } catch (e) {
-                    answer = [];
-                  }
-                  return {
-                    type: "multiple",
-                    label: q.questionText,
-                    answer,
-                    originalQuestion: {
-                      ...baseOriginal,
-                      type: "multiple",
-                      options: q.options || [],
-                    },
-                  };
-                } else if (q.questionType === "single") {
-                  return {
-                    type: "single",
-                    label: q.questionText,
-                    answer: latestResponse || "",
-                    originalQuestion: {
-                      ...baseOriginal,
-                      type: "single",
-                      options: q.options || [],
-                    },
-                  };
-                } else {
-                  return {
-                    type: "open",
-                    label: q.questionText,
-                    answer: latestResponse || "",
-                    originalQuestion: {
-                      ...baseOriginal,
-                      type: "open",
-                    },
-                  };
-                }
-              }),
-            },
-          };
-
-          form.reset(defaultValues);
-        }
-      } catch (err) {
-        console.error("Failed to load profile:", err);
-        toast.error("Error al cargar el perfil");
-      } finally {
-        if (mounted) setLoading(false);
-      }
-    }
-    fetchProfile();
-    return () => {
-      mounted = false;
-    };
-  }, [form]);
-
-  const onSubmit = async (data: CompanyFormData) => {
-    if (!profile) return;
-    setIsSubmitting(true);
-    try {
-      const responsesToUpdate = data.extraQuestions.additionalQuestions.map(
-        (q) => ({
-          questionId: q.originalQuestion.id,
-          response: Array.isArray(q.answer)
-            ? JSON.stringify(q.answer)
-            : q.answer,
-        }),
-      );
-
-      const result = await updateBusinessResponses(
-        profile.business.id,
-        responsesToUpdate,
-      );
-
-      if (result.success) {
-        toast.success("Información actualizada correctamente");
-      } else {
-        toast.error(result.message || "Error al actualizar");
-      }
-    } catch (error) {
-      console.error(error);
-      toast.error("Error inesperado");
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  const handleRegenerate = async () => {
-    if (!profile) return;
-    setIsRegenerating(true);
-    try {
-      const result = await regenerateDiagnostic(profile.business.id);
-      if (result.success) {
-        toast.success("Diagnóstico regenerado");
-        // Reload profile
-        const p = await getFullBusinessProfile();
-        if (p) setProfile(p);
-      } else {
-        toast.error(result.message || "Error al regenerar");
-      }
-    } catch (error) {
-      toast.error("Error inesperado");
-    } finally {
-      setIsRegenerating(false);
-    }
-  };
-
-  if (loading) {
-    return (
-      <PageLayout title="Mi empresa" description="Cargando perfil...">
-        <pre>{JSON.stringify(profile, null, 2)}</pre>
-      </PageLayout>
-    );
-  }
-
-  if (!profile) {
-    return (
-      <PageLayout title="Mi empresa" description="No se encontró información">
-        <div className="text-center">
-          <p>No pudimos cargar tu perfil de negocio.</p>
-        </div>
-      </PageLayout>
-    );
-  }
-
-  const headerActions = (
-    <div className="flex items-center gap-2">
-      <Button
-        variant="secondary"
-        className="shadow-primary-soft/10 flex items-center gap-2"
-        onClick={handleRegenerate}
-        disabled={isRegenerating || isSubmitting}
-      >
-        {isRegenerating ? (
-          <Loader2 className="size-4 animate-spin" />
-        ) : (
-          <RotateCcw className="size-4" />
-        )}
-        Re-generar diagnóstico
-      </Button>
-      <Button
-        onClick={form.handleSubmit(onSubmit)}
-        disabled={isSubmitting || isRegenerating}
-      >
-        {isSubmitting && <Loader2 className="mr-2 size-4 animate-spin" />}
-        Enviar
-      </Button>
-    </div>
-  );
+  const hasCompany = Boolean(activeBusiness);
+  const companyName = activeBusiness?.companyName ?? "";
 
   return (
-    <PageLayout
-      title="Mi empresa"
-      description={`Perfil de ${profile.business.companyName}`}
-      actions={headerActions}
-    >
-      <Form {...form}>
-        <form
-          onSubmit={form.handleSubmit(onSubmit)}
-          className="space-y-8 pb-10"
-        >
-          <div className="flex flex-col gap-4">
-            <FormFieldGroup control={form.control} />
+    <div className="min-h-[calc(100vh-80px)] flex flex-col gap-12 pb-16">
+      {/* ── Hero / Greeting ── */}
+      <section className="relative overflow-hidden rounded-3xl border border-border/50 bg-gradient-to-br from-surface-900/60 via-surface-900/40 to-transparent p-8 md:p-12 backdrop-blur-sm shadow-2xl shadow-surface-950/30">
+        {/* Decorative glow */}
+        <div className="pointer-events-none absolute -top-24 -right-24 size-72 rounded-full bg-primary/10 blur-3xl" />
+        <div className="pointer-events-none absolute bottom-0 left-12 size-48 rounded-full bg-violet-500/8 blur-2xl" />
+
+        <div className="relative z-10 flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+          <div>
+            {!mounted ? (
+              <div className="space-y-3">
+                <Skeleton className="h-10 w-72" />
+                <Skeleton className="h-5 w-96" />
+              </div>
+            ) : hasCompany ? (
+              <>
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="size-10 rounded-xl bg-primary/15 flex items-center justify-center">
+                    <Sparkles className="size-5 text-primary" />
+                  </div>
+                  <span className="text-sm font-medium text-muted-foreground uppercase tracking-widest">
+                    Panel de Control
+                  </span>
+                </div>
+                <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight text-foreground">
+                  Bienvenido,{" "}
+                  <span className="text-primary">{companyName}</span> 👋
+                </h1>
+                <p className="mt-3 text-muted-foreground max-w-xl text-sm md:text-base">
+                  Aquí tienes una vista rápida de las herramientas disponibles
+                  para evaluar y potenciar la adopción de IA en tu empresa.
+                </p>
+              </>
+            ) : (
+              <>
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="size-10 rounded-xl bg-primary/15 flex items-center justify-center animate-pulse">
+                    <Building2 className="size-5 text-primary" />
+                  </div>
+                  <span className="text-sm font-medium text-muted-foreground uppercase tracking-widest">
+                    Primeros Pasos
+                  </span>
+                </div>
+                <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight text-foreground">
+                  Bienvenido a{" "}
+                  <span className="text-primary">Readia</span>
+                </h1>
+                <p className="mt-3 text-muted-foreground max-w-xl text-sm md:text-base">
+                  Aún no tienes ninguna empresa registrada. Crea una para
+                  comenzar a diagnosticar la madurez de IA de tu negocio y
+                  generar tu hoja de ruta personalizada.
+                </p>
+              </>
+            )}
           </div>
 
-          {profile.questionsAndResponses.map((q, index) => (
-            <FormField
-              key={q.id}
-              control={form.control}
-              name={`extraQuestions.additionalQuestions.${index}.answer`}
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-base font-semibold">
-                    {q.questionText}
-                  </FormLabel>
-                  <FormControl>
-                    {q.questionType === "open" ? (
-                      <Textarea
-                        placeholder="Escribe tu respuesta aquí..."
-                        className="min-h-[100px]"
-                        {...field}
-                      />
-                    ) : q.questionType === "single" ? (
-                      <RadioGroup
-                        onValueChange={field.onChange}
-                        className="flex flex-col space-y-1"
-                      >
-                        {q.options?.map((opt) => (
-                          <FormItem
-                            key={opt.value}
-                            className="flex items-center space-y-0 space-x-3"
-                          >
-                            <FormControl>
-                              <RadioGroupItem
-                                value={opt.value}
-                                checked={field.value == opt.value}
-                              />
-                            </FormControl>
-                            <FormLabel className="font-normal">
-                              {opt.label}
-                            </FormLabel>
-                          </FormItem>
-                        ))}
-                      </RadioGroup>
-                    ) : q.questionType === "multiple" ? (
-                      <div className="flex flex-col space-y-2">
-                        {q.options?.map((opt) => (
-                          <FormItem
-                            key={opt.value}
-                            className="flex flex-row items-start space-y-0 space-x-3"
-                          >
-                            <FormControl>
-                              <Checkbox
-                                defaultChecked={field.value?.includes(
-                                  opt.value,
-                                )}
-                              />
-                            </FormControl>
-                            <FormLabel className="font-normal">
-                              {opt.label}
-                            </FormLabel>
-                          </FormItem>
-                        ))}
-                      </div>
-                    ) : null}
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+          {/* CTA */}
+          {mounted && !hasCompany && (
+            <div className="shrink-0">
+              <Button
+                size="lg"
+                onClick={() => setIsDialogOpen(true)}
+                className="cursor-pointer shadow-xl shadow-primary/25 flex items-center gap-2 text-base px-6"
+              >
+                <Plus className="size-5" />
+                Crear mi empresa
+              </Button>
+              <CompanyProfileDialog
+                isOpen={isDialogOpen}
+                onOpenChange={setIsDialogOpen}
+              />
+            </div>
+          )}
+
+          {mounted && hasCompany && (
+            <div className="shrink-0">
+              <Link href="/diagnostic">
+                <Button
+                  size="lg"
+                  className="cursor-pointer shadow-xl shadow-primary/25 flex items-center gap-2 text-base px-6"
+                >
+                  Ver Diagnóstico
+                  <ArrowRight className="size-5" />
+                </Button>
+              </Link>
+            </div>
+          )}
+        </div>
+      </section>
+
+      {/* ── Feature Cards ── */}
+      <section>
+        <div className="mb-6">
+          <h2 className="text-xl font-bold flex items-center gap-2">
+            <Route className="size-5 text-primary" />
+            Herramientas disponibles
+          </h2>
+          <p className="text-muted-foreground text-sm mt-1">
+            Explora las secciones de la plataforma para sacar el máximo provecho.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+          {FEATURES.map((feat) => (
+            <Link key={feat.href} href={feat.href} className="group block">
+              <div
+                className={`
+                  relative h-full flex flex-col gap-4 p-6 rounded-2xl border border-border/50
+                  bg-gradient-to-br ${feat.color}
+                  ${feat.borderColor}
+                  transition-all duration-300 hover:shadow-lg hover:shadow-surface-950/30
+                  hover:-translate-y-0.5 backdrop-blur-sm cursor-pointer
+                `}
+              >
+                <div
+                  className={`size-12 rounded-xl bg-surface-900/60 flex items-center justify-center ${feat.iconColor} transition-transform duration-300 group-hover:scale-110`}
+                >
+                  <feat.icon className="size-6" />
+                </div>
+
+                <div className="flex-1">
+                  <h3 className="text-base font-bold text-foreground mb-1.5">
+                    {feat.title}
+                  </h3>
+                  <p className="text-muted-foreground text-sm leading-relaxed">
+                    {feat.description}
+                  </p>
+                </div>
+
+                <div
+                  className={`flex items-center gap-1.5 text-xs font-medium ${feat.iconColor} opacity-70 group-hover:opacity-100 transition-opacity`}
+                >
+                  Ir a {feat.title.split(" ")[0]}
+                  <ArrowRight className="size-3.5 transition-transform duration-200 group-hover:translate-x-0.5" />
+                </div>
+              </div>
+            </Link>
           ))}
-        </form>
-      </Form>
-    </PageLayout>
+        </div>
+      </section>
+
+      {/* ── No company CTA block (only if no company and mounted) ── */}
+      {mounted && !hasCompany && (
+        <section className="flex flex-col items-center justify-center gap-6 text-center py-10 px-8 rounded-2xl border border-dashed border-border/60 bg-surface-900/10">
+          <div className="size-14 rounded-2xl bg-primary/10 flex items-center justify-center text-primary">
+            <Building2 className="size-7" />
+          </div>
+          <div>
+            <h3 className="text-lg font-bold text-foreground">
+              Empieza registrando tu empresa
+            </h3>
+            <p className="text-muted-foreground text-sm mt-1.5 max-w-sm">
+              Con un perfil de empresa completo, la IA generará un diagnóstico y
+              hoja de ruta totalmente personalizados.
+            </p>
+          </div>
+          <Button
+            onClick={() => setIsDialogOpen(true)}
+            variant="outline"
+            className="cursor-pointer flex items-center gap-2"
+          >
+            <Plus className="size-4" />
+            Crear empresa ahora
+          </Button>
+        </section>
+      )}
+    </div>
   );
 }
-
-const FormFieldGroup = ({ control }: { control: Control<CompanyFormData> }) => {
-  return (
-    <>
-      <div className="flex flex-col gap-4">
-        <div className="flex w-full items-center justify-between gap-4">
-          <FormField
-            control={control}
-            name="generalInfo.companyName"
-            render={({ field }) => (
-              <div className="flex-1">
-                <InputFormItem
-                  type="text"
-                  field={field}
-                  label="Nombre de la empresa"
-                  inputProps={{
-                    placeholder: "Empresa S.A.",
-                  }}
-                />
-              </div>
-            )}
-          />
-          <FormField
-            control={control}
-            name="generalInfo.sector"
-            render={({ field }) => (
-              <div className="flex-1">
-                <InputFormItem
-                  type="select"
-                  field={field}
-                  label="Sector"
-                  selectItems={["Industrial", "Comercio", "Servicios"]}
-                />
-              </div>
-            )}
-          />
-        </div>
-        <div className="flex w-full items-center justify-between gap-4">
-          <FormField
-            control={control}
-            name="generalInfo.category"
-            render={({ field }) => (
-              <div className="flex-1">
-                <InputFormItem
-                  type="text"
-                  field={field}
-                  label="Categoría"
-                  inputProps={{
-                    placeholder: "Ej: Tecnología, Agricultura, etc.",
-                  }}
-                />
-              </div>
-            )}
-          />
-          <FormField
-            control={control}
-            name="generalInfo.employeeCount"
-            render={({ field }) => (
-              <div className="flex-1">
-                <InputFormItem
-                  type="number"
-                  field={field}
-                  label="Cantidad de empleados"
-                  inputProps={{
-                    placeholder: "Ej: 50",
-                  }}
-                />
-              </div>
-            )}
-          />
-          <FormField
-            control={control}
-            name="generalInfo.netEarnings"
-            render={({ field }) => (
-              <div className="flex-1">
-                <InputFormItem
-                  type="number"
-                  field={field}
-                  label="Ganancias netas"
-                  inputProps={{
-                    placeholder: "Ej: 100000",
-                  }}
-                />
-              </div>
-            )}
-          />
-        </div>
-      </div>
-      <FormField
-        control={control}
-        name="generalInfo.description"
-        render={({ field }) => (
-          <InputFormItem type="textarea" field={field} label="Descripción" />
-        )}
-      />
-    </>
-  );
-};

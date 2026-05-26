@@ -7,6 +7,7 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar";
 import loadUser from "@/lib/load-session";
+import { QueryProvider } from "@/components/providers/query-provider";
 
 interface MainLayoutProps {
   children: React.ReactNode;
@@ -34,7 +35,8 @@ export default async function MainLayout({ children }: MainLayoutProps) {
         fullName={user.fullName}
         userName={user.userName}
       />
-      <SidebarProvider className="relative">
+      <QueryProvider>
+        <SidebarProvider className="relative">
         <span className="absolute top-0 left-0 h-full w-full overflow-hidden">
           <span className="absolute top-[-30%] left-[50%] h-[500px] w-[500px] rounded-full bg-[radial-gradient(circle_farthest-side,var(--primary-soft),rgba(255,255,255,0))] md:top-[10%] md:left-[-20%]" />
           <span className="absolute right-[-30%] bottom-[-30%] h-[1000px] w-[1000px] rounded-full bg-[radial-gradient(circle_farthest-side,var(--primary-soft),rgba(255,255,255,0))]" />
@@ -57,6 +59,7 @@ export default async function MainLayout({ children }: MainLayoutProps) {
           </div>
         </SidebarInset>
       </SidebarProvider>
+      </QueryProvider>
     </>
   );
 }

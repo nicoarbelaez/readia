@@ -9,8 +9,14 @@ import {
   ItemTitle,
 } from "@/components/ui/item";
 import { CardBento } from "@/components/diagnostic/card-bento";
-import { Priority, Recommendation } from "@/app/(main)/diagnostic/page";
+export type Priority = "Alta" | "Media" | "Baja";
 
+export interface Recommendation {
+  id?: string;
+  text: string;
+  priority: Priority;
+  category: string;
+}
 export function RecommendationsPanel({
   recommendations,
 }: {
@@ -38,9 +44,9 @@ export function RecommendationsPanel({
       cardContent={
         <ScrollArea className="flex h-full flex-1 flex-col">
           <div className="h-full flex-1 space-y-3 overflow-y-auto">
-            {recommendations.map((rec) => (
+            {recommendations.map((rec, i) => (
               <Item
-                key={rec.id}
+                key={rec.id ?? i}
                 variant="outline"
                 className="group hover:bg-accent"
               >
