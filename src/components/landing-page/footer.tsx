@@ -1,42 +1,62 @@
+"use client";
+
 export function Footer() {
+  const currentYear = new Date().getFullYear();
+
   return (
-    <footer className="bg-[var(--background)]  py-8 md:py-12">
-      <div className="container mx-auto px-4 sm:px-6">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
-          
+    <footer className="bg-background border-border/40 border-t py-12 md:py-16">
+      <div className="container mx-auto max-w-6xl px-6">
+        <div className="grid grid-cols-1 gap-8 md:grid-cols-3 md:gap-12">
           {/* Logo y descripción */}
-          <div>
-            <h3 className="text-xl md:text-2xl font-bold mb-3 text-[var(--primary)]">
-              Readia
+          <div className="space-y-4">
+            <h3 className="text-2xl font-extrabold tracking-tight">
+              <span className="from-primary bg-gradient-to-r to-emerald-400 bg-clip-text text-transparent">
+                Readia
+              </span>
             </h3>
-            <p className="text-[var(--muted-foreground)] text-sm md:text-base">
-              IA que evalúa tus capacidades tecnológicas y genera un plan claro para adoptar Inteligencia Artificial.
+            <p className="text-muted-foreground max-w-sm text-sm leading-relaxed opacity-90">
+              Auditoría inteligente que evalúa tus capacidades tecnológicas y
+              genera planes estratégicos automatizados para adoptar Inteligencia
+              Artificial.
             </p>
           </div>
 
           {/* Recursos */}
-          <div>
-            <h4 className="font-semibold text-lg mb-3 text-[var(--foreground)]">Recursos</h4>
-            <ul className="space-y-2 text-[var(--muted-foreground)] text-sm">
+          <div className="space-y-4">
+            <h4 className="text-foreground text-sm font-extrabold tracking-wider uppercase">
+              Recursos
+            </h4>
+            <ul className="space-y-2.5">
               <li>
-                <a href="#faq" className="hover:text-[var(--primary)] transition-colors">
+                <a
+                  href="#faq"
+                  className="text-muted-foreground hover:text-primary text-sm transition-colors"
+                >
                   Preguntas frecuentes
                 </a>
               </li>
               <li>
-                <a href="#recursos" className="hover:text-[var(--primary)] transition-colors">
-                  Documentación
+                <a
+                  href="/docs"
+                  className="text-muted-foreground hover:text-primary text-sm transition-colors"
+                >
+                  Documentación Técnica
                 </a>
               </li>
             </ul>
           </div>
 
           {/* Contacto */}
-          <div>
-            <h4 className="font-semibold text-lg mb-3 text-[var(--foreground)]">Contacto</h4>
-            <ul className="space-y-2 text-[var(--muted-foreground)] text-sm">
+          <div className="space-y-4">
+            <h4 className="text-foreground text-sm font-extrabold tracking-wider uppercase">
+              Contacto
+            </h4>
+            <ul className="space-y-2.5">
               <li>
-                <a href="mailto:info@readia.com" className="hover:text-[var(--primary)] transition-colors">
+                <a
+                  href="mailto:info@readia.com"
+                  className="text-muted-foreground hover:text-primary text-sm transition-colors"
+                >
                   info@readia.com
                 </a>
               </li>
@@ -45,8 +65,32 @@ export function Footer() {
         </div>
 
         {/* Footer inferior */}
-        <div className="border-t border-[var(--border)] mt-6 pt-6 text-center text-xs text-[var(--muted-foreground)]">
-          © 2025 Readia. Proyecto universitario.
+        <div className="border-border/40 text-muted-foreground/60 mt-10 flex flex-col items-center justify-between gap-4 border-t pt-8 text-xs sm:flex-row">
+          <div className="flex flex-col items-center gap-2 sm:flex-row">
+            <span>
+              © {currentYear} Readia. Proyecto académico de innovación
+              tecnológica.
+            </span>
+            <span className="hidden sm:inline">·</span>
+            <a
+              href="http://arbelaeznicolas.dev/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-primary transition-colors"
+            >
+              by Nicolas Arbelaez
+            </a>
+          </div>
+
+          <div className="flex gap-4">
+            <a href="#" className="hover:text-primary transition-colors">
+              Términos
+            </a>
+            <span>·</span>
+            <a href="#" className="hover:text-primary transition-colors">
+              Privacidad
+            </a>
+          </div>
         </div>
       </div>
     </footer>

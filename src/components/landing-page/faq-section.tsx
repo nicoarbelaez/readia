@@ -1,49 +1,39 @@
-
 "use client";
 
 import { useState, useRef } from "react";
-import { Plus, Minus } from "lucide-react";
+import { HelpCircle, ChevronDown } from "lucide-react";
+import { Card } from "@/components/ui/card";
 
 const faqItems = [
   {
     id: 1,
-    question: "¿Qué hace exactamente la IA de Readia?",
-    answer: "La IA de Readia analiza la infraestructura tecnológica, la calidad de los datos, las capacidades del equipo y la gobernanza digital de tu organización. Con esta información genera automáticamente un diagnóstico completo y una hoja de ruta para adoptar IA de manera efectiva."
+    question: "¿Qué analiza exactamente el diagnóstico de Readia?",
+    answer: "Readia evalúa de manera integral cuatro dimensiones fundamentales: tu Infraestructura de TI (servidores, redes, nubes), Arquitectura y Gobernanza de Datos (almacenes, seguridad, silos), Talento Humano (brechas de competencias digitales) y Gobernanza Ética/Procesos de Negocio. Con esto determina qué tan preparada está tu organización para adoptar Inteligencia Artificial."
   },
   {
     id: 2,
-    question: "¿Qué diferencia a Readia de otros servicios?",
-    answer: "A diferencia de una consultoría tradicional, Readia es una inteligencia artificial que procesa datos de tu empresa en tiempo real, identifica brechas y propone soluciones personalizadas en cuestión de minutos, reduciendo tiempo y costos."
+    question: "¿Qué diferencia a Readia de una consultora tradicional?",
+    answer: "A diferencia de las consultorías de TI tradicionales que tardan semanas y resultan costosas, Readia utiliza un motor interactivo impulsado por IA para realizar el diagnóstico y trazar planes estratégicos y arquitectónicos en cuestión de minutos, con rigor metodológico y de forma 100% personalizada."
   },
   {
     id: 3,
-    question: "¿Es seguro compartir la información de mi empresa?",
-    answer: "Sí. La IA de Readia utiliza protocolos de seguridad avanzados y procesa la información de forma confidencial. Los datos nunca se comparten con terceros y pueden almacenarse en servidores locales o en la nube, según prefieras."
+    question: "¿Es seguro compartir la información técnica de mi empresa?",
+    answer: "Absolutamente. La privacidad de tus datos es nuestra prioridad número uno. Utilizamos encriptación de grado bancario (AES-256) en tránsito y reposo. Además, tu información técnica es confidencial y jamás se compartirá con terceros ni se utilizará para entrenar modelos públicos."
   },
   {
     id: 4,
-    question: "¿Qué tipo de empresas pueden beneficiarse?",
-    answer: "Cualquier empresa, desde startups hasta grandes corporaciones. La IA adapta el diagnóstico según el tamaño, la industria y el nivel de madurez digital de cada organización."
+    question: "¿Qué tipo de empresas pueden usar Readia?",
+    answer: "Readia está diseñado para empresas de cualquier escala y sector: desde startups en crecimiento rápido que desean consolidar sus bases técnicas, hasta medianas y grandes corporaciones que buscan estructurar su transformación digital e iniciar proyectos de IA sin cometer errores costosos."
   },
   {
     id: 5,
-    question: "¿Cuánto tiempo tarda en dar un diagnóstico?",
-    answer: "El diagnóstico inicial se genera en minutos tras ingresar la información básica. El informe detallado completo puede estar listo en pocos días, dependiendo de la cantidad de datos proporcionados."
+    question: "¿En cuánto tiempo recibo mi diagnóstico y hoja de ruta?",
+    answer: "El diagnóstico inicial de madurez y la estructuración del perfil se generan de forma instantánea al completar tu perfil interactivo de preguntas de TI. Los informes detallados estratégicos y de arquitectura de hoja de ruta se despliegan en tiempo real tras la evaluación."
   },
   {
     id: 6,
-    question: "¿La IA también apoya en la implementación?",
-    answer: "Sí. Readia no solo entrega un diagnóstico, también genera una hoja de ruta priorizada con fases de implementación, casos de uso recomendados y métricas para medir el retorno de inversión (ROI)."
-  },
-  {
-    id: 7,
-    question: "¿Qué necesito para empezar a usar Readia?",
-    answer: "Únicamente registrar tu empresa en la plataforma y proporcionar información básica sobre tus sistemas, datos y objetivos. El resto lo hace automáticamente la IA."
-  },
-  {
-    id: 8,
-    question: "¿En qué idiomas está disponible?",
-    answer: "Actualmente la IA de Readia está disponible en español"
+    question: "¿La plataforma ayuda en el plan de implementación?",
+    answer: "Sí. Readia no solo identifica tus brechas tecnológicas, sino que genera una Hoja de Ruta interactiva (Roadmap) estructurada por fases claras (inicial, intermedia, avanzada) con tareas recomendadas, sugerencias de stack tecnológico y métricas para medir el ROI."
   }
 ];
 
@@ -51,84 +41,87 @@ export function FAQSection() {
   const [openItems, setOpenItems] = useState<number[]>([]);
 
   const toggleItem = (id: number) => {
-    setOpenItems(prev =>
-      prev.includes(id)
-        ? prev.filter(itemId => itemId !== id)
-        : [...prev, id]
+    setOpenItems((prev) =>
+      prev.includes(id) ? prev.filter((itemId) => itemId !== id) : [...prev, id]
     );
   };
 
   return (
-    <section id="faq" className="bg-[var(--background)] py-12 md:py-16 lg:py-20">
-      <div className="container mx-auto px-4 sm:px-6">
-        <div className="text-center mb-8 md:mb-12 lg:mb-16">
-          <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-[var(--foreground)]">
-            Preguntas frecuentes
+    <section id="faq" className="bg-background py-16 md:py-24 relative overflow-hidden">
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(16,185,129,0.015),transparent_50%)] pointer-events-none" />
+
+      <div className="container mx-auto px-6 max-w-4xl relative z-10">
+        
+        {/* Título de la sección */}
+        <div className="text-center mb-12 md:mb-16">
+          <div className="inline-flex p-3 rounded-2xl bg-primary/10 text-primary mb-3">
+            <HelpCircle className="size-6 text-emerald-400" />
+          </div>
+          <h2 className="text-3xl md:text-4xl font-extrabold text-foreground tracking-tight">
+            Preguntas Frecuentes
           </h2>
-          <p className="text-[var(--muted-foreground)] mt-2 md:mt-4 max-w-2xl mx-auto text-sm md:text-base lg:text-lg">
-            Resolvemos todas tus dudas sobre nuestro diagnóstico de capacidades de TI hacia IA
+          <p className="text-muted-foreground mt-4 max-w-xl mx-auto text-sm md:text-base leading-relaxed">
+            Todo lo que necesitas saber sobre nuestro diagnóstico automatizado de TI e implementación estratégica de Inteligencia Artificial.
           </p>
         </div>
 
-        <div className="max-w-4xl mx-auto">
-          <div className="space-y-3 md:space-y-4">
-            {faqItems.map((item) => (
-              <FAQItem
-                key={item.id}
-                item={item}
-                isOpen={openItems.includes(item.id)}
-                onToggle={() => toggleItem(item.id)}
-              />
-            ))}
-          </div>
+        {/* Acordeón de FAQs */}
+        <div className="space-y-4">
+          {faqItems.map((item) => (
+            <FAQItem
+              key={item.id}
+              item={item}
+              isOpen={openItems.includes(item.id)}
+              onToggle={() => toggleItem(item.id)}
+            />
+          ))}
         </div>
       </div>
     </section>
   );
 }
 
-// Componente individual para cada item del FAQ con animaciones
-function FAQItem({ item, isOpen, onToggle }: { 
-  item: { id: number; question: string; answer: string }; 
-  isOpen: boolean; 
-  onToggle: () => void; 
+function FAQItem({
+  item,
+  isOpen,
+  onToggle
+}: {
+  item: { id: number; question: string; answer: string };
+  isOpen: boolean;
+  onToggle: () => void;
 }) {
   const contentRef = useRef<HTMLDivElement>(null);
 
   return (
-    <div className="bg-[var(--card)] rounded-xl overflow-hidden transition-all duration-300 hover:shadow-md">
+    <Card className="bg-card/45 backdrop-blur-sm border border-border/40 rounded-2xl overflow-hidden hover:border-primary/25 hover:shadow-sm transition-all duration-300">
       <button
         onClick={onToggle}
-        className="w-full flex items-center justify-between p-4 md:p-6 text-left hover:bg-[var(--muted)] transition-colors duration-200"
+        className="w-full flex items-center justify-between p-5 md:p-6 text-left hover:bg-muted/30 transition-colors duration-200 cursor-pointer group"
       >
-        <span className="font-semibold text-[var(--foreground)] pr-4 text-sm md:text-base">
+        <span className="font-bold text-foreground text-sm md:text-base pr-4 group-hover:text-primary transition-colors">
           {item.question}
         </span>
-        <div className={`flex-shrink-0 transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`}>
-          {isOpen ? (
-            <Minus className="h-4 w-4 md:h-5 md:w-5 text-[var(--primary)] transition-colors duration-200" />
-          ) : (
-            <Plus className="h-4 w-4 md:h-5 md:w-5 text-[var(--primary)] transition-colors duration-200" />
-          )}
-        </div>
+        <ChevronDown
+          className={`size-4 md:size-5 text-primary transition-transform duration-300 flex-shrink-0 ${
+            isOpen ? "rotate-180" : ""
+          }`}
+        />
       </button>
-      
+
       <div
         ref={contentRef}
         className="transition-all duration-300 ease-in-out overflow-hidden"
         style={{
-          maxHeight: isOpen ? `${contentRef.current?.scrollHeight}px` : '0px',
-          opacity: isOpen ? 1 : 0,
+          maxHeight: isOpen ? `${contentRef.current?.scrollHeight}px` : "0px",
+          opacity: isOpen ? 1 : 0
         }}
       >
-        <div className="px-4 md:px-6 pb-4 md:pb-6">
-          <div className="border-t border-[var(--border)] pt-3 md:pt-4">
-            <p className="text-[var(--muted-foreground)] leading-relaxed text-sm md:text-base">
-              {item.answer}
-            </p>
-          </div>
+        <div className="px-5 md:px-6 pb-5 md:pb-6 border-t border-border/20 pt-4">
+          <p className="text-muted-foreground leading-relaxed text-xs md:text-[14.5px] opacity-90">
+            {item.answer}
+          </p>
         </div>
       </div>
-    </div>
+    </Card>
   );
 }
