@@ -1,4 +1,4 @@
-import { PillarData } from "@/app/(main)/diagnostic/page";
+
 import { CardBento } from "@/components/diagnostic/card-bento";
 import {
   ResponsiveContainer,
@@ -9,6 +9,12 @@ import {
   PolarAngleAxis,
   PolarRadiusAxis,
 } from "recharts";
+
+export interface PillarData {
+  subject: string;
+  A: number;
+  fullMark: number;
+}
 
 export function RadarCard({
   title,

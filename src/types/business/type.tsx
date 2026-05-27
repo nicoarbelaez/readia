@@ -1,5 +1,5 @@
 import { CompanyGeneralInfo } from "@/components/forms/company-profile/schemas/company-form-schemas";
-import { Database } from "@/types/database";
+import { Database } from "@/types/database-types";
 
 export type Business = {
   id: number;

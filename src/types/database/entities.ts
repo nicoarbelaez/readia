@@ -1,4 +1,4 @@
-import { Database } from "@/types/database";
+import { Database } from "@/types/database-types";
 
 // Alias corto para no repetir la ruta larga a "public_web"
 type PublicWebSchema = Database["public_web"]["Tables"];

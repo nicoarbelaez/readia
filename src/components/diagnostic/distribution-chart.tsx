@@ -5,13 +5,12 @@ import {
   ResponsiveContainer,
   Tooltip as RechartsTooltip,
 } from "recharts";
-import { DiagnosticResult } from "@/app/(main)/diagnostic/page";
 import { CardBento } from "@/components/diagnostic/card-bento";
 
 export function DistributionChart({
   data,
 }: {
-  data: DiagnosticResult["distribution"];
+  data: { name: string; value: number; color: string }[];
 }) {
   return (
     <CardBento

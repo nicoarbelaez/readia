@@ -3,7 +3,7 @@ import {
   QuestionsListSchema,
 } from "@/components/forms/company-profile/schemas/question-schema";
 import z from "zod";
-import { Database } from "@/types/database";
+import { Database } from "@/types/database-types";
 
 /**
  * Antes de usar Zod, la definición de tipos era la siguiente:
