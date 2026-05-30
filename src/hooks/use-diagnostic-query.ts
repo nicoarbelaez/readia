@@ -1,9 +1,10 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { createClient } from "@/utils/supabase/client";
 import { useDiagnosticStore } from "@/stores/use-diagnostic-store";
 import { useGenerationStore } from "@/stores/use-generation-store";
 import { useEffect } from "react";
+import type { DiagnosticData } from "@/types/diagnostic";
+import type { PostgrestError, SupabaseClient } from "@supabase/supabase-js";
 
 export function useDiagnosticQuery(businessId: number | null) {
   const supabase = createClient();
@@ -15,19 +16,28 @@ export function useDiagnosticQuery(businessId: number | null) {
     queryKey: ["diagnostic", businessId],
     queryFn: async () => {
       if (!businessId) return null;
-      const { data: diag, error } = await (supabase
-        .schema("public_web") as any)
+
+      // schema("public_web") operates outside generated DB types — cast via unknown
+      const schemaClient = supabase.schema(
+        "public_web",
+      ) as unknown as SupabaseClient;
+      const { data: diag, error } = (await schemaClient
         .from("diagnostics")
-        .select(`
+        .select(
+          `
           id, overall_score, score_label, score_description, conclusions_markdown, created_at,
           diagnostic_pillars (title, description, diagnostic_pillar_data (subject, a_value, full_mark)),
           diagnostic_distributions (name, value, color),
           diagnostic_recommendations (text, priority, category)
-        `)
+        `,
+        )
         .eq("business_id", businessId)
         .order("created_at", { ascending: false })
         .limit(1)
-        .single() as any;
+        .single()) as unknown as {
+        data: DiagnosticData | null;
+        error: PostgrestError | null;
+      };
 
       if (error && error.code !== "PGRST116") throw error;
       return diag || null;
