@@ -10,7 +10,7 @@ export function Footer() {
           {/* Logo y descripción */}
           <div className="space-y-4">
             <h3 className="text-2xl font-extrabold tracking-tight">
-              <span className="from-primary bg-gradient-to-r to-emerald-400 bg-clip-text text-transparent">
+              <span className="from-primary bg-linear-to-r to-emerald-400 bg-clip-text text-transparent">
                 Readia
               </span>
             </h3>
@@ -35,31 +35,6 @@ export function Footer() {
                   Preguntas frecuentes
                 </a>
               </li>
-              <li>
-                <a
-                  href="/docs"
-                  className="text-muted-foreground hover:text-primary text-sm transition-colors"
-                >
-                  Documentación Técnica
-                </a>
-              </li>
-            </ul>
-          </div>
-
-          {/* Contacto */}
-          <div className="space-y-4">
-            <h4 className="text-foreground text-sm font-extrabold tracking-wider uppercase">
-              Contacto
-            </h4>
-            <ul className="space-y-2.5">
-              <li>
-                <a
-                  href="mailto:info@readia.com"
-                  className="text-muted-foreground hover:text-primary text-sm transition-colors"
-                >
-                  info@readia.com
-                </a>
-              </li>
             </ul>
           </div>
         </div>
@@ -79,16 +54,6 @@ export function Footer() {
               className="hover:text-primary transition-colors"
             >
               by Nicolas Arbelaez
-            </a>
-          </div>
-
-          <div className="flex gap-4">
-            <a href="#" className="hover:text-primary transition-colors">
-              Términos
-            </a>
-            <span>·</span>
-            <a href="#" className="hover:text-primary transition-colors">
-              Privacidad
             </a>
           </div>
         </div>
