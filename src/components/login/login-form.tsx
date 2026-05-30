@@ -38,10 +38,20 @@ export function LoginForm({
           </div>
         </CardContent>
       </Card>
-      <div className="text-muted-foreground *:[a]:hover:text-primary text-center text-xs text-balance *:[a]:underline *:[a]:underline-offset-4">
-        Al hacer clic en continuar, aceptas nuestros{" "}
-        <a href="#">Términos de servicio</a> y{" "}
-        <a href="#">Política de privacidad</a>.
+      <div className="text-muted-foreground *:[a]:hover:text-primary flex gap-2 text-center text-xs text-balance *:[a]:underline *:[a]:underline-offset-4">
+        <span>
+          © {new Date().getFullYear()} Readia. Proyecto académico de innovación
+          tecnológica.
+        </span>
+        <span className="hidden sm:inline">·</span>
+        <a
+          href="http://arbelaeznicolas.dev/"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="hover:text-primary transition-colors"
+        >
+          by Nicolas Arbelaez
+        </a>
       </div>
     </div>
   );

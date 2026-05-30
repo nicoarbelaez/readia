@@ -12,19 +12,19 @@ import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { QuestionWithResponses } from "@/types/business/type";
+import type { Control, FieldValues, Path } from "react-hook-form";
 
-interface QuestionFieldProps {
+interface QuestionFieldProps<T extends FieldValues = FieldValues> {
   question: QuestionWithResponses;
   index: number;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  control: any;
+  control: Control<T>;
   type: "base" | "ai";
 }
 
-export function QuestionField({ question, index, control, type }: QuestionFieldProps) {
-  const name = type === "base"
+export function QuestionField<T extends FieldValues = FieldValues>({ question, index, control, type }: QuestionFieldProps<T>) {
+  const name = (type === "base"
     ? `questions.questions.${index}.answer`
-    : `extraQuestions.additionalQuestions.${index}.answer`;
+    : `extraQuestions.additionalQuestions.${index}.answer`) as Path<T>;
 
   return (
     <FormField
