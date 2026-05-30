@@ -55,11 +55,9 @@ export function QuestionCarouselStep({ questions, stepKey, onComplete, onBack, i
     const val = form.getValues().answer;
     
     if (stepKey === 'questionsAnswers') {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      store.setQuestionAnswer(currentIndex, val as any);
+      store.setQuestionAnswer(currentIndex, val as string | string[]);
     } else {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      store.setExtraQuestionAnswer(currentIndex, val as any);
+      store.setExtraQuestionAnswer(currentIndex, val as string | string[]);
     }
 
     if (isLastQuestion) {

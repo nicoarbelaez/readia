@@ -27,8 +27,20 @@ import { Spinner } from "@/components/ui/spinner";
 import { useGenerateQuestions } from "@/hooks/use-generate-questions";
 import { useCreateBusinessProfile } from "@/hooks/use-create-business-profile";
 import { QuestionsList } from "@/types/question";
+import type { Question } from "@/types/question";
+import type { CompanyQuestion } from "@/components/forms/company-profile/schemas/company-form-schemas";
 import { toast } from "sonner";
 import { Building2, Sparkles } from "lucide-react";
+
+function toCompanyQuestion(q: Question): CompanyQuestion {
+  if (q.type === "multiple") {
+    return { label: q.label, type: "multiple", answer: [], originalQuestion: q };
+  } else if (q.type === "single") {
+    return { label: q.label, type: "single", answer: "", originalQuestion: q };
+  } else {
+    return { label: q.label, type: "open", answer: "", originalQuestion: q };
+  }
+}
 
 // ─────────────────────────────────────────────────────────────────
 // Preguntas base (movidas aquí para cohesión)
@@ -77,17 +89,7 @@ function StepContent({ onFormComplete }: { onFormComplete: () => void }) {
   // Inicializar preguntas base en el store si está vacío
   useEffect(() => {
     if (store.questionsAnswers.length === 0) {
-      store.setQuestionsAnswers(
-        BASE_QUESTIONS.map((q) => ({
-          label: q.label,
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          type: q.type as any,
-          answer: q.type === "multiple" ? [] : "",
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          originalQuestion: q as any,
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        }) as any)
-      );
+      store.setQuestionsAnswers(BASE_QUESTIONS.map(toCompanyQuestion));
     }
     // Solo inicializar una vez
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -103,18 +105,7 @@ function StepContent({ onFormComplete }: { onFormComplete: () => void }) {
       {
         onSuccess: (data) => {
           store.setAiQuestions(data);
-          store.setExtraQuestionsAnswers(
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            data.map((q: any) => ({
-              label: q.label,
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              type: q.type as any,
-              answer: q.type === "multiple" ? [] : "",
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              originalQuestion: q as any,
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            }) as any)
-          );
+          store.setExtraQuestionsAnswers(data.map(toCompanyQuestion));
           store.goToNextStep();
         },
         onError: (e) => {
@@ -285,9 +276,9 @@ export function CompanyProfileDialog({
    * Ejecuta la mutación de React Query en lugar de llamar al server action directamente.
    */
   const handleFormComplete = useCallback(async () => {
+    if (!store.generalInfo) return;
     const formData: CompanyFormData = {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      generalInfo: store.generalInfo as any,
+      generalInfo: store.generalInfo,
       questions: { questions: store.questionsAnswers },
       extraQuestions: { additionalQuestions: store.extraQuestionsAnswers },
     };
