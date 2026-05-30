@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "gen:types": "npx -y supabase@2.47.2 gen types typescript --project-id fglvypynatlwvxwjudlk --schema public,public_web > ./src/types/database.ts",
+    "gen:types": "npx -y supabase@2.47.2 gen types typescript --project-id iienjlqzfimcovzozknt --schema public,public_web > ./src/types/database.ts",
     "db:push": "supabase db push && pnpm gen:types"
   },
   "dependencies": {
@@ -26,6 +26,7 @@
     "@radix-ui/react-separator": "^1.1.7",
     "@radix-ui/react-slot": "^1.2.3",
     "@radix-ui/react-tooltip": "^1.2.8",
+    "@react-pdf/renderer": "^4.5.1",
     "@supabase/ssr": "^0.7.0",
     "@supabase/supabase-js": "^2.56.0",
     "@tabler/icons-react": "^3.34.1",
