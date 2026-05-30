@@ -38,16 +38,14 @@ export const useCompanyFormStore = create<CompanyFormStore>((set) => ({
   setQuestionAnswer: (index, answer) => set((state) => {
     const newAnswers = [...state.questionsAnswers];
     if (newAnswers[index]) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      newAnswers[index].answer = answer as any;
+      (newAnswers[index] as { answer: string | string[] }).answer = answer;
     }
     return { questionsAnswers: newAnswers };
   }),
   setExtraQuestionAnswer: (index, answer) => set((state) => {
     const newAnswers = [...state.extraQuestionsAnswers];
     if (newAnswers[index]) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      newAnswers[index].answer = answer as any;
+      (newAnswers[index] as { answer: string | string[] }).answer = answer;
     }
     return { extraQuestionsAnswers: newAnswers };
   }),
