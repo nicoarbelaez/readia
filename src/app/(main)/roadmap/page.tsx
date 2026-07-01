@@ -2,6 +2,8 @@
 
 import FlowClient from "@/components/flow/flow-client";
 import { useRoadmapQuery } from "@/hooks/use-roadmap-query";
+import type { RoadmapNodeRaw } from "@/hooks/use-roadmap-query";
+import type { RoadmapNodeType, NodeCustomType } from "@/types/roadmap-flow";
 import { useBusinessStore } from "@/stores/use-business-store";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
@@ -76,7 +78,9 @@ export default function RoadMap() {
   const isDiagGenerating = status === "diagnostic";
   const isRoadmapGenerating = status === "roadmap";
   const hasDiagnostic = Boolean(diagnostic);
-  const hasRoadmapData = Boolean(data && data.roadmap_nodes && data.roadmap_nodes.length > 0);
+  const hasRoadmapData = Boolean(
+    data && data.roadmap_nodes && data.roadmap_nodes.length > 0,
+  );
 
   // ── No business selected
   if (!activeBusiness) {
@@ -225,30 +229,31 @@ export default function RoadMap() {
   }
 
   // ── Loaded
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const nodes = data.roadmap_nodes.map((n: any) => ({
+  const nodes = data.roadmap_nodes.map((n: RoadmapNodeRaw) => ({
     id: n.id,
-    type: n.type,
+    type: n.type as NodeCustomType,
     position: { x: n.position_x, y: n.position_y },
     data: {
       label: n.label,
       details: {
-        nodeType: n.node_type,
+        nodeType: n.node_type as RoadmapNodeType,
         shortDescription: n.short_description,
-        description: n.description,
+        description: n.description ?? undefined,
         owner: n.owner,
-        objectives: n.objectives,
-        actions: n.actions,
-        tools: n.tools,
-        kpis: n.kpis,
-        nextSteps: n.next_steps,
-        timeline: n.timeline,
+        objectives: n.objectives ?? undefined,
+        actions: n.actions ?? undefined,
+        tools: n.tools ?? undefined,
+        kpis: n.kpis ?? undefined,
+        nextSteps: n.next_steps ?? undefined,
+        timeline: n.timeline ?? undefined,
         isDone: n.is_done,
-        subtasks: n.subtasks,
+        subtasks: n.subtasks ?? undefined,
       },
     },
   }));
 
+  console.log("Hoja de Ruta");
+  console.log(data);
   return (
     <PageLayout
       title="Hoja de Ruta"

@@ -18,6 +18,7 @@ import { useGenerationStore } from "@/stores/use-generation-store";
 import { triggerManualDiagnostic } from "@/hooks/use-create-business-profile";
 import { createClient } from "@/utils/supabase/client";
 import { useQueryClient } from "@tanstack/react-query";
+import { usePdfReport } from "@/report/hooks/use-pdf-report";
 
 import { Spinner } from "@/components/ui/spinner";
 
@@ -61,6 +62,9 @@ export default function Diagnostic() {
     state.getStatus(activeBusiness?.id || null),
   );
   const isGenerating = status === "diagnostic";
+  const { download: downloadPdf, isGenerating: isPdfGenerating } = usePdfReport(
+    activeBusiness?.id ?? null,
+  );
 
   if (!activeBusiness) {
     return (
@@ -88,9 +92,15 @@ export default function Diagnostic() {
       <Button
         variant="secondary"
         className="shadow-primary-soft/10 flex items-center"
+        onClick={downloadPdf}
+        disabled={isPdfGenerating}
       >
-        <Download className="size-4" />
-        PDF
+        {isPdfGenerating ? (
+          <Spinner className="size-4" />
+        ) : (
+          <Download className="size-4" />
+        )}
+        {isPdfGenerating ? "Generando PDF..." : "PDF"}
       </Button>
     </>
   );
@@ -163,7 +173,11 @@ export default function Diagnostic() {
               title={data.diagnostic_pillars[0].title}
               description={data.diagnostic_pillars[0].description}
               data={data.diagnostic_pillars[0].diagnostic_pillar_data.map(
-                (d: { subject: string; a_value: number; full_mark: number }) => ({
+                (d: {
+                  subject: string;
+                  a_value: number;
+                  full_mark: number;
+                }) => ({
                   subject: d.subject,
                   A: d.a_value,
                   fullMark: d.full_mark,
@@ -179,7 +193,11 @@ export default function Diagnostic() {
               title={data.diagnostic_pillars[1].title}
               description={data.diagnostic_pillars[1].description}
               data={data.diagnostic_pillars[1].diagnostic_pillar_data.map(
-                (d: { subject: string; a_value: number; full_mark: number }) => ({
+                (d: {
+                  subject: string;
+                  a_value: number;
+                  full_mark: number;
+                }) => ({
                   subject: d.subject,
                   A: d.a_value,
                   fullMark: d.full_mark,
@@ -195,7 +213,11 @@ export default function Diagnostic() {
               title={data.diagnostic_pillars[2].title}
               description={data.diagnostic_pillars[2].description}
               data={data.diagnostic_pillars[2].diagnostic_pillar_data.map(
-                (d: { subject: string; a_value: number; full_mark: number }) => ({
+                (d: {
+                  subject: string;
+                  a_value: number;
+                  full_mark: number;
+                }) => ({
                   subject: d.subject,
                   A: d.a_value,
                   fullMark: d.full_mark,

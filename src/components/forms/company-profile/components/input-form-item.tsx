@@ -26,7 +26,6 @@ interface BaseInputProps<
 > {
   field: ControllerRenderProps<TFieldValues, TName>;
   inputProps?: React.ComponentProps<typeof Input>;
-  textareaProps?: React.ComponentProps<typeof Textarea>;
   label?: string;
   placeholder?: string;
 }
@@ -68,31 +67,14 @@ function NumberInput<
 function TextAreaInput<
   TFieldValues extends FieldValues,
   TName extends FieldPath<TFieldValues>,
->({ field, inputProps, textareaProps }: BaseInputProps<TFieldValues, TName>) {
-  const { className, style, placeholder, wrap, ...restTextareaProps } =
-    textareaProps ?? {};
-
-  const mergedClassName = [
-    "bg-background min-h-[100px] w-full rounded-md border px-3 py-2",
-    "whitespace-pre-wrap break-words overflow-x-hidden",
-    className,
-  ]
-    .filter(Boolean)
-    .join(" ");
-
+>({ field, inputProps }: BaseInputProps<TFieldValues, TName>) {
+  const inputClassName = inputProps?.className;
+  const placeholder = inputProps?.placeholder;
   return (
     <Textarea
       {...field}
-      {...restTextareaProps}
-      value={field.value ?? ""}
-      wrap={wrap ?? "soft"}
-      className={mergedClassName}
-      style={{
-        overflowWrap: "anywhere",
-        wordBreak: "break-word",
-        ...style,
-      }}
-      placeholder={placeholder ?? inputProps?.placeholder ?? ""}
+      className={inputClassName ?? "bg-background min-h-[100px] w-full rounded-md border px-3 py-2"}
+      placeholder={placeholder ?? ""}
     />
   );
 }
@@ -140,7 +122,6 @@ export function InputFormItem<
   type,
   field,
   inputProps,
-  textareaProps,
   label,
   selectItems,
 }: InputFormItemProps<TFieldValues, TName>) {
@@ -156,11 +137,7 @@ export function InputFormItem<
             <NumberInput field={field} inputProps={inputProps} />
           )}
           {type === "textarea" && (
-            <TextAreaInput
-              field={field}
-              inputProps={inputProps}
-              textareaProps={textareaProps}
-            />
+            <TextAreaInput field={field} inputProps={inputProps} />
           )}
           {type === "select" && (
             <SelectInput

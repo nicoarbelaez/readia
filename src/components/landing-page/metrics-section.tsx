@@ -60,7 +60,7 @@ export function MetricsSection() {
                 </div>
 
                 {/* Percentage value */}
-                <div className="text-4xl md:text-5xl font-extrabold bg-gradient-to-r from-primary to-emerald-400 bg-clip-text text-transparent mb-2.5">
+                <div className="text-4xl md:text-5xl font-extrabold bg-linear-to-r from-primary to-emerald-400 bg-clip-text text-transparent mb-2.5">
                   {metric.value}
                 </div>
 

@@ -3,6 +3,16 @@ import { createClient } from "@/utils/supabase/client";
 import { getBusinesses } from "@/app/actions/business/business-profile-actions";
 import { Business } from "@/types/business/type";
 
+interface BusinessRow {
+  id: number;
+  company_name: string;
+  description: string;
+  sector: string;
+  employee_count: number;
+  net_earnings: number;
+  category: string;
+}
+
 export function useBusinessSwitcher() {
   const [businesses, setBusinesses] = useState<Business[]>([]);
   const [activeBusiness, setActiveBusiness] = useState<Business | null>(null);
@@ -30,8 +40,7 @@ export function useBusinessSwitcher() {
     loadInitialBusinesses();
   }, [activeBusiness]);
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const handleInsert = useCallback((newRow: any) => {
+  const handleInsert = useCallback((newRow: BusinessRow) => {
     const newBusiness: Business = {
       id: newRow.id,
       companyName: newRow.company_name,
@@ -59,8 +68,7 @@ export function useBusinessSwitcher() {
     });
   }, []);
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const handleUpdate = useCallback((newRow: any) => {
+  const handleUpdate = useCallback((newRow: BusinessRow) => {
     const updatedBusiness: Business = {
       id: newRow.id,
       companyName: newRow.company_name,
@@ -84,8 +92,7 @@ export function useBusinessSwitcher() {
   }, []);
 
   const handleDelete = useCallback(
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (oldRow: any) => {
+    (oldRow: BusinessRow) => {
       const deletedBusinessId = oldRow.id;
 
       setBusinesses((prev) => {
@@ -143,15 +150,15 @@ export function useBusinessSwitcher() {
 
           switch (eventType) {
             case "INSERT":
-              handleInsert(newRow);
+              handleInsert(newRow as BusinessRow);
               break;
 
             case "UPDATE":
-              handleUpdate(newRow);
+              handleUpdate(newRow as BusinessRow);
               break;
 
             case "DELETE":
-              handleDelete(oldRow);
+              handleDelete(oldRow as BusinessRow);
               break;
 
             default:
