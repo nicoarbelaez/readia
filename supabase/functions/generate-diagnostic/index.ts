@@ -130,12 +130,12 @@ ${JSON.stringify(qaPairs, null, 2)}
       .from('diagnostics')
       .insert({
         business_id: businessId,
-        overall_score: object.overallScore,
+        overall_score: Math.round(object.overallScore),
         score_label: object.scoreLabel,
         score_description: object.scoreDescription,
         conclusions_markdown: object.conclusionsMarkdown
       })
-      .select()
+      .select() 
       .single();
 
     if (diagError) {

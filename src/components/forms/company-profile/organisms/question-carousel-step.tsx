@@ -15,36 +15,47 @@ import { useEffect } from "react";
 
 interface QuestionCarouselStepProps {
   questions: QuestionsList;
-  stepKey: 'questionsAnswers' | 'extraQuestionsAnswers';
+  stepKey: "questionsAnswers" | "extraQuestionsAnswers";
   onComplete: () => void;
   onBack: () => void;
   isLoading?: boolean;
 }
 
-export function QuestionCarouselStep({ questions, stepKey, onComplete, onBack, isLoading }: QuestionCarouselStepProps) {
+export function QuestionCarouselStep({
+  questions,
+  stepKey,
+  onComplete,
+  onBack,
+  isLoading,
+}: QuestionCarouselStepProps) {
   const store = useCompanyFormStore();
   const currentIndex = store.currentQuestionIndex;
-  
+
   const currentQuestion = questions?.[currentIndex];
   const isLastQuestion = currentIndex === (questions?.length || 1) - 1;
   const isFirstQuestion = currentIndex === 0;
 
   const singleSchema = z.object({
-    answer: currentQuestion?.type === 'multiple' 
-      ? z.array(z.string()).min(1, "Selecciona al menos una opción")
-      : z.string().min(1, "Respuesta obligatoria")
+    answer:
+      currentQuestion?.type === "multiple"
+        ? z.array(z.string()).min(1, "Selecciona al menos una opción")
+        : z.string().min(1, "Respuesta obligatoria"),
   });
 
   const form = useForm({
     resolver: zodResolver(singleSchema),
     defaultValues: {
-      answer: store[stepKey][currentIndex]?.answer || (currentQuestion?.type === 'multiple' ? [] : "")
-    }
+      answer:
+        store[stepKey][currentIndex]?.answer ||
+        (currentQuestion?.type === "multiple" ? [] : ""),
+    },
   });
 
   useEffect(() => {
     form.reset({
-      answer: store[stepKey][currentIndex]?.answer || (currentQuestion?.type === 'multiple' ? [] : "")
+      answer:
+        store[stepKey][currentIndex]?.answer ||
+        (currentQuestion?.type === "multiple" ? [] : ""),
     });
   }, [currentIndex, currentQuestion, store, stepKey, form]);
 
@@ -53,8 +64,8 @@ export function QuestionCarouselStep({ questions, stepKey, onComplete, onBack, i
     if (!valid) return;
 
     const val = form.getValues().answer;
-    
-    if (stepKey === 'questionsAnswers') {
+
+    if (stepKey === "questionsAnswers") {
       store.setQuestionAnswer(currentIndex, val as string | string[]);
     } else {
       store.setExtraQuestionAnswer(currentIndex, val as string | string[]);
@@ -99,17 +110,21 @@ export function QuestionCarouselStep({ questions, stepKey, onComplete, onBack, i
 
   return (
     <div className="space-y-6">
-      <div className="mb-4 text-sm text-muted-foreground">
+      <div className="text-muted-foreground mb-4 text-sm">
         Pregunta {currentIndex + 1} de {questions.length}
       </div>
+
       <Form {...form}>
         <form className="space-y-6" onSubmit={(e) => e.preventDefault()}>
           <FormField
-            key={currentQuestion.id} // reset on change
+            key={currentQuestion.id}
             control={form.control}
             name="answer"
             render={({ field }) => {
-              if (currentQuestion.type === "multiple" || currentQuestion.type === "single") {
+              if (
+                currentQuestion.type === "multiple" ||
+                currentQuestion.type === "single"
+              ) {
                 return (
                   <RadioFormItem
                     type={currentQuestion.type}
@@ -119,16 +134,21 @@ export function QuestionCarouselStep({ questions, stepKey, onComplete, onBack, i
                   />
                 );
               }
+
               return (
                 <InputFormItem
                   type="textarea"
                   field={field}
                   label={currentQuestion.label}
-                  inputProps={{ placeholder: "Tu respuesta...", className: "min-h-[100px]" }}
+                  textareaProps={{
+                    placeholder: "Tu respuesta...",
+                    className: "min-h-[100px]",
+                  }}
                 />
               );
             }}
           />
+
           <NavigationButtons
             onNext={handleNext}
             onBack={handlePrevious}
