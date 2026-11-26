@@ -1,36 +1,115 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# ReadIA
 
-## Getting Started
+[English](./README.en.md) · Español
 
-First, run the development server:
+Aplicación web que convierte un cuestionario sobre la infraestructura, los datos y el talento de una empresa en un diagnóstico de madurez TI/IA, una hoja de ruta interactiva y un informe PDF descargable. Las preguntas, el diagnóstico y la hoja de ruta los genera un modelo de lenguaje (Gemini, con OpenRouter como respaldo) a través de funciones Edge de Supabase.
+
+Proyecto universitario de la Universidad Santiago de Cali (USC). Demo: <https://readia.arbelaeznicolas.dev/>
+
+## Funcionalidades
+
+- Inicio de sesión con Google y GitHub mediante Supabase Auth, con refresco de sesión en el middleware de Next.js.
+- Gestión de varias empresas por usuario: crear, cambiar de empresa y eliminar.
+- Perfil de empresa en varios pasos (React Hook Form + Zod) con un carrusel de preguntas generadas por IA.
+- Diagnóstico de madurez con puntaje global, radar por pilares, distribución, recomendaciones priorizadas (Alta, Media, Baja) y conclusiones en Markdown.
+- Hoja de ruta como grafo de nodos (React Flow + dagre) con fases, tareas, responsables, KPIs y subtareas.
+- Informe PDF con portada, resumen ejecutivo, pilares, recomendaciones, hoja de ruta, Gantt y conclusiones (`@react-pdf/renderer`).
+- Cadena de respaldo de modelos: Gemini (2 intentos) y luego OpenRouter (2 intentos), con registro de intentos.
+- Tema claro y oscuro.
+
+## Stack
+
+| Capa | Tecnología |
+| --- | --- |
+| Frontend | Next.js 15.4.10 (App Router, Turbopack en desarrollo), React 19.1.0, TypeScript 5.9.2 |
+| Estilos y UI | Tailwind CSS 4, shadcn/ui, Radix UI, next-themes |
+| Estado y datos | Zustand ^5.0.13, TanStack Query ^5.100.14 |
+| Formularios | React Hook Form ^7.62.0, Zod ^4.1.5 |
+| Visualización | @xyflow/react ^12.8.4, dagre ^0.8.5, Recharts ^3.5.0 |
+| PDF | @react-pdf/renderer ^4.5.1 |
+| Backend | Supabase: PostgreSQL con RLS, Auth, Edge Functions (Deno) |
+| IA | Vercel AI SDK (`ai` ^5.0.37), `@ai-sdk/google` ^2.0.13, OpenRouter vía `@ai-sdk/openai` |
+| Herramientas | pnpm, ESLint 9, Prettier 3.6.2, Supabase CLI 2.47.2 |
+
+## Requisitos
+
+- Node.js 20 o superior y pnpm.
+- Un proyecto de Supabase (o la CLI de Supabase con Docker para correrlo en local).
+- Una clave de Google AI Studio (Gemini). La clave de OpenRouter es opcional y solo se usa como respaldo.
+
+## Puesta en marcha
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+pnpm install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Variables de entorno. No hay `.env.example`; estas son las que lee el código:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+| Variable | Dónde se usa |
+| --- | --- |
+| `NEXT_PUBLIC_SUPABASE_URL` | Next.js (cliente, servidor y middleware) |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Next.js (cliente, servidor y middleware) |
+| `GOOGLE_GENERATIVE_AI_API_KEY` | Server Action de Next.js y funciones Edge |
+| `OPENROUTER_API_KEY` | Funciones Edge (respaldo) |
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Crea `.env.local` con las dos primeras y la de Gemini. Las claves de las funciones Edge se cargan como secretos de Supabase:
 
-## Learn More
+```bash
+supabase secrets set GOOGLE_GENERATIVE_AI_API_KEY=... OPENROUTER_API_KEY=...
+```
 
-To learn more about Next.js, take a look at the following resources:
+Base de datos y funciones:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+supabase link --project-ref <tu-project-ref>
+pnpm db:push                         # aplica las migraciones y regenera src/types/database.ts
+supabase functions deploy generate-questions
+supabase functions deploy generate-diagnostic
+supabase functions deploy generate-roadmap
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Habilita los proveedores Google y GitHub en Supabase Auth y agrega `http://localhost:3000/auth/callback` como URL de redirección. Después:
 
-## Deploy on Vercel
+```bash
+pnpm dev
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Abre <http://localhost:3000>.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Scripts
+
+| Script | Qué hace |
+| --- | --- |
+| `pnpm dev` | Servidor de desarrollo con Turbopack |
+| `pnpm build` | Compilación de producción |
+| `pnpm start` | Sirve la compilación |
+| `pnpm lint` | ESLint (`next lint`) |
+| `pnpm gen:types` | Genera `src/types/database.ts` desde los esquemas `public` y `public_web`. Cambia el `--project-id` del script por el de tu proyecto |
+| `pnpm db:push` | `supabase db push` y luego `gen:types` |
+
+## Estructura
+
+```text
+src/
+  app/            rutas (main)/{home,business,diagnostic,roadmap,dashboard}, login, auth/callback, actions/
+  components/     landing-page, forms/company-profile, diagnostic, flow, sidebar, ui
+  hooks/          hooks de TanStack Query y disparo de funciones Edge
+  stores/         estado de cliente con Zustand
+  report/         documento PDF y sus secciones
+  utils/supabase/ clientes de Supabase (browser, server, middleware)
+supabase/
+  functions/      generate-questions, generate-diagnostic, generate-roadmap, _shared
+  migrations/     esquema public_web, RLS y datos base
+```
+
+El detalle de arquitectura, con diagramas, está en [docs/architecture.md](./docs/architecture.md).
+
+## Limitaciones conocidas
+
+- Marcar un nodo o subtarea de la hoja de ruta como hecho aún no se guarda en la base de datos: las Server Actions de `src/app/actions/roadmap-actions.ts` son simuladas.
+- No hay pruebas automatizadas ni pipeline de CI; solo ESLint.
+- Las métricas y testimonios de la landing son contenido de ejemplo, no resultados medidos.
+
+## Créditos
+
+Desarrollo: Nicolas Arbelaez (esquema de Supabase, RLS, funciones Edge, diagnóstico, hoja de ruta e informe PDF). La landing page la inició [@jevg2003](https://github.com/jevg2003).
